@@ -1,0 +1,5 @@
+name: Space
+main: com.uddernetworks.space.main.Main
+version: 1.0
+author: RubbaBoy
+load: STARTUP

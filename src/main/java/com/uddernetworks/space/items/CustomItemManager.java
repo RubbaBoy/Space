@@ -1,0 +1,112 @@
+package com.uddernetworks.space.items;
+
+import com.uddernetworks.space.main.Main;
+import com.uddernetworks.space.nbt.NBTItem;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class CustomItemManager implements Listener {
+
+    private Main main;
+    private List<CustomItem> customItems = new ArrayList<>();
+
+    public CustomItemManager(Main main) {
+        this.main = main;
+    }
+
+    public int getCount() {
+        return this.customItems.size();
+    }
+
+    public void addCustomItem(CustomItem customItem) {
+        if (!customItems.contains(customItem)) {
+            customItem.setId(getCount() + 1);
+            customItems.add(customItem);
+        }
+    }
+
+    public CustomItem getCustomItem(Material material, short data) {
+        for (CustomItem customItem : customItems) {
+            if (customItem.getMaterial() == material && customItem.getDamage() == data) return customItem;
+        }
+
+        return null;
+    }
+
+    public CustomItem getCustomItem(int id) {
+        for (CustomItem customItem : customItems) {
+            if (customItem.getId() == id) return customItem;
+        }
+
+        return null;
+    }
+
+    public CustomItem getCustomItem(String name) {
+        for (CustomItem customItem : customItems) {
+            if (customItem.getName().equalsIgnoreCase(name)) return customItem;
+        }
+
+        return null;
+    }
+
+    public List<CustomItem> getCustomItems() {
+        return new ArrayList<>(customItems);
+    }
+
+    public boolean isCustomItem(ItemStack itemStack) {
+        NBTItem nbtItem = new NBTItem(itemStack);
+        return nbtItem.getTag().hasKey("SpaceItem");
+    }
+
+    public CustomItem getCustomItem(ItemStack itemStack) {
+        if (itemStack == null) return null;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (nbtItem.getTag() != null && nbtItem.getTag().hasKey("SpaceItem")) {
+            return getCustomItem(nbtItem.getTag().getInt("SpaceItem"));
+        }
+
+        return null;
+    }
+
+    public static void randomizeItem(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        nbtItem.getTag().setInt("random", ThreadLocalRandom.current().nextInt());
+        nbtItem.updateItem();
+    }
+
+    @EventHandler
+    public void onClickEvent(PlayerInteractEvent event) {
+        if (event.getItem() == null) return;
+        if (isCustomItem(event.getItem())) {
+            getCustomItem(event.getItem()).onClick(event);
+        }
+    }
+
+    @EventHandler
+    public void onDropEvent(PlayerDropItemEvent event) {
+        if (isCustomItem(event.getItemDrop().getItemStack())) {
+            getCustomItem(event.getItemDrop().getItemStack()).onDrop(event);
+        }
+    }
+
+    @EventHandler
+    public void onClickEntityEvent(PlayerInteractAtEntityEvent event) {
+        ItemStack item = event.getHand() == EquipmentSlot.HAND ? event.getPlayer().getInventory().getItemInMainHand() : event.getPlayer().getInventory().getItemInOffHand();
+        if (item == null) return;
+        if (isCustomItem(item)) {
+            getCustomItem(item).onClickEntity(event);
+        }
+    }
+
+}
