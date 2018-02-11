@@ -1,15 +1,18 @@
 package com.uddernetworks.space.blocks;
 
-import com.uddernetworks.space.guis.CustomGUI;
+import com.uddernetworks.space.guis.Workbench;
+import com.uddernetworks.space.main.Main;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.UUID;
+
 public class WorkbenchBlock extends CustomBlock {
 
-    public WorkbenchBlock(Material material, int damage, Material particle, String name, Class<? extends CustomGUI> gui) {
-        super(material, (short) damage, particle, name, gui);
+    public WorkbenchBlock(Main main, Material material, int damage, Material particle, String name) {
+        super(main, material, (short) damage, particle, name, () -> main.getGUIManager().addGUI(new Workbench(main, "WorkbenchBlock", 54, UUID.randomUUID())));
     }
 
     @Override
@@ -30,5 +33,10 @@ public class WorkbenchBlock extends CustomBlock {
     @Override
     void onClick(PlayerInteractEvent event) {
 
+    }
+
+    @Override
+    boolean hasGUI() {
+        return true;
     }
 }

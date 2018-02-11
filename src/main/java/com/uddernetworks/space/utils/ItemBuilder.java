@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ItemBuilder {
@@ -71,6 +72,34 @@ public class ItemBuilder {
         itemStack.setItemMeta(meta);
 
         return itemStack;
+    }
+
+    public static boolean itemsEquals(ItemStack item1, ItemStack item2) {
+        if (item1 == null) {
+            return false;
+        } else if (item1 == item2) {
+            return true;
+        } else {
+            if (item1.getTypeId() == item2.getTypeId()
+                    && item1.getDurability() == item2.getDurability()
+                    && item1.hasItemMeta() == item2.hasItemMeta()) {
+                if (item1.hasItemMeta()) {
+                    if (item1.getItemMeta().getDisplayName().equals(item2.getItemMeta().getDisplayName())) {
+                        if (item1.getItemMeta().getLore() != null) {
+                            return item1.getItemMeta().getLore().equals(item2.getItemMeta().getLore());
+                        } else {
+                            return true;
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
     }
 
     public ItemBuilder setMaterial(Material material) {
@@ -143,6 +172,11 @@ public class ItemBuilder {
 
     public ItemBuilder addFlag(ItemFlag flag) {
         this.flags.add(flag);
+        return this;
+    }
+
+    public ItemBuilder addFlags(ItemFlag... flags) {
+        this.flags.addAll(Arrays.asList(flags));
         return this;
     }
 

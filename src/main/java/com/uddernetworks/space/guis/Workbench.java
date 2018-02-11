@@ -1,32 +1,35 @@
 package com.uddernetworks.space.guis;
 
 import com.uddernetworks.space.main.Main;
+import com.uddernetworks.space.recipies.RecipeType;
 import com.uddernetworks.space.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.UUID;
+
 public class Workbench extends CustomGUI {
 
     private Main main;
 
-    public Workbench(Main main, String title, int size) {
-        super(title, size, GUIItems.WORKBENCH);
+    public Workbench(Main main, String title, int size, UUID uuid) {
+        super(main, title, size, uuid, null);
 
         this.main = main;
 
         SlotAction slotAction = new SlotAction() {
             @Override
             public boolean putIn(int position, ItemStack item) {
-                System.out.println("Item has been put IN the slot: " + item);
+//                System.out.println("Item has been put IN the slot: " + item);
                 updateResult();
                 return true;
             }
 
             @Override
             public boolean takeOut(int position, ItemStack item) {
-                System.out.println("Item has been taken OUT");
+//                System.out.println("Item has been taken OUT");
                 updateResult();
                 return true;
             }
@@ -46,7 +49,7 @@ public class Workbench extends CustomGUI {
         Bukkit.getScheduler().runTaskLater(main, () -> {
             ItemStack[][] itemGrid = getCraftingGrid();
 
-            ItemStack result = main.getRecipeManager().getResultingItem(itemGrid);
+            ItemStack result = main.getRecipeManager().getResultingItem(itemGrid, RecipeType.WORKBENCH);
 
             getInventory().setItem(34, result);
 
@@ -62,7 +65,7 @@ public class Workbench extends CustomGUI {
                     getInventory().setItem(slot, ItemBuilder.AIR);
                 }
             }
-        }, 1L);
+        }, 0L);
     }
 
     private void dropCraftingGrid(HumanEntity lastViewer) {
@@ -100,7 +103,7 @@ public class Workbench extends CustomGUI {
     }
 
     @Override
-    public void onOpen(HumanEntity closer) {
+    public void onOpen(HumanEntity opener) {
 
     }
 }

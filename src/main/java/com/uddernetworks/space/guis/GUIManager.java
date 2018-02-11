@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class GUIManager {
 
@@ -15,30 +16,32 @@ public class GUIManager {
         this.main = main;
     }
 
-    public void addGUI(CustomGUI gui) {
-        if (!containsGUI(gui.getClass())) {
+    public CustomGUI addGUI(CustomGUI gui) {
+//        if (!containsGUI(gui.getClass())) {
             guis.add(gui);
 
             System.out.println("Registering events for: " + gui);
             Bukkit.getPluginManager().registerEvents(gui, main);
-        }
+
+            return gui;
+//        }
     }
 
-    public CustomGUI getGUI(Class<? extends CustomGUI> gui) {
-        if (gui == null) return null;
-        for (CustomGUI customGUI : guis) {
-            if (customGUI.getClass().equals(gui)) return customGUI;
-        }
-
-        return null;
+    public CustomGUI getGUI(UUID uuid) {
+        return guis.stream().filter(customGUI -> customGUI.getUUID().equals(uuid)).findFirst().orElse(null);
     }
 
-    public boolean containsGUI(Class<? extends CustomGUI> gui) {
-        for (CustomGUI customGUI : guis) {
-            if (customGUI.getClass().equals(gui)) return true;
-        }
-
-        return false;
+    public void removeGUI(UUID uuid) {
+        new ArrayList<>(guis).stream().filter(gui -> gui.getUUID().equals(uuid)).forEach(guis::remove);
     }
+
+    public void clearGUIs() {
+        guis.clear();
+    }
+
+
+//    public int getNextId() {
+//        return guis.size();
+//    }
 
 }

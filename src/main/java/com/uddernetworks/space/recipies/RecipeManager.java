@@ -23,16 +23,19 @@ public class RecipeManager {
         this.recipes.add(recipe);
     }
 
-    public ItemStack getResultingItem(ItemStack[][] itemGrid) {
-        if (itemGrid.length != 5 || itemGrid[0].length != 5) {
-            return null;
-        }
+    public ItemStack getResultingItem(ItemStack[][] itemGrid, RecipeType type) {
+//        if (itemGrid.length != 5 || itemGrid[0].length != 5) {
+//            return null;
+//        }
 
         AtomicReference<ItemStack> result = new AtomicReference<>();
 
         result.set(ItemBuilder.itemFrom(Material.AIR));
 
-        recipes.stream().filter(recipe -> recipe.equals(itemGrid)).findFirst().ifPresent(recipe -> result.set(recipe.getResulting()));
+        recipes.stream().filter(recipe -> recipe.getType() == type)
+                        .filter(recipe -> recipe.getResultingItem(itemGrid))
+                        .findFirst()
+                        .ifPresent(recipe -> result.set(recipe.getResulting()));
 
         return result.get();
     }

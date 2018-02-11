@@ -1,5 +1,6 @@
 package com.uddernetworks.space.guis;
 
+import com.uddernetworks.space.main.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -13,21 +14,28 @@ import org.bukkit.inventory.InventoryHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CustomGUI implements InventoryHolder, Listener {
 
+    Main main;
     private String title;
     private int size;
     private List<Slot> slots = new ArrayList<>();
     private Inventory inventory;
+    private UUID uuid;
 
-    public CustomGUI(String title, int size, GUIItems guiItems) {
+    public CustomGUI(Main main, String title, int size, UUID uuid, GUIItems guiItems) {
+        this.main = main;
         this.title = title;
         this.size = size;
+        this.uuid = uuid;
         this.inventory = Bukkit.createInventory(this, this.size, this.title);
 
-        for (GUIItems.GUIItem guiItem : guiItems.getGUIItems()) {
-            addSlot(new PopulatedSlot(guiItem.getSlot(), false, guiItem.getItem()));
+        if (guiItems != null) {
+            for (GUIItems.GUIItem guiItem : guiItems.getGUIItems()) {
+                addSlot(new PopulatedSlot(guiItem.getSlot(), false, guiItem.getItem()));
+            }
         }
 
         slots.stream().filter(Slot::hasDefaultItem).forEach(slot -> inventory.setItem(slot.getIndex(), slot.getDefaultItem()));
@@ -39,6 +47,10 @@ public class CustomGUI implements InventoryHolder, Listener {
         }
     }
 
+    public void updateSlots() {
+        slots.forEach(slot -> inventory.setItem(slot.getIndex(), slot.getDefaultItem()));
+    }
+
     public void onClose(HumanEntity closer) {
     }
 
@@ -47,17 +59,20 @@ public class CustomGUI implements InventoryHolder, Listener {
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof CustomGUI) {
+//        System.out.println("Clicked, class = " + getClass() + " vs " + event.getInventory().getHolder().getClass());
+//        System.out.println("Other shit = " + getClass().getSuperclass());
+        if (event.getInventory().getHolder().getClass().equals(getClass())) {
+//            System.out.println("IS INSTANCE###########################################");
             for (Slot slot : slots) {
                 if (slot.getIndex() == event.getSlot()) {
                     if (event.getCurrentItem().getType() != Material.AIR) {
                         if (!slot.getSlotAction().takeOut(slot.getIndex(), event.getCurrentItem())) {
-                            System.out.println("Cancelling");
+//                            System.out.println("Cancelling");
                             event.setCancelled(true);
                         }
                     } else {
                         if (!slot.getSlotAction().putIn(slot.getIndex(), event.getCursor())) {
-                            System.out.println("Cancelling 2");
+//                            System.out.println("Cancelling 2");
                             event.setCancelled(true);
                         }
                     }
@@ -68,14 +83,19 @@ public class CustomGUI implements InventoryHolder, Listener {
 
     @EventHandler
     public void onCloseEvent(InventoryCloseEvent event) {
-        if (event.getInventory().getHolder() instanceof CustomGUI) {
+        if (event.getInventory().getHolder().getClass().equals(getClass())) {
             onClose(event.getPlayer());
+
+            if (event.getInventory().getViewers().size() - 1 == 0) {
+                main.getGUIManager().removeGUI(getUUID());
+//                System.out.println("Removing currently unused GUI from memory");
+            }
         }
     }
 
     @EventHandler
-    public void onCloseEvent(InventoryOpenEvent event) {
-        if (event.getInventory().getHolder() instanceof CustomGUI) {
+    public void onOpenEvent(InventoryOpenEvent event) {
+        if (event.getInventory().getHolder().getClass().equals(getClass())) {
             onOpen(event.getPlayer());
         }
     }
@@ -83,5 +103,9 @@ public class CustomGUI implements InventoryHolder, Listener {
     @Override
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 }

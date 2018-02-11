@@ -1,6 +1,9 @@
 package com.uddernetworks.space.blocks;
 
-import net.minecraft.server.v1_12_R1.*;
+import net.minecraft.server.v1_12_R1.ItemAxe;
+import net.minecraft.server.v1_12_R1.ItemPickaxe;
+import net.minecraft.server.v1_12_R1.ItemSpade;
+import net.minecraft.server.v1_12_R1.ItemTool;
 
 public enum Tool {
     PICKAXE(ItemPickaxe.class),

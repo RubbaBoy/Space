@@ -1,15 +1,20 @@
 package com.uddernetworks.space.blocks;
 
+import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class BasicBlock extends CustomBlock {
+import java.util.function.Supplier;
 
-    public BasicBlock(Main main, Material material, int damage, Material particle, String name) {
-        super(main, material, (short) damage, particle, name, null);
+public class AnimatedBlock extends CustomBlock {
+
+//    private Consumer<Player> openInventory;
+
+    public AnimatedBlock(Main main, Material material, short[] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
+        super(main, material, damages[0], particle, name, customGUISupplier);
     }
 
     @Override
@@ -29,11 +34,11 @@ public class BasicBlock extends CustomBlock {
 
     @Override
     void onClick(PlayerInteractEvent event) {
-
+//        openInventory.accept(event.getPlayer());
     }
 
     @Override
     boolean hasGUI() {
-        return false;
+        return true;
     }
 }

@@ -1,12 +1,13 @@
 package com.uddernetworks.space.guis;
 
+import com.uddernetworks.space.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public enum GUIItems {
-    WORKBENCH(new GUIItem(45, false, new ItemStack(Material.DIAMOND_HOE, 1, (short) 4)));
+    WORKBENCH(new GUIItem(45, false, Material.DIAMOND_HOE, 4)),
+    ALLOY_MIXER_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 5));
 
 
     private GUIItem[] guiItems;
@@ -25,20 +26,11 @@ public enum GUIItems {
         private boolean isMovable;
         private ItemStack item;
 
-        public GUIItem(int slot, boolean isMovable, ItemStack item) {
+        public GUIItem(int slot, boolean isMovable, Material material, int damage) {
             this.slot = slot;
             this.isMovable = isMovable;
-            this.item = item;
 
-            ItemMeta meta = this.item.getItemMeta();
-
-            meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            meta.spigot().setUnbreakable(true);
-            meta.setDisplayName(null);
-            meta.setLore(null);
-
-            this.item.setItemMeta(meta);
+            this.item = ItemBuilder.from(material).setDamage(damage).setUnbreakable(true).setDisplayName(null).addFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES).build();
         }
 
         public int getSlot() {
