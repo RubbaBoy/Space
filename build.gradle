@@ -30,11 +30,15 @@ libsDirName = '\\\\MANTRAIN10\\Storage\\AMP\\Instances\\UddernetworksMC\\Minecra
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    compileOnly fileTree(dir: 'libs', include: '*.jar')
+    compileOnly fileTree(dir: 'libs', include: 'spigot-1.12.2-R0.1-SNAPSHOT-b1579.jar')
+    compileOnly fileTree(dir: 'libs', include: 'spigot-api-1.12.2-R0.1-SNAPSHOT-shaded-b1579.jar')
+
+    compileOnly fileTree(dir: 'libs', include: 'RubbaBoysConfigHelper-1.1-SNAPSHOT.jar')
+    compileOnly fileTree(dir: 'libs', include: 'CommandHelper-1.0-SNAPSHOT.jar')
 
 //    compile 'org.spigotmc:spigot-api:1.12.1-R0.1-SNAPSHOT'
 //    compile 'org.spigotmc:spigot:1.12.1-R0.1-SNAPSHOT'
-    compile 'com.uddernetworks.config:RubbaBoysConfigHelper:1.1-SNAPSHOT'
-    compile 'com.uddernetworks.command:CommandHelper:1.0-SNAPSHOT'
+//    compile 'com.uddernetworks.config:RubbaBoysConfigHelper:1.1-SNAPSHOT'
+//    compile 'com.uddernetworks.command:CommandHelper:1.0-SNAPSHOT'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
 }

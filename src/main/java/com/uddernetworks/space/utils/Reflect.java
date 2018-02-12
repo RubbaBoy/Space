@@ -31,6 +31,7 @@ public class Reflect {
     }
 
     public static Object getField(Object instance, String fieldName, boolean isPublic) {
+//        System.out.println("instance.getClass() = " + instance.getClass());
         return getField(instance, instance.getClass(), fieldName, isPublic);
     }
 
@@ -50,19 +51,24 @@ public class Reflect {
         setField(instance, instance.getClass(), fieldName, fieldValue, isPublic);
     }
 
+    public static void setField(Object instance, String fieldName, Object fieldValue, boolean isPublic, boolean isFinal) {
+        setField(instance, instance.getClass(), fieldName, fieldValue, isPublic, isFinal);
+    }
+
     public static void setField(Object instance, Class<?> clazz, String fieldName, Object fieldValue, boolean isPublic) {
         setField(instance, clazz, fieldName, fieldValue, isPublic, false);
     }
 
     public static void setField(Object instance, Class<?> clazz, String fieldName, Object fieldValue, boolean isPublic, boolean isFinal) {
         try {
-//            Field field = isPublic ? clazz.getField(fieldName) : clazz.getDeclaredField(fieldName);
-            Field field = clazz.getDeclaredField(fieldName);
+            Field field = isPublic ? clazz.getField(fieldName) : clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
 
-            Field modifiersField2 = Field.class.getDeclaredField("modifiers");
-            modifiersField2.setAccessible(true);
-            modifiersField2.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            if (isFinal) {
+                Field modifiersField2 = Field.class.getDeclaredField("modifiers");
+                modifiersField2.setAccessible(true);
+                modifiersField2.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            }
 
             field.set(instance, fieldValue);
         } catch (NoSuchFieldException | IllegalAccessException e) {

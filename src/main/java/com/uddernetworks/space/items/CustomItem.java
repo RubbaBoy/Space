@@ -19,6 +19,7 @@ public abstract class CustomItem {
     private short damage;
     private String name;
     private ItemStack staticItemStack;
+    private boolean stackable = true;
 
     public CustomItem(Material material, short damage, String name) {
         this.material = material;
@@ -69,5 +70,9 @@ public abstract class CustomItem {
         nbtItem.getTag().setInt("SpaceItem", id);
         nbtItem.getTag().setInt("random", ThreadLocalRandom.current().nextInt());
         this.staticItemStack = nbtItem.toItemStack();
+    }
+
+    public boolean isStackable() {
+        return stackable;
     }
 }

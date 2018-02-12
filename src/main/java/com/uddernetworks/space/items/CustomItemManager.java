@@ -3,6 +3,8 @@ package com.uddernetworks.space.items;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.nbt.NBTItem;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -26,6 +28,35 @@ public class CustomItemManager implements Listener {
 
     public int getCount() {
         return this.customItems.size();
+    }
+
+    public boolean itemsSimilar(net.minecraft.server.v1_12_R1.ItemStack itemStack1, net.minecraft.server.v1_12_R1.ItemStack itemStack2) {
+        return itemsSimilar(CraftItemStack.asBukkitCopy(itemStack1), CraftItemStack.asBukkitCopy(itemStack2));
+    }
+
+    public boolean itemsSimilar(ItemStack itemStack1, ItemStack itemStack2) {
+        if (itemStack1.isSimilar(itemStack2)) return true;
+        CustomItem customItem1 = getCustomItem(itemStack1);
+        CustomItem customItem2 = getCustomItem(itemStack2);
+        if (customItem1 == null || customItem2 == null) return false;
+        return customItem1.equals(customItem2)
+                || (itemStack1.getItemMeta().getDisplayName().equals(itemStack2.getItemMeta().getDisplayName())
+                && itemStack1.getItemMeta().getLore().equals(itemStack2.getItemMeta().getLore()));
+    }
+
+    public int getMaxStackSize(net.minecraft.server.v1_12_R1.ItemStack itemStack) {
+        return getMaxStackSize(CraftItemStack.asBukkitCopy(itemStack));
+    }
+
+    public int getMaxStackSize(ItemStack itemStack) {
+        if (!isCustomItem(itemStack)) return itemStack.getMaxStackSize();
+        return 64;
+    }
+
+    public boolean isItemStackable(net.minecraft.server.v1_12_R1.ItemStack itemStack) {
+        CustomItem customItem = getCustomItem(CraftItemStack.asBukkitCopy(itemStack));
+        if (customItem == null) return itemStack.isStackable();
+        return customItem.isStackable();
     }
 
     public void addCustomItem(CustomItem customItem) {
@@ -108,5 +139,4 @@ public class CustomItemManager implements Listener {
             getCustomItem(item).onClickEntity(event);
         }
     }
-
 }
