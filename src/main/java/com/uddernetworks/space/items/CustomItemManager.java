@@ -38,6 +38,8 @@ public class CustomItemManager implements Listener {
         if (itemStack1.isSimilar(itemStack2)) return true;
         CustomItem customItem1 = getCustomItem(itemStack1);
         CustomItem customItem2 = getCustomItem(itemStack2);
+        System.out.println("customItem1 = " + customItem1);
+        System.out.println("customItem2 = " + customItem2);
         if (customItem1 == null || customItem2 == null) return false;
         return customItem1.equals(customItem2)
                 || (itemStack1.getItemMeta().getDisplayName().equals(itemStack2.getItemMeta().getDisplayName())

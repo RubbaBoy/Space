@@ -932,7 +932,7 @@ public class Main extends JavaPlugin implements Listener {
 //                        itemstack2 = slot2.getItem().cloneItemStack();
                         System.out.println("CLONEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
                         itemstack2 = slot2.getItem().cloneItemStack();
-                        itemstack2.setCount(64);
+                        itemstack2.setCount(getCustomItemManager().getMaxStackSize(itemstack2));
                         System.out.println("itemstack2 = " + itemstack2);
 //                        itemstack2.setCount(itemstack2.getMaxStackSize());
                         playerinventory.setCarried(itemstack2);
@@ -1057,7 +1057,7 @@ public class Main extends JavaPlugin implements Listener {
                         } else if (slot2.isAllowed(itemstack1)) {
                             System.out.println("10 10 10");
 //                            if (itemstack2.getItem() == itemstack1.getItem() && ItemBuilder.itemsEquals(itemstack2, itemstack1)) {
-                            if (getCustomItemManager().itemsSimilar(itemstack2, itemstack1)) {
+                            if (getCustomItemManager().getMaxStackSize(itemstack1) > 1 && getCustomItemManager().itemsSimilar(itemstack2, itemstack1)) {
                                 System.out.println("14 14 14");
                                 System.out.println("j = " + j);
 
@@ -1731,7 +1731,7 @@ public class Main extends JavaPlugin implements Listener {
                     break;
                 }
 
-                slot = (Slot) container.slots.get(k);
+                slot = container.slots.get(k);
                 itemstack1 = slot.getItem();
 //                if (!itemstack1.isEmpty() && itemstack1.getItem() == itemstack.getItem() && (!itemstack.usesData() || itemstack.getData() == itemstack1.getData()) && ItemStack.equals(itemstack, itemstack1)) {
                 if (!itemstack1.isEmpty() && getCustomItemManager().itemsSimilar(itemstack, itemstack1)) {
@@ -1777,7 +1777,7 @@ public class Main extends JavaPlugin implements Listener {
                     break;
                 }
 
-                slot = (Slot) container.slots.get(k);
+                slot = container.slots.get(k);
                 itemstack1 = slot.getItem();
                 if (itemstack1.isEmpty() && slot.isAllowed(itemstack)) {
 //                    if (itemstack.getCount() > slot.getMaxStackSize()) {
