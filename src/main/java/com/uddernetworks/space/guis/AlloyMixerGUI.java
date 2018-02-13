@@ -112,25 +112,34 @@ public class AlloyMixerGUI extends CustomGUI {
     }
 
     private void updateDoing() {
+        System.out.println("AlloyMixerGUI.updateDoing");
         Bukkit.getScheduler().runTaskLater(main, () -> {
+            System.out.println("15 = " + getInventory().getItem(15));
             ItemStack[][] tempGrid = new ItemStack[][] {
                     {getInventory().getItem(11), getInventory().getItem(15)}
             };
 
             ItemStack resulting = main.getRecipeManager().getResultingItem(tempGrid, RecipeType.ALLOY_MIXER);
 
+            System.out.println("111111111 resulting = " + resulting);
+
+//            if (resulting != null && resulting.getType() == Material.AIR) {
             if (resulting != null && resulting.getType() != Material.AIR) {
+                System.out.println("========== 111");
                 ItemStack inSlot = getInventory().getItem(49);
 
                 if (inSlot == null || inSlot.getType() == Material.AIR) {
+                    System.out.println("========== 222");
                     startProcessing();
                 } else if (inSlot.getAmount() + resulting.getAmount() <= 64) {
+                    System.out.println("========== 333");
                     startProcessing();
                 }
             } else {
+                System.out.println("========== 444");
                 stopProcessing();
             }
-        }, 0L);
+        }, 1L);
     }
 
     private void clearInputs() {

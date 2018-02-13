@@ -22,14 +22,12 @@ public class Workbench extends CustomGUI {
         SlotAction slotAction = new SlotAction() {
             @Override
             public boolean putIn(int position, ItemStack item) {
-//                System.out.println("Item has been put IN the slot: " + item);
                 updateResult();
                 return true;
             }
 
             @Override
             public boolean takeOut(int position, ItemStack item) {
-//                System.out.println("Item has been taken OUT");
                 updateResult();
                 return true;
             }
@@ -69,7 +67,6 @@ public class Workbench extends CustomGUI {
     }
 
     private void dropCraftingGrid(HumanEntity lastViewer) {
-        System.out.println("Dropping crafting grid!");
         if (getInventory().getViewers().size() == 1) {
             for (int y = 0; y < 5; y++) {
                 for (int x = 0; x < 5; x++) {

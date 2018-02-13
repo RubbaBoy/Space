@@ -177,7 +177,7 @@ public class Main extends JavaPlugin implements Listener {
 
         /* Alloy Mixer Recipes */
 
-        this.recipeManager.addRecipe(new AlloyMixerRecipe(this.customItemManager.getCustomItem("Carbon").toItemStack(), ItemBuilder.itemFrom(Material.IRON_INGOT), this.customItemManager.getCustomItem("Steel").toItemStack()));
+        this.recipeManager.addRecipe(new AlloyMixerRecipe(this, this.customItemManager.getCustomItem("Carbon").toItemStack(), ItemBuilder.itemFrom(Material.IRON_INGOT), this.customItemManager.getCustomItem("Steel").toItemStack()));
 
 
         EasyShapedRecipe icRecipe = new EasyShapedRecipe(this, "IC", "IC", "   ", "CCC", "SSS");
@@ -399,13 +399,11 @@ public class Main extends JavaPlugin implements Listener {
          * Take the player's networking channel and add our custom DuplexHandler
          */
         ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
-        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\npipeline.getClass() = " + pipeline.getClass());
         pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler); // "packet_handler", --- beforeeeeeeee
     }
 
 
     public void a(PacketPlayInWindowClick packetplayinwindowclick, EntityPlayer player) throws InterruptedException {
-        System.out.println("11111 packetplayinwindowclick = [" + packetplayinwindowclick + "], player = [" + player + "]");
 //        PlayerConnectionUtils.ensureMainThread(packetplayinwindowclick, player.playerConnection, player.x());
         player.resetIdleTimer();
 
@@ -423,16 +421,7 @@ public class Main extends JavaPlugin implements Listener {
             ItemStack clickedItem;
             Slot slot;
             ItemStack cursor;
-            System.out.println("packetplayinwindowclick.f() = " + packetplayinwindowclick.f());
-            /*
-                1 PICKUP
-                2 QUICK_MOVE
-                3 SWAP
-                4 CLONE
-                5 THROW
-                6 QUICK_CRAFT
-                7 PICKUP_ALL
-             */
+
             switch (packetplayinwindowclick.f()) {
                 case PICKUP:
                     if (packetplayinwindowclick.c() == 0) {
@@ -465,21 +454,14 @@ public class Main extends JavaPlugin implements Listener {
                                 action = packetplayinwindowclick.c() == 0 ? InventoryAction.PLACE_ALL : InventoryAction.PLACE_ONE;
                             }
                         } else {
-                            System.out.println("111");
                             if (!slot.isAllowed(player)) {
-                                System.out.println("222");
                                 break;
                             }
-                            System.out.println("333");
 
                             if (cursor.isEmpty()) {
-                                System.out.println("444");
                                 action = packetplayinwindowclick.c() == 0 ? InventoryAction.PICKUP_ALL : InventoryAction.PICKUP_HALF;
-                                System.out.println("action = " + action);
                             } else if (slot.isAllowed(cursor)) {
                                 if (getCustomItemManager().itemsSimilar(clickedItem, cursor)) {
-                                    System.out.println("555");
-//                                if (true) {
                                     int toPlace = packetplayinwindowclick.c() == 0 ? cursor.getCount() : 1;
                                     toPlace = Math.min(toPlace, clickedItem.getMaxStackSize() - clickedItem.getCount());
                                     toPlace = Math.min(toPlace, slot.inventory.getMaxStackSize() - clickedItem.getCount());
@@ -493,9 +475,7 @@ public class Main extends JavaPlugin implements Listener {
                                         action = InventoryAction.PLACE_SOME;
                                     }
 
-                                    System.out.println("action = " + action + " toPlace = " + toPlace);
                                 } else if (cursor.getCount() <= slot.getMaxStackSize()) {
-                                    System.out.println("SWAP");
                                     action = InventoryAction.SWAP_WITH_CURSOR;
                                 }
 //                            } else if (cursor.getItem() == clickedItem.getItem() && (!cursor.usesData() || cursor.getData() == clickedItem.getData()) && ItemStack.equals(cursor, clickedItem) && clickedItem.getCount() >= 0 && clickedItem.getCount() + cursor.getCount() <= cursor.getMaxStackSize()) {
@@ -598,7 +578,6 @@ public class Main extends JavaPlugin implements Listener {
                         click = ClickType.CONTROL_DROP;
                         slot = player.activeContainer.getSlot(packetplayinwindowclick.b());
                         if (slot != null && slot.hasItem() && slot.isAllowed(player) && !slot.getItem().isEmpty() && slot.getItem().getItem() != Item.getItemOf(Blocks.AIR)) {
-//                        if (true) {
                             action = InventoryAction.DROP_ALL_SLOT;
                             break;
                         }
@@ -623,7 +602,6 @@ public class Main extends JavaPlugin implements Listener {
                     if (packetplayinwindowclick.b() >= 0 && !player.inventory.getCarried().isEmpty()) {
                         cursor = player.inventory.getCarried();
                         action = InventoryAction.NOTHING;
-//                        CraftInventory
 //                        if (inventory.getTopInventory().contains(org.bukkit.Material.getMaterial(Item.getId(cursor.getItem()))) || inventory.getBottomInventory().contains(org.bukkit.Material.getMaterial(Item.getId(cursor.getItem())))) {
                         if (contains(inventory.getTopInventory(), cursor) || contains(inventory.getBottomInventory(), cursor)) {
                             action = InventoryAction.COLLECT_TO_CURSOR;
@@ -661,11 +639,9 @@ public class Main extends JavaPlugin implements Listener {
 
                 switch (((InventoryClickEvent) event).getResult()) {
                     case DENY: // 1
-                        System.out.println("DENY");
                         switch (action) {
                             case NOTHING:
                             default:
-                                System.out.println("-1 -1 -1");
                                 break;
                             case PICKUP_ALL:
                             case MOVE_TO_OTHER_INVENTORY:
@@ -673,7 +649,6 @@ public class Main extends JavaPlugin implements Listener {
                             case HOTBAR_SWAP:
                             case COLLECT_TO_CURSOR:
                             case UNKNOWN:
-                                System.out.println("777");
                                 player.updateInventory(player.activeContainer);
                                 break;
                             case PICKUP_SOME:
@@ -683,26 +658,22 @@ public class Main extends JavaPlugin implements Listener {
                             case PLACE_SOME:
                             case PLACE_ONE:
                             case SWAP_WITH_CURSOR:
-                                System.out.println("888");
                                 player.playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, player.inventory.getCarried()));
                                 player.playerConnection.sendPacket(new PacketPlayOutSetSlot(player.activeContainer.windowId, packetplayinwindowclick.b(), player.activeContainer.getSlot(packetplayinwindowclick.b()).getItem()));
                                 break;
                             case DROP_ALL_CURSOR:
                             case DROP_ONE_CURSOR:
                             case CLONE_STACK:
-                                System.out.println("999");
                                 player.playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, player.inventory.getCarried()));
                                 break;
                             case DROP_ALL_SLOT:
                             case DROP_ONE_SLOT:
-                                System.out.println("10 10 10");
                                 player.playerConnection.sendPacket(new PacketPlayOutSetSlot(player.activeContainer.windowId, packetplayinwindowclick.b(), player.activeContainer.getSlot(packetplayinwindowclick.b()).getItem()));
                         }
 
                         return;
                     case DEFAULT: // 2
                     case ALLOW: // 3
-                        System.out.println("Default / Allow");
                         itemstack = a(player.activeContainer, packetplayinwindowclick.b(), packetplayinwindowclick.c(), packetplayinwindowclick.f(), player);
                     default:
                         if (event instanceof CraftItemEvent) {
@@ -711,11 +682,9 @@ public class Main extends JavaPlugin implements Listener {
                 }
             }
 
-            System.out.println(packetplayinwindowclick.e() + " == " + itemstack);
             if (ItemStack.matches(packetplayinwindowclick.e(), itemstack)) {
 //            if (getCustomItemManager().itemsSimilar(packetplayinwindowclick.e(), itemstack)) {
 
-                System.out.println("FIRST");
                 player.playerConnection.sendPacket(new PacketPlayOutTransaction(packetplayinwindowclick.a(), packetplayinwindowclick.d(), true));
                 player.f = true;
                 player.activeContainer.b();
@@ -724,7 +693,6 @@ public class Main extends JavaPlugin implements Listener {
 
                 player.updateInventory(player.activeContainer);
             } else {
-                System.out.println("SECOND");
                 ((IntHashMap<Short>) Reflect.getField(player.playerConnection, "k", false)).a(player.activeContainer.windowId, packetplayinwindowclick.d());
 //                player.playerConnection.k.a(player.activeContainer.windowId, packetplayinwindowclick.d());
                 player.playerConnection.sendPacket(new PacketPlayOutTransaction(packetplayinwindowclick.a(), packetplayinwindowclick.d(), false));
@@ -884,10 +852,7 @@ public class Main extends JavaPlugin implements Listener {
         } else {
             Slot slot2;
             int k1;
-            System.out.println("\n\ninventoryclicktype = " + inventoryclicktype);
-            System.out.println(" entityhuman.abilities.canInstantlyBuild = " + entityhuman.abilities.canInstantlyBuild);
             if (inventoryclicktype != InventoryClickType.PICKUP && inventoryclicktype != InventoryClickType.QUICK_MOVE || j != 0 && j != 1) {
-//                System.out.println("1111111111111111");
                 if (inventoryclicktype == InventoryClickType.SWAP && j >= 0 && j < 9) {
                     slot2 = (Slot) container.slots.get(i);
                     itemstack2 = playerinventory.getItem(j);
@@ -897,7 +862,6 @@ public class Main extends JavaPlugin implements Listener {
                             if (slot2.isAllowed(entityhuman)) {
                                 playerinventory.setItem(j, itemstack1);
                                 Reflect.invokeMethod(slot2, "b", new Class<?>[] {int.class}, new Object[] {itemstack1.getCount()}, false);
-//                                slot2.b(itemstack1.getCount());
                                 slot2.set(ItemStack.a);
                                 slot2.a(entityhuman, itemstack1);
                             }
@@ -929,12 +893,8 @@ public class Main extends JavaPlugin implements Listener {
                 } else if (inventoryclicktype == InventoryClickType.CLONE && entityhuman.abilities.canInstantlyBuild && playerinventory.getCarried().isEmpty() && i >= 0) {
                     slot2 = (Slot) container.slots.get(i);
                     if (slot2 != null && slot2.hasItem()) {
-//                        itemstack2 = slot2.getItem().cloneItemStack();
-                        System.out.println("CLONEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
                         itemstack2 = slot2.getItem().cloneItemStack();
                         itemstack2.setCount(getCustomItemManager().getMaxStackSize(itemstack2));
-                        System.out.println("itemstack2 = " + itemstack2);
-//                        itemstack2.setCount(itemstack2.getMaxStackSize());
                         playerinventory.setCarried(itemstack2);
                         playerinventory.update();
                     }
@@ -975,7 +935,6 @@ public class Main extends JavaPlugin implements Listener {
                     container.b();
                 }
             } else if (i == -999) {
-                System.out.println("111");
                 if (!playerinventory.getCarried().isEmpty()) {
                     if (j == 0) {
                         ItemStack carried = playerinventory.getCarried();
@@ -988,7 +947,6 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
             } else if (inventoryclicktype == InventoryClickType.QUICK_MOVE) {
-                System.out.println("Quick moved!!!");
                 if (i < 0) {
                     return ItemStack.a;
                 }
@@ -998,54 +956,37 @@ public class Main extends JavaPlugin implements Listener {
                     return ItemStack.a;
                 }
 
-                System.out.println("STARTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT is = " + slot2.getItem());
-
-//                for(itemstack2 = shiftClick(container, entityhuman, i); !itemstack2.isEmpty() && c(slot2.getItem(), itemstack2); itemstack2 = shiftClick(container, entityhuman, i)) {
-//                for(itemstack2 = shiftClick(container, entityhuman, i); !itemstack2.isEmpty() && getCustomItemManager().itemsSimilar(slot2.getItem(), itemstack2); itemstack2 = shiftClick(container, entityhuman, i)) {
                 for(itemstack2 = shiftClick(container, entityhuman, i); !itemstack2.isEmpty() && c(slot2.getItem(), itemstack2); itemstack2 = shiftClick(container, entityhuman, i)) {
-//                    itemstack = itemstack2.cloneItemStack();
-//                }
-                    System.out.println("tyttttt 666");
                     itemstack = itemstack2.cloneItemStack();
                 }
-
-                System.out.println("ENDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD slot is now = " + (container.slots.get(i).getItem()));
             } else {
-                System.out.println("222");
                 if (i < 0) {
                     return ItemStack.a;
                 }
 
                 slot2 = (Slot) container.slots.get(i);
                 if (slot2 != null) {
-                    System.out.println("333");
                     itemstack2 = slot2.getItem();
                     itemstack1 = playerinventory.getCarried();
                     if (!itemstack2.isEmpty()) {
                         itemstack = itemstack2.cloneItemStack();
                     }
 
-                    System.out.println("444");
                     if (itemstack2.isEmpty()) {
-                        System.out.println("555");
                         if (!itemstack1.isEmpty() && slot2.isAllowed(itemstack1)) {
                             k1 = j == 0 ? itemstack1.getCount() : 1;
                             if (k1 > slot2.getMaxStackSize(itemstack1)) {
                                 k1 = slot2.getMaxStackSize(itemstack1);
                             }
 
-                            System.out.println("666");
                             slot2.set(itemstack1.cloneAndSubtract(k1));
                         }
                     } else if (slot2.isAllowed(entityhuman)) {
-                        System.out.println("777");
                         if (itemstack1.isEmpty()) {
                             if (itemstack2.isEmpty()) {
-                                System.out.println("888");
                                 slot2.set(ItemStack.a);
                                 playerinventory.setCarried(ItemStack.a);
                             } else {
-                                System.out.println("999");
                                 k1 = j == 0 ? itemstack2.getCount() : (itemstack2.getCount() + 1) / 2;
                                 playerinventory.setCarried(slot2.a(k1));
                                 if (itemstack2.isEmpty()) {
@@ -1055,57 +996,28 @@ public class Main extends JavaPlugin implements Listener {
                                 slot2.a(entityhuman, playerinventory.getCarried());
                             }
                         } else if (slot2.isAllowed(itemstack1)) {
-                            System.out.println("10 10 10");
 //                            if (itemstack2.getItem() == itemstack1.getItem() && ItemBuilder.itemsEquals(itemstack2, itemstack1)) {
                             if (getCustomItemManager().getMaxStackSize(itemstack1) > 1 && getCustomItemManager().itemsSimilar(itemstack2, itemstack1)) {
-                                System.out.println("14 14 14");
-                                System.out.println("j = " + j);
 
                                 k1 = j == 0 ? itemstack1.getCount() : 1;
 
-                                // 1 is in hand
-
-                                System.out.println("itemstack1 = " + itemstack1);
-                                System.out.println("itemstack2 = " + itemstack2);
-
-                                System.out.println("k1 = " + k1);
-
-                                // k1 is 32
-                                // item1 is 16
-                                // item2 is 32
-
-//                                if (k1 > slot2.getMaxStackSize(itemstack1) - itemstack2.getCount()) {
-                                if (k1 > 64 - itemstack2.getCount()) {
-                                    k1 = 64 - itemstack2.getCount();
+                                if (k1 > getCustomItemManager().getMaxStackSize(itemstack1) - itemstack2.getCount()) {
+                                    k1 = getCustomItemManager().getMaxStackSize(itemstack1) - itemstack2.getCount();
                                 }
 
-                                if (k1 > 64 - itemstack2.getCount()) {
-                                    k1 = 64 - itemstack2.getCount();
+                                if (k1 > getCustomItemManager().getMaxStackSize(itemstack1) - itemstack2.getCount()) {
+                                    k1 = getCustomItemManager().getMaxStackSize(itemstack1) - itemstack2.getCount();
                                 }
-
-                                System.out.println("k1 = " + k1);
 
                                 itemstack1.subtract(k1);
                                 itemstack2.add(k1);
-
-                                System.out.println("itemstack1 = " + itemstack1);
-                                System.out.println("itemstack2 = " + itemstack2);
-
-//                                Bukkit.getScheduler().runTaskLater(this, () -> {
-//                                    playerinventory.update();
-//                                }, 50L);
-
-                            } else if (itemstack1.getCount() <= slot2.getMaxStackSize(itemstack1)) {
-                                System.out.println("11 11 11");
+                            } else if (itemstack1.getCount() <= getCustomItemManager().getMaxStackSize(itemstack1)) {
                                 slot2.set(itemstack1);
                                 playerinventory.setCarried(itemstack2);
                             }
-//                        } else if (itemstack2.getItem() == itemstack1.getItem() && itemstack1.getMaxStackSize() > 1 && (!itemstack2.usesData() || itemstack2.getData() == itemstack1.getData()) && ItemStack.equals(itemstack2, itemstack1) && !itemstack2.isEmpty()) {
                         } else if (itemstack1.getMaxStackSize() > 1 && getCustomItemManager().itemsSimilar(itemstack2, itemstack1)) {
-                            System.out.println("12 12 12");
                             k1 = itemstack2.getCount();
                             if (k1 + itemstack1.getCount() <= itemstack1.getMaxStackSize()) {
-                                System.out.println("13 13 13");
                                 itemstack1.add(k1);
                                 itemstack2 = slot2.a(k1);
                                 if (itemstack2.isEmpty()) {
@@ -1134,17 +1046,13 @@ public class Main extends JavaPlugin implements Listener {
 
     private static boolean c(ItemStack itemstack, ItemStack itemstack1) {
         return itemstack == itemstack1 || itemstack.getData() == itemstack1.getData();
-//        return itemstack == itemstack1 ? true : (!itemstack.isEmpty() && !itemstack1.isEmpty() ? itemstack.doMaterialsMatch(itemstack1) : false);
     }
 
     private ItemStack shiftClick(Container container, EntityHuman entityhuman, int i) {
         ItemStackHolder itemStackHolder = new ItemStackHolder();
-        System.out.println("container.getClass() = " + container.getClass());
         if (clickActions.containsKey(container.getClass())) {
-            System.out.println("Contains!");
             clickActions.get(container.getClass()).accept(container, entityhuman, i, itemStackHolder);
         } else {
-            System.out.println("NO CONTAINS");
             craftContainer(container, entityhuman, i, itemStackHolder);
         }
 
@@ -1510,25 +1418,20 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void containerChest(Container container, EntityHuman entityhuman, int i, ItemStackHolder itemStackHolder) {
-        System.out.println("CHESTTTTTTTTTTT iiiii == " + i);
         ContainerChest containerChest = (ContainerChest) container;
         ItemStack itemstack = ItemStack.a;
         Slot slot = (Slot) containerChest.slots.get(i);
-        System.out.println((slot != null) + " and " + slot.hasItem());
         if (slot != null && slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
-            System.out.println("Before item = " + itemstack1);
             itemstack = itemstack1.cloneItemStack();
             int f = (int) Reflect.getField(containerChest, "f", false);
             if (i < f * 9) {
                 if (!canAddItemToSlot(containerChest, itemstack1, f * 9, containerChest.slots.size(), true)) {
                     itemStackHolder.setItemStack(ItemStack.a);
-                    System.out.println("Air");
                     return;
                 }
             } else if (!canAddItemToSlot(containerChest, itemstack1, 0, f * 9, false)) {
                 itemStackHolder.setItemStack(ItemStack.a);
-                System.out.println("Air");
                 return;
             }
 
@@ -1539,8 +1442,6 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
 
-        System.out.println("Got other shit");
-        System.out.println("itemstack = " + itemstack);
         itemStackHolder.setItemStack(itemstack);
     }
 
@@ -1561,7 +1462,6 @@ public class Main extends JavaPlugin implements Listener {
                             itemStackHolder.setItemStack(ItemStack.a);
                             return;
                         }
-//                } else if (ContainerBrewingStand.SlotPotionBottle.c_(itemstack) && itemstack.getCount() == 1) {
                     } else if (c_ && itemstack.getCount() == 1) {
                         if (!canAddItemToSlot(containerBrewingStand, itemstack1, 0, 3, false)) {
                             itemStackHolder.setItemStack(ItemStack.a);
@@ -1744,8 +1644,6 @@ public class Main extends JavaPlugin implements Listener {
                         flag1 = true;
 //                    } else if (itemstack1.getCount() < itemstack.getMaxStackSize()) {
                     } else if (itemstack1.getCount() < 64) {
-//                        itemstack.subtract(itemstack.getMaxStackSize() - itemstack1.getCount());
-//                        itemstack1.setCount(itemstack.getMaxStackSize());
                         itemstack.subtract(64 - itemstack1.getCount());
                         itemstack1.setCount(64);
                         slot.f();
@@ -1802,12 +1700,6 @@ public class Main extends JavaPlugin implements Listener {
 
         return flag1;
     }
-
-
-//    private ItemStack shiftClick(CraftContainer container, EntityHuman entityhuman, int i, ItemStackHolder itemStackHolder) {
-//        return container.delegate != null ? container.delegate.shiftClick(entityhuman, i) : container.shiftClick(entityhuman, i);
-//    }
-    /**/
 
 
     private boolean contains(Inventory inventory, ItemStack item) {

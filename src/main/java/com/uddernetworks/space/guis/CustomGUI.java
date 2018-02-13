@@ -59,20 +59,15 @@ public class CustomGUI implements InventoryHolder, Listener {
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-//        System.out.println("Clicked, class = " + getClass() + " vs " + event.getInventory().getHolder().getClass());
-//        System.out.println("Other shit = " + getClass().getSuperclass());
         if (event.getInventory().getHolder().getClass().equals(getClass())) {
-//            System.out.println("IS INSTANCE###########################################");
             for (Slot slot : slots) {
                 if (slot.getIndex() == event.getSlot()) {
                     if (event.getCurrentItem().getType() != Material.AIR) {
                         if (!slot.getSlotAction().takeOut(slot.getIndex(), event.getCurrentItem())) {
-//                            System.out.println("Cancelling");
                             event.setCancelled(true);
                         }
                     } else {
                         if (!slot.getSlotAction().putIn(slot.getIndex(), event.getCursor())) {
-//                            System.out.println("Cancelling 2");
                             event.setCancelled(true);
                         }
                     }
@@ -88,7 +83,6 @@ public class CustomGUI implements InventoryHolder, Listener {
 
             if (event.getInventory().getViewers().size() - 1 == 0) {
                 main.getGUIManager().removeGUI(getUUID());
-//                System.out.println("Removing currently unused GUI from memory");
             }
         }
     }

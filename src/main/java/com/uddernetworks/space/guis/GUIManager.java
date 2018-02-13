@@ -17,14 +17,11 @@ public class GUIManager {
     }
 
     public CustomGUI addGUI(CustomGUI gui) {
-//        if (!containsGUI(gui.getClass())) {
-            guis.add(gui);
+        guis.add(gui);
 
-            System.out.println("Registering events for: " + gui);
-            Bukkit.getPluginManager().registerEvents(gui, main);
+        Bukkit.getPluginManager().registerEvents(gui, main);
 
-            return gui;
-//        }
+        return gui;
     }
 
     public CustomGUI getGUI(UUID uuid) {
@@ -38,10 +35,5 @@ public class GUIManager {
     public void clearGUIs() {
         guis.clear();
     }
-
-
-//    public int getNextId() {
-//        return guis.size();
-//    }
 
 }

@@ -31,7 +31,6 @@ public class Reflect {
     }
 
     public static Object getField(Object instance, String fieldName, boolean isPublic) {
-//        System.out.println("instance.getClass() = " + instance.getClass());
         return getField(instance, instance.getClass(), fieldName, isPublic);
     }
 

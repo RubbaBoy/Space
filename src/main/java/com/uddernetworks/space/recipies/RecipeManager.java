@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -27,6 +28,8 @@ public class RecipeManager {
 //        if (itemGrid.length != 5 || itemGrid[0].length != 5) {
 //            return null;
 //        }
+
+        System.out.println("itemGrid = " + Arrays.deepToString(itemGrid));
 
         AtomicReference<ItemStack> result = new AtomicReference<>();
 

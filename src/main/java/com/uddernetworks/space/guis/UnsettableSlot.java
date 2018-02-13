@@ -18,12 +18,8 @@ public class UnsettableSlot implements Slot {
 
             @Override
             public boolean takeOut(int position, ItemStack item) {
-                System.out.println("Took out!!");
                 if (item != null && item.getType() != Material.AIR) {
-                    System.out.println("Running!");
                     takeOut.run();
-                } else {
-                    System.out.println("Couldn't run because " + (item != null) + " or " + (item.getType()));
                 }
 
                 return true;

@@ -76,66 +76,9 @@ public class CustomBlockManager implements Listener {
         return nmsBlock.q(null);
     }
 
-//    private void updateSpeed(Block block, float speed) {
-//        speed = 100F;
-//        if (speed == currSpeed) return;
-//        currSpeed = speed;
-//        System.out.println("Speed to " + speed);
-//        Reflect.setField(CraftMagicNumbers.getBlock(block), net.minecraft.server.v1_12_R1.Block.class,"strength", speed, false);
-//    }
-
-//    private void setBlockHardness(Block block, float strength) {
-//        Reflect.setField(CraftMagicNumbers.getBlock(block), net.minecraft.server.v1_12_R1.Block.class,"strength", strength, false);
-//    }
-
     public List<CustomBlock> getCustomBlocks() {
         return new ArrayList<>(customBlocks);
     }
-
-    private int time = 0;
-
-//    @EventHandler
-//    public void blockDamageEvent(BlockDamageEvent event) {
-//        if (time % 5 != 0) {
-//            event.setCancelled(true);
-//        }
-//        System.out.println("Damaging block!");
-//        time++;
-//    }
-
-//    @EventHandler
-//    public void onStartBreakEvent(PlayerInteractEvent event) {
-////        Block block = event.getClickedBlock();
-////        Player player = event.getPlayer();
-////
-////        System.out.println("Interact 11111");
-////
-////        if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
-////
-////        System.out.println("22222");
-////
-////        CustomBlock customBlock = getCustomBlock(block);
-////
-////        if (customBlock == null) return;
-////        System.out.println("333333333");
-//
-////        Reflect.setField(CraftMagicNumbers.getBlock(block), net.minecraft.server.v1_12_R1.Block.class,"strength", 0F, false);
-//
-////        Item item = nmsItem.getItem();
-////
-////        if (item instanceof ItemTool) {
-////            Reflect.setField(item, ItemTool.class, "a", 0F, false);
-////        }
-//
-//
-////        updateSpeed(block, customBlock.getStrength());
-//
-////        if (customBlock.getTool() != currentTool) {
-////            updateTool(customBlock.getTool());
-////        }
-//
-////        System.out.println("Started to destroy!");
-//    }
 
     @EventHandler
     public void onDestroyEvent(BlockBreakEvent event) {
@@ -161,39 +104,21 @@ public class CustomBlockManager implements Listener {
         Block clicked = event.getClickedBlock();
         Player player = event.getPlayer();
 
-        Debugger debugger = new Debugger();
-
-//        System.out.println("111");
-
         if (event.getHand() != EquipmentSlot.HAND && event.getHand() != EquipmentSlot.OFF_HAND) return;
-
-//        System.out.println("222");
 
         if (player.isSneaking() || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
-        debugger.log("111");
-
         CustomBlock customBlock = getCustomBlock(clicked);
-
-        debugger.log("222");
 
         if (customBlock == null) return;
 
         customBlock.onClick(event);
 
-        debugger.log("333");
-
         CustomGUI customGUI = customBlock.getGUI(clicked);
-
-        debugger.log("444");
 
         if (customGUI == null) return;
 
         player.openInventory(customGUI.getInventory());
-
-        debugger.log("555");
-
-        debugger.end();
     }
 
     @EventHandler
