@@ -1,7 +1,6 @@
 package com.uddernetworks.space.main;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.uddernetworks.command.CommandManager;
 import com.uddernetworks.space.blocks.AnimatedBlock;
 import com.uddernetworks.space.blocks.BasicBlock;
@@ -14,20 +13,18 @@ import com.uddernetworks.space.guis.GUIManager;
 import com.uddernetworks.space.guis.ProgressBar;
 import com.uddernetworks.space.guis.ProgressBarManager;
 import com.uddernetworks.space.items.BasicItem;
+import com.uddernetworks.space.items.CustomIDManager;
 import com.uddernetworks.space.items.CustomItemManager;
 import com.uddernetworks.space.items.EasyShapedRecipe;
 import com.uddernetworks.space.recipies.AlloyMixerRecipe;
-import com.uddernetworks.space.recipies.Recipe;
 import com.uddernetworks.space.recipies.RecipeManager;
 import com.uddernetworks.space.recipies.WorkbenchRecipe;
-import com.uddernetworks.space.stacker.ItemStacker;
 import com.uddernetworks.space.utils.FastTaskTracker;
 import com.uddernetworks.space.utils.ItemBuilder;
 import com.uddernetworks.space.utils.QuadConsumer;
 import com.uddernetworks.space.utils.Reflect;
 import io.netty.channel.*;
 import net.minecraft.server.v1_12_R1.*;
-import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,8 +32,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftContainer;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
@@ -56,14 +51,10 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Consumer;
 
 import static org.bukkit.Material.AIR;
+import static org.bukkit.Material.matchMaterial;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -72,6 +63,7 @@ public class Main extends JavaPlugin implements Listener {
     private RecipeManager recipeManager;
     private CustomItemManager customItemManager;
     private CustomBlockManager customBlockManager;
+    private CustomIDManager customIDManager;
 
     private HashMap<UUID, Vector> velocities;
     private HashMap<UUID, Location> positions;
@@ -131,6 +123,8 @@ public class Main extends JavaPlugin implements Listener {
 
         this.progressBarManager.addProgressBar(new ProgressBar("AlloyMixerBar", Material.DIAMOND_HOE, damages));
 
+        this.customIDManager = new CustomIDManager(this);
+
         /* GUIs */
 
 //        this.guiManager.addGUI(new Workbench(this, "WorkbenchBlock", 54));
@@ -138,29 +132,32 @@ public class Main extends JavaPlugin implements Listener {
 
         /* Items */
 
-        this.customItemManager.addCustomItem(new BasicItem(Material.DIAMOND_HOE, 51, "Carbon"));
-        this.customItemManager.addCustomItem(new BasicItem(Material.DIAMOND_HOE, 52, "Magnesium Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(Material.DIAMOND_HOE, 53, "Raw Silicon"));
-        this.customItemManager.addCustomItem(new BasicItem(Material.DIAMOND_HOE, 54, "Copper Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(Material.DIAMOND_HOE, 55, "Aluminum Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(Material.DIAMOND_HOE, 56, "IC"));
-        this.customItemManager.addCustomItem(new BasicItem(Material.DIAMOND_HOE, 57, "CPU"));
-        this.customItemManager.addCustomItem(new BasicItem(Material.DIAMOND_HOE, 58, "Steel"));
+        this.customItemManager.addCustomItem(new BasicItem(0, Material.DIAMOND_HOE, 51, "Carbon"));
+        this.customItemManager.addCustomItem(new BasicItem(1, Material.DIAMOND_HOE, 52, "Magnesium Ingot"));
+        this.customItemManager.addCustomItem(new BasicItem(2, Material.DIAMOND_HOE, 53, "Raw Silicon"));
+        this.customItemManager.addCustomItem(new BasicItem(3, Material.DIAMOND_HOE, 54, "Copper Ingot"));
+        this.customItemManager.addCustomItem(new BasicItem(4, Material.DIAMOND_HOE, 55, "Aluminum Ingot"));
+        this.customItemManager.addCustomItem(new BasicItem(5, Material.DIAMOND_HOE, 56, "IC"));
+        this.customItemManager.addCustomItem(new BasicItem(6, Material.DIAMOND_HOE, 57, "CPU"));
+        this.customItemManager.addCustomItem(new BasicItem(7, Material.DIAMOND_HOE, 58, "Steel"));
 
         /* Blocks */
 
-        this.customBlockManager.addCustomBlock(new WorkbenchBlock(this, Material.DIAMOND_HOE, 21, Material.WOOL, "Spaceship Workbench"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 22, Material.STONE, "Carbon Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 23, Material.BLACK_SHULKER_BOX, "Carbon Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 24, Material.STONE, "Magnesium Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 25, Material.GRAY_SHULKER_BOX, "Magnesium Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 26, Material.STONE, "Silicon Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 27, Material.GRAY_SHULKER_BOX, "Silicon Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 28, Material.STONE, "Copper Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 29, Material.ORANGE_SHULKER_BOX, "Copper Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 30, Material.STONE, "Aluminum Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, Material.DIAMOND_HOE, 31, Material.WHITE_SHULKER_BOX, "Aluminum Block"));
-        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, Material.DIAMOND_HOE, new short[] {32}, Material.WHITE_SHULKER_BOX, "Alloy Mixer", () -> getGUIManager().addGUI(new AlloyMixerGUI(this, "Alloy Mixer", 54, UUID.randomUUID()))));
+        this.customBlockManager.addCustomBlock(new WorkbenchBlock(this, 100, Material.DIAMOND_HOE, 21, Material.WOOL, "Spaceship Workbench"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 101, Material.DIAMOND_HOE, 22, Material.STONE, "Carbon Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 102, Material.DIAMOND_HOE, 23, Material.BLACK_SHULKER_BOX, "Carbon Block"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 103, Material.DIAMOND_HOE, 24, Material.STONE, "Magnesium Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 104, Material.DIAMOND_HOE, 25, Material.GRAY_SHULKER_BOX, "Magnesium Block"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 105, Material.DIAMOND_HOE, 26, Material.STONE, "Silicon Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 106, Material.DIAMOND_HOE, 27, Material.GRAY_SHULKER_BOX, "Silicon Block"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 107, Material.DIAMOND_HOE, 28, Material.STONE, "Copper Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 108, Material.DIAMOND_HOE, 29, Material.ORANGE_SHULKER_BOX, "Copper Block"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 109, Material.DIAMOND_HOE, 30, Material.STONE, "Aluminum Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 110, Material.DIAMOND_HOE, 31, Material.WHITE_SHULKER_BOX, "Aluminum Block"));
+        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 111, Material.DIAMOND_HOE, new short[] {32, 33, 34}, Material.WHITE_SHULKER_BOX, "Alloy Mixer", () -> {
+            System.out.println("Creating new GUI");
+            return getGUIManager().addGUI(new AlloyMixerGUI(this, "Alloy Mixer", 54, UUID.randomUUID()));
+        }));
 
 
         /* Recipes */
@@ -180,17 +177,24 @@ public class Main extends JavaPlugin implements Listener {
         this.recipeManager.addRecipe(new AlloyMixerRecipe(this, this.customItemManager.getCustomItem("Carbon").toItemStack(), ItemBuilder.itemFrom(Material.IRON_INGOT), this.customItemManager.getCustomItem("Steel").toItemStack()));
 
 
-        EasyShapedRecipe icRecipe = new EasyShapedRecipe(this, "IC", "IC", "   ", "CCC", "SSS");
-        icRecipe.addIngredient('C', "Copper Ingot");
-        icRecipe.addIngredient('S', "Raw Silicon");
+        EasyShapedRecipe icRecipe = new EasyShapedRecipe(this, "IC", 5, "   ", "CCC", "SSS");
+        icRecipe.addIngredient('C', 3);
+        icRecipe.addIngredient('S', 2);
         icRecipe.register();
 
-        EasyShapedRecipe cpuRecipe = new EasyShapedRecipe(this, "CPU", "CPU", "ISI", "CDC", "ISI");
-        cpuRecipe.addIngredient('I', "IC");
-        cpuRecipe.addIngredient('D', ItemBuilder.itemFrom(Material.DIAMOND));
-        cpuRecipe.addIngredient('S', "Raw Silicon");
-        cpuRecipe.addIngredient('C', "Copper Ingot");
+        EasyShapedRecipe cpuRecipe = new EasyShapedRecipe(this, "CPU", 6, "ISI", "CDC", "ISI");
+        cpuRecipe.addIngredient('I', 5);
+        cpuRecipe.addIngredient('D', Material.DIAMOND);
+        cpuRecipe.addIngredient('S', 2);
+        cpuRecipe.addIngredient('C', 3);
         cpuRecipe.register();
+
+        EasyShapedRecipe alloyMixerRecipe = new EasyShapedRecipe(this, "AlloyMixer", 6, "FCF", "CIC", "CHC");
+        alloyMixerRecipe.addIngredient('F', Material.FURNACE);
+        alloyMixerRecipe.addIngredient('I', 5);
+        alloyMixerRecipe.addIngredient('H', Material.HOPPER);
+        alloyMixerRecipe.addIngredient('C', Material.COBBLESTONE);
+        alloyMixerRecipe.register();
     }
 
     @Override
@@ -217,6 +221,10 @@ public class Main extends JavaPlugin implements Listener {
 
     public CustomBlockManager getCustomBlockManager() {
         return customBlockManager;
+    }
+
+    public CustomIDManager getCustomIDManager() {
+        return customIDManager;
     }
 
     public FastTaskTracker getFastTaskTracker() {
@@ -354,37 +362,40 @@ public class Main extends JavaPlugin implements Listener {
     private void create(Player player) {
         remove(player);
 
-        ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
-            /**
-             * Reads packets
-             */
-            @Override
-            public void channelRead(ChannelHandlerContext context, Object packet) throws Exception {
-                if (packet instanceof PacketPlayInWindowClick) {
-                    PacketPlayInWindowClick packetPlayInWindowClick = (PacketPlayInWindowClick) packet;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
+                /**
+                 * Reads packets
+                 */
+                @Override
+                public void channelRead(ChannelHandlerContext context, Object packet) throws Exception {
+                    if (packet instanceof PacketPlayInWindowClick) {
+                        PacketPlayInWindowClick packetPlayInWindowClick = (PacketPlayInWindowClick) packet;
 
-                    EntityPlayer playerEntity = ((CraftPlayer) player).getHandle();
+                        System.out.println("PACKET:: " + packet);
 
-                    a(packetPlayInWindowClick, playerEntity);
+                        EntityPlayer playerEntity = ((CraftPlayer) player).getHandle();
 
-                    return;
+                        a(packetPlayInWindowClick, playerEntity);
+
+                        return;
 
 //                    ItemStack itemstack2 = playerEntity.activeContainer.a(packetPlayInWindowClick.b(), packetPlayInWindowClick.c(), packetPlayInWindowClick.f(), playerEntity);
+                    }
+
+                    super.channelRead(context, packet);
                 }
 
-                super.channelRead(context, packet);
-            }
+                /**
+                 * Writes packets
+                 */
+                @Override
+                public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
+                    super.write(context, packet, channelPromise);
+                }
+            };
 
-            /**
-             * Writes packets
-             */
-            @Override
-            public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
-                super.write(context, packet, channelPromise);
-            }
-        };
-
-        remove(player);
+//        remove(player);
 
 //        ((CraftPlayer) player).getHandle().playerConnection.networkManager.setPacketListener(new PacketListener() {
 //            @Override
@@ -395,11 +406,13 @@ public class Main extends JavaPlugin implements Listener {
 
 //        DefaultChannelPipeline
 
-        /**
-         * Take the player's networking channel and add our custom DuplexHandler
-         */
-        ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
-        pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler); // "packet_handler", --- beforeeeeeeee
+            /**
+             * Take the player's networking channel and add our custom DuplexHandler
+             */
+            ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
+            pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler); // "packet_handler", --- beforeeeeeeee
+        }, 60L);
+
     }
 
 

@@ -29,7 +29,7 @@ public class RecipeManager {
 //            return null;
 //        }
 
-        System.out.println("itemGrid = " + Arrays.deepToString(itemGrid));
+//        System.out.println("itemGrid = " + Arrays.deepToString(itemGrid));
 
         AtomicReference<ItemStack> result = new AtomicReference<>();
 

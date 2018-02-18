@@ -8,8 +8,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class BasicBlock extends CustomBlock {
 
-    public BasicBlock(Main main, Material material, int damage, Material particle, String name) {
-        super(main, material, (short) damage, particle, name, null);
+    public BasicBlock(Main main, int id, Material material, int damage, Material particle, String name) {
+        super(main, id, material, (short) damage, particle, name, null);
     }
 
     @Override

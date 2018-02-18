@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public class WorkbenchBlock extends CustomBlock {
 
-    public WorkbenchBlock(Main main, Material material, int damage, Material particle, String name) {
-        super(main, material, (short) damage, particle, name, () -> main.getGUIManager().addGUI(new Workbench(main, "WorkbenchBlock", 54, UUID.randomUUID())));
+    public WorkbenchBlock(Main main, int id, Material material, int damage, Material particle, String name) {
+        super(main, id, material, (short) damage, particle, name, () -> main.getGUIManager().addGUI(new Workbench(main, "WorkbenchBlock", 54, UUID.randomUUID())));
     }
 
     @Override

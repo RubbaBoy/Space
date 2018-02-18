@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class CustomItem {
+public abstract class CustomItem extends IDHolder {
 
     private int id;
     private Material material;
@@ -21,12 +21,13 @@ public abstract class CustomItem {
     private ItemStack staticItemStack;
     private boolean stackable = true;
 
-    public CustomItem(Material material, short damage, String name) {
+    public CustomItem(int id, Material material, short damage, String name) {
+        super(id);
         this.material = material;
         this.damage = damage;
         this.name = name;
 
-        this.staticItemStack = ItemBuilder.create()
+        NBTItem nbtItem = new NBTItem(ItemBuilder.create()
                 .setMaterial(material)
                 .setDamage(damage)
                 .setDisplayName(ChatColor.RESET + name)
@@ -34,7 +35,10 @@ public abstract class CustomItem {
                 .addFlag(ItemFlag.HIDE_UNBREAKABLE)
                 .addFlag(ItemFlag.HIDE_DESTROYS)
                 .addFlag(ItemFlag.HIDE_ATTRIBUTES)
-                .addFlag(ItemFlag.HIDE_ENCHANTS).build();
+                .addFlag(ItemFlag.HIDE_ENCHANTS).build());
+        nbtItem.getTag().setInt("SpaceItem", id);
+        nbtItem.getTag().setInt("random", ThreadLocalRandom.current().nextInt());
+        this.staticItemStack = nbtItem.toItemStack();
     }
 
     public Material getMaterial() {
@@ -49,6 +53,7 @@ public abstract class CustomItem {
         return name;
     }
 
+    @Override
     public ItemStack toItemStack() {
         return staticItemStack;
     }
@@ -58,19 +63,6 @@ public abstract class CustomItem {
     abstract void onDrop(PlayerDropItemEvent event);
 
     abstract void onClickEntity(PlayerInteractAtEntityEvent event);
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-
-        NBTItem nbtItem = new NBTItem(this.staticItemStack);
-        nbtItem.getTag().setInt("SpaceItem", id);
-        nbtItem.getTag().setInt("random", ThreadLocalRandom.current().nextInt());
-        this.staticItemStack = nbtItem.toItemStack();
-    }
 
     public boolean isStackable() {
         return stackable;

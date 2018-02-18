@@ -107,7 +107,7 @@ public class RocketCommand {
         Player player = (Player) sender;
         for (CustomBlock customBlock : main.getCustomBlockManager().getCustomBlocks()) {
 //            player.getInventory().setItemInMainHand(new ItemStack(customBlock.getMaterial(), customBlock.getDamage()));
-            player.getWorld().dropItem(player.getLocation(), customBlock.getDrop());
+            player.getWorld().dropItem(player.getLocation(), customBlock.toItemStack());
         }
     }
 

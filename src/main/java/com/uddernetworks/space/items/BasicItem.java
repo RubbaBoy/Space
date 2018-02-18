@@ -7,8 +7,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class BasicItem extends CustomItem {
 
-    public BasicItem(Material material, int damage, String name) {
-        super(material, (short) damage, name);
+    public BasicItem(int id, Material material, int damage, String name) {
+        super(id, material, (short) damage, name);
     }
 
     @Override

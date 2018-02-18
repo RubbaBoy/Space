@@ -3,6 +3,7 @@ package com.uddernetworks.space.guis;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,6 +25,7 @@ public class CustomGUI implements InventoryHolder, Listener {
     private List<Slot> slots = new ArrayList<>();
     private Inventory inventory;
     private UUID uuid;
+    private Block parentBlock = null;
 
     public CustomGUI(Main main, String title, int size, UUID uuid, GUIItems guiItems) {
         this.main = main;
@@ -49,6 +51,14 @@ public class CustomGUI implements InventoryHolder, Listener {
 
     public void updateSlots() {
         slots.forEach(slot -> inventory.setItem(slot.getIndex(), slot.getDefaultItem()));
+    }
+
+    public void setParentBlock(Block parentBlock) {
+        this.parentBlock = parentBlock;
+    }
+
+    public Block getParentBlock() {
+        return parentBlock;
     }
 
     public void onClose(HumanEntity closer) {
@@ -82,7 +92,7 @@ public class CustomGUI implements InventoryHolder, Listener {
             onClose(event.getPlayer());
 
             if (event.getInventory().getViewers().size() - 1 == 0) {
-                main.getGUIManager().removeGUI(getUUID());
+//                main.getGUIManager().removeGUI(getUUID());
             }
         }
     }

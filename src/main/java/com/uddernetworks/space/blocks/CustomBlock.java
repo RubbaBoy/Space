@@ -1,6 +1,7 @@
 package com.uddernetworks.space.blocks;
 
 import com.uddernetworks.space.guis.CustomGUI;
+import com.uddernetworks.space.items.IDHolder;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.utils.Debugger;
 import com.uddernetworks.space.utils.ItemBuilder;
@@ -12,15 +13,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public abstract class CustomBlock {
+public abstract class CustomBlock extends IDHolder {
 
-    private Main main;
+    Main main;
     private Material material;
     private short damage;
     private Material particle;
@@ -28,7 +30,8 @@ public abstract class CustomBlock {
     private ItemStack staticDrop;
     private Supplier<CustomGUI> customGUISupplier;
 
-    public CustomBlock(Main main, Material material, short damage, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
+    public CustomBlock(Main main, int id, Material material, short damage, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
+        super(id);
         this.main = main;
         this.material = material;
         this.damage = damage;
@@ -51,7 +54,8 @@ public abstract class CustomBlock {
         return name;
     }
 
-    public ItemStack getDrop() {
+    @Override
+    public ItemStack toItemStack() {
         return staticDrop.clone();
     }
 
@@ -68,6 +72,7 @@ public abstract class CustomBlock {
     }
 
     public CustomGUI getGUI(Block blockInstance) {
+        System.out.println("======================================================================");
 //        Debugger debugger = new Debugger();
 
 //        debugger.log("111");
@@ -75,11 +80,28 @@ public abstract class CustomBlock {
 
 //        debugger.log("222");
 
-        if (inventoryIDMeta.size() == 0) return customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
+        System.out.println("inventoryIDMeta = " + inventoryIDMeta.get(0).asString());
+
+        if (inventoryIDMeta.size() == 0) {
+            System.out.println("1111111111111111111111111");
+            CustomGUI ret = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
+
+            if (ret != null) {
+                System.out.println("3333333333333333333333333");
+                ret.setParentBlock(blockInstance);
+                blockInstance.setMetadata("inventoryID", new FixedMetadataValue(main, ret.getUUID()));
+            }
+
+            return ret;
+        } else {
+            System.out.println("22222222222222222222222222222");
+        }
 
 //        debugger.log("333");
 
         UUID inventoryID = UUID.fromString(inventoryIDMeta.get(0).asString());
+
+        System.out.println("inventoryID = " + inventoryID);
 
 //        debugger.log("444");
 
@@ -92,6 +114,16 @@ public abstract class CustomBlock {
 //        debugger.log("666");
 
 //        debugger.end();
+
+        if (ret != null) {
+//            inventoryIDMeta.clear();
+            System.out.println("44444444444");
+            ret.setParentBlock(blockInstance);
+            blockInstance.setMetadata("inventoryID", new FixedMetadataValue(main, ret.getUUID()));
+
+            List<MetadataValue> inventoryIDMeta2 = blockInstance.getMetadata("inventoryID");
+            System.out.println("NEWW inventoryIDMeta = " + inventoryIDMeta2.get(0).asString());
+        }
 
         return ret;
     }

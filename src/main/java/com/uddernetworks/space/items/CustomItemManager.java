@@ -3,7 +3,6 @@ package com.uddernetworks.space.items;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.nbt.NBTItem;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -61,7 +60,7 @@ public class CustomItemManager implements Listener {
 
     public void addCustomItem(CustomItem customItem) {
         if (!customItems.contains(customItem)) {
-            customItem.setId(getCount() + 1);
+//            customItem.setID(getCount() + 1);
             customItems.add(customItem);
         }
     }
@@ -74,13 +73,13 @@ public class CustomItemManager implements Listener {
         return null;
     }
 
-    public CustomItem getCustomItem(int id) {
-        for (CustomItem customItem : customItems) {
-            if (customItem.getId() == id) return customItem;
-        }
-
-        return null;
-    }
+//    public CustomItem getCustomItem(int id) {
+//        for (CustomItem customItem : customItems) {
+//            if (customItem.getID() == id) return customItem;
+//        }
+//
+//        return null;
+//    }
 
     public CustomItem getCustomItem(String name) {
         for (CustomItem customItem : customItems) {
@@ -103,7 +102,7 @@ public class CustomItemManager implements Listener {
         if (itemStack == null) return null;
         NBTItem nbtItem = new NBTItem(itemStack);
         if (nbtItem.getTag() != null && nbtItem.getTag().hasKey("SpaceItem")) {
-            return getCustomItem(nbtItem.getTag().getInt("SpaceItem"));
+            return main.getCustomIDManager().getCustomItemById(nbtItem.getTag().getInt("SpaceItem"));
         }
 
         return null;

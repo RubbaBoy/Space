@@ -2,7 +2,6 @@ package com.uddernetworks.space.blocks;
 
 import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.main.Main;
-import com.uddernetworks.space.utils.Debugger;
 import com.uddernetworks.space.utils.Reflect;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
@@ -12,9 +11,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftCreatureSpawner;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -72,6 +73,14 @@ public class CustomBlockManager implements Listener {
         return main.getCustomBlockManager().getCustomBlock(Material.getMaterial(material), damage);
     }
 
+    public CustomBlock getCustomBlock(String name) {
+        for (CustomBlock customBlock : customBlocks) {
+            if (customBlock.getName().equalsIgnoreCase(name)) return customBlock;
+        }
+
+        return null;
+    }
+
     private net.minecraft.server.v1_12_R1.Material getNMSMaterial(net.minecraft.server.v1_12_R1.Block nmsBlock) {
         return nmsBlock.q(null);
     }
@@ -91,10 +100,9 @@ public class CustomBlockManager implements Listener {
 
         customBlock.spawnParticles(block);
 
-        if (player.getGameMode() != GameMode.CREATIVE) block.getWorld().dropItemNaturally(block.getLocation(), customBlock.getDrop());
+        if (player.getGameMode() != GameMode.CREATIVE) block.getWorld().dropItemNaturally(block.getLocation(), customBlock.toItemStack());
 
         if (!customBlock.onBreak(block, player)) {
-            System.out.println("Cancelled");
             event.setCancelled(true);
         }
     }
@@ -126,42 +134,21 @@ public class CustomBlockManager implements Listener {
         ItemStack item = event.getItem();
         Player player = event.getPlayer();
 
-//        System.out.println("111");
-
         if (event.getHand() != EquipmentSlot.HAND && event.getHand() != EquipmentSlot.OFF_HAND) return;
-
-//        System.out.println("222");
 
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
-//        System.out.println("333");
-
         if (event.getItem() == null) return;
-
-//        System.out.println("444");
 
         if (!player.isSneaking() && event.getClickedBlock().getState() instanceof InventoryHolder) return;
 
-//        System.out.println("555");
-
         CustomBlock customBlockClicked = getCustomBlock(event.getClickedBlock());
-
-//        System.out.println("666");
 
         if (!player.isSneaking() && (customBlockClicked != null && customBlockClicked.getGUI(event.getClickedBlock()) != null)) return;
 
-//        System.out.println("777");
-
         CustomBlock customBlock = getCustomBlock(item.getType(), item.getDurability());
 
-//        System.out.println("888");
-
-        System.out.println("customBlock = " + customBlock);
-        System.out.println("Damage = " + item.getDurability());
-
         if (customBlock == null) return;
-
-//        System.out.println("999");
 
         BlockFace blockFace = event.getBlockFace();
         Block clickedBlock = event.getClickedBlock();
@@ -196,38 +183,24 @@ public class CustomBlockManager implements Listener {
 
         if (toPlaceBlock == null || !toPlaceBlock.isEmpty()) return;
 
-//        System.out.println("101010");
-
         if (!customBlock.onPrePlace(toPlaceBlock, player)) return;
-
-//        System.out.println("11 11 11");
 
         if (player.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount() - 1);
 
         toPlaceBlock.setMetadata("material", new FixedMetadataValue(main, customBlock.getMaterial().name()));
         toPlaceBlock.setMetadata("damage", new FixedMetadataValue(main, customBlock.getDamage()));
 
-//        System.out.println("12 12 12");
-
         if (customBlock.hasGUI()) {
             toPlaceBlock.setMetadata("inventoryID", new FixedMetadataValue(main, customBlock.getGUI(toPlaceBlock).getUUID()));
         }
 
-//        System.out.println("13 13 13");
-
         sendArmSwing(player, event.getHand());
 
-//        System.out.println("14 14 14");
-
         setBlockData(player, toPlaceBlock, customBlock.getMaterial(), customBlock.getDamage());
-
-//        System.out.println("15 15 15");
 
         event.setCancelled(true);
 
         customBlock.onPlace(toPlaceBlock, player);
-
-//        System.out.println("16 16 16");
     }
 
     public void setBlockData(Player player, Block toPlaceBlock, Material material, short damage) {
