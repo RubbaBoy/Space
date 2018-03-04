@@ -80,7 +80,7 @@ public abstract class CustomBlock extends IDHolder {
 
 //        debugger.log("222");
 
-        System.out.println("inventoryIDMeta = " + inventoryIDMeta.get(0).asString());
+//        System.out.println("inventoryIDMeta = " + inventoryIDMeta.get(0).asString());
 
         if (inventoryIDMeta.size() == 0) {
             System.out.println("1111111111111111111111111");

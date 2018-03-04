@@ -104,7 +104,12 @@ public class CustomBlockManager implements Listener {
 
         if (!customBlock.onBreak(block, player)) {
             event.setCancelled(true);
+            return;
         }
+
+        block.setMetadata("inventoryID", null);
+        block.setMetadata("material", null);
+        block.setMetadata("damage", null);
     }
 
     @EventHandler

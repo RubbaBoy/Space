@@ -8,10 +8,7 @@ import com.uddernetworks.space.blocks.CustomBlockManager;
 import com.uddernetworks.space.blocks.WorkbenchBlock;
 import com.uddernetworks.space.command.RocketCommand;
 import com.uddernetworks.space.command.SpaceCommand;
-import com.uddernetworks.space.guis.AlloyMixerGUI;
-import com.uddernetworks.space.guis.GUIManager;
-import com.uddernetworks.space.guis.ProgressBar;
-import com.uddernetworks.space.guis.ProgressBarManager;
+import com.uddernetworks.space.guis.*;
 import com.uddernetworks.space.items.BasicItem;
 import com.uddernetworks.space.items.CustomIDManager;
 import com.uddernetworks.space.items.CustomItemManager;
@@ -25,10 +22,11 @@ import com.uddernetworks.space.utils.QuadConsumer;
 import com.uddernetworks.space.utils.Reflect;
 import io.netty.channel.*;
 import net.minecraft.server.v1_12_R1.*;
+import net.minecraft.server.v1_12_R1.Slot;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
@@ -51,10 +49,10 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.net.InetAddress;
 import java.util.*;
 
 import static org.bukkit.Material.AIR;
-import static org.bukkit.Material.matchMaterial;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -123,6 +121,12 @@ public class Main extends JavaPlugin implements Listener {
 
         this.progressBarManager.addProgressBar(new ProgressBar("AlloyMixerBar", Material.DIAMOND_HOE, damages));
 
+        int[] damages2 = new int[150];
+
+        for (int i = 0; i < 150; i++) damages2[i] = i + 111 + 122;
+
+        this.progressBarManager.addProgressBar(new ProgressBar("CryogenicContainerBar", Material.DIAMOND_HOE, damages2));
+
         this.customIDManager = new CustomIDManager(this);
 
         /* GUIs */
@@ -158,7 +162,11 @@ public class Main extends JavaPlugin implements Listener {
             System.out.println("Creating new GUI");
             return getGUIManager().addGUI(new AlloyMixerGUI(this, "Alloy Mixer", 54, UUID.randomUUID()));
         }));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 112, Material.DIAMOND_HOE, 35, Material.GRAY_SHULKER_BOX, "Cryogenic Container",
+                () -> getGUIManager().addGUI(new CryogenicContainerGUI(this, "Cryogenic Container", 54, UUID.randomUUID()))));
 
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 113, Material.DIAMOND_HOE, 36, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator",
+                () -> getGUIManager().addGUI(new CryogenicContainerGUI(this, "Cryogenic Container", 54, UUID.randomUUID()))));
 
         /* Recipes */
 
@@ -189,12 +197,17 @@ public class Main extends JavaPlugin implements Listener {
         cpuRecipe.addIngredient('C', 3);
         cpuRecipe.register();
 
-        EasyShapedRecipe alloyMixerRecipe = new EasyShapedRecipe(this, "AlloyMixer", 6, "FCF", "CIC", "CHC");
+        EasyShapedRecipe alloyMixerRecipe = new EasyShapedRecipe(this, "AlloyMixer", 111, "FCF", "CIC", "CHC");
         alloyMixerRecipe.addIngredient('F', Material.FURNACE);
         alloyMixerRecipe.addIngredient('I', 5);
         alloyMixerRecipe.addIngredient('H', Material.HOPPER);
         alloyMixerRecipe.addIngredient('C', Material.COBBLESTONE);
         alloyMixerRecipe.register();
+
+        EasyShapedRecipe workbenchRecipe = new EasyShapedRecipe(this, "SpaceshipWorkbench", 100, "SSS", "SCS", "SSS");
+        workbenchRecipe.addIngredient('C', Material.WORKBENCH);
+        workbenchRecipe.addIngredient('S', 7);
+        workbenchRecipe.register();
     }
 
     @Override
@@ -232,7 +245,7 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void updateVelocities() {
-        World world = Bukkit.getServer().getWorld("moon");
+        org.bukkit.World world = Bukkit.getServer().getWorld("moon");
         if (world == null) return;
 
         for (Entity entity : world.getEntities()) {
@@ -363,6 +376,7 @@ public class Main extends JavaPlugin implements Listener {
         remove(player);
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
+            player.sendMessage(ChatColor.GOLD + "Now hooked into click packet rerouting.");
             ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
                 /**
                  * Reads packets

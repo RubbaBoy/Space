@@ -7,6 +7,7 @@ import com.uddernetworks.command.ArgumentList;
 import com.uddernetworks.command.Command;
 import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.items.CustomItem;
+import com.uddernetworks.space.items.IDHolder;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.nbt.NBTItem;
 import net.minecraft.server.v1_12_R1.EntityHuman;
@@ -28,7 +29,7 @@ import java.lang.reflect.Field;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Command(name = "rocket", consoleAllow = false, minArgs = 1, maxArgs = 2)
+@Command(name = "rocket", consoleAllow = false, minArgs = 1, maxArgs = 4)
 public class RocketCommand {
 
     private Main main;
@@ -100,6 +101,27 @@ public class RocketCommand {
                             - custom modeled/textured armor on an existing mob, determined by armor data value
          */
 
+    }
+
+    @Argument(format = "give * *")
+    public void give(CommandSender sender, ArgumentList args) {
+        Player player = (Player) sender;
+        int id = args.nextArg().getInt();
+        int amount = args.nextArg().getInt();
+
+        IDHolder idHolder = main.getCustomIDManager().getByID(id);
+
+        if (idHolder == null) {
+            player.sendMessage(ChatColor.RED + "No item/block found with the given ID.");
+            return;
+        }
+
+        ItemStack itemStack = idHolder.toItemStack();
+        itemStack.setAmount(amount);
+
+        player.getWorld().dropItem(player.getLocation(), itemStack);
+
+        player.sendMessage(ChatColor.GOLD + "Gave you " + ChatColor.RED + "x" + amount + ChatColor.GOLD + " of " + ChatColor.RED + idHolder.getID());
     }
 
     @Argument(format = "blocks")
