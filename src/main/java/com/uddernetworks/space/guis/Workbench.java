@@ -15,7 +15,7 @@ public class Workbench extends CustomGUI {
     private Main main;
 
     public Workbench(Main main, String title, int size, UUID uuid) {
-        super(main, title, size, uuid, null);
+        super(main, title, size, uuid, GUIItems.WORKBENCH);
 
         this.main = main;
 

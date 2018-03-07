@@ -30,11 +30,11 @@ public abstract class CustomBlock extends IDHolder {
     private ItemStack staticDrop;
     private Supplier<CustomGUI> customGUISupplier;
 
-    public CustomBlock(Main main, int id, Material material, short damage, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
+    public CustomBlock(Main main, int id, Material material, int damage, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
         super(id);
         this.main = main;
         this.material = material;
-        this.damage = damage;
+        this.damage = (short) damage;
         this.particle = particle;
         this.name = name;
         this.customGUISupplier = customGUISupplier;
@@ -82,7 +82,7 @@ public abstract class CustomBlock extends IDHolder {
 
 //        System.out.println("inventoryIDMeta = " + inventoryIDMeta.get(0).asString());
 
-        if (inventoryIDMeta.size() == 0) {
+        if (inventoryIDMeta.size() == 0 || inventoryIDMeta.get(0).asString().trim().equals("")) {
             System.out.println("1111111111111111111111111");
             CustomGUI ret = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
 

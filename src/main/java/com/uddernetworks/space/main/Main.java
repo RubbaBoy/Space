@@ -2,10 +2,7 @@ package com.uddernetworks.space.main;
 
 import com.google.common.collect.ImmutableMap;
 import com.uddernetworks.command.CommandManager;
-import com.uddernetworks.space.blocks.AnimatedBlock;
-import com.uddernetworks.space.blocks.BasicBlock;
-import com.uddernetworks.space.blocks.CustomBlockManager;
-import com.uddernetworks.space.blocks.WorkbenchBlock;
+import com.uddernetworks.space.blocks.*;
 import com.uddernetworks.space.command.RocketCommand;
 import com.uddernetworks.space.command.SpaceCommand;
 import com.uddernetworks.space.guis.*;
@@ -162,11 +159,9 @@ public class Main extends JavaPlugin implements Listener {
             System.out.println("Creating new GUI");
             return getGUIManager().addGUI(new AlloyMixerGUI(this, "Alloy Mixer", 54, UUID.randomUUID()));
         }));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 112, Material.DIAMOND_HOE, 35, Material.GRAY_SHULKER_BOX, "Cryogenic Container",
-                () -> getGUIManager().addGUI(new CryogenicContainerGUI(this, "Cryogenic Container", 54, UUID.randomUUID()))));
+        this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 35, Material.GRAY_SHULKER_BOX, "Cryogenic Container"));
 
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 113, Material.DIAMOND_HOE, 36, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator",
-                () -> getGUIManager().addGUI(new CryogenicContainerGUI(this, "Cryogenic Container", 54, UUID.randomUUID()))));
+        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 36, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator"));
 
         /* Recipes */
 

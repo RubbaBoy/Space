@@ -12,11 +12,11 @@ import java.util.function.Supplier;
 public class BasicBlock extends CustomBlock {
 
     public BasicBlock(Main main, int id, Material material, int damage, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
-        super(main, id, material, (short) damage, particle, name, customGUISupplier);
+        super(main, id, material, damage, particle, name, customGUISupplier);
     }
 
     public BasicBlock(Main main, int id, Material material, int damage, Material particle, String name) {
-        super(main, id, material, (short) damage, particle, name, null);
+        super(main, id, material, damage, particle, name, null);
     }
 
     @Override

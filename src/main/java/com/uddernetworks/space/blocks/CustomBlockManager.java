@@ -61,7 +61,7 @@ public class CustomBlockManager implements Listener {
         Bukkit.getOnlinePlayers().forEach(forPlayer -> ((CraftPlayer) forPlayer).getHandle().playerConnection.sendPacket(animation));
     }
 
-    private CustomBlock getCustomBlock(Block block) {
+    public CustomBlock getCustomBlock(Block block) {
         List<MetadataValue> materialMetaList = block.getMetadata("material");
         List<MetadataValue> damageMetaList = block.getMetadata("damage");
 
@@ -107,9 +107,9 @@ public class CustomBlockManager implements Listener {
             return;
         }
 
-        block.setMetadata("inventoryID", null);
-        block.setMetadata("material", null);
-        block.setMetadata("damage", null);
+//        block.setMetadata("inventoryID", new FixedMetadataValue(main, new ArrayList<>()));
+//        block.setMetadata("material", new FixedMetadataValue(main, new ArrayList<>()));
+//        block.setMetadata("damage", new FixedMetadataValue(main, new ArrayList<>()));
     }
 
     @EventHandler
@@ -119,18 +119,21 @@ public class CustomBlockManager implements Listener {
 
         if (event.getHand() != EquipmentSlot.HAND && event.getHand() != EquipmentSlot.OFF_HAND) return;
 
+//        System.out.println("11111");
+
         if (player.isSneaking() || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-
+//        System.out.println("22222");
         CustomBlock customBlock = getCustomBlock(clicked);
-
+//        System.out.println("33333");
         if (customBlock == null) return;
-
+//        System.out.println("4444444");
         customBlock.onClick(event);
-
+//        System.out.println("555555");
         CustomGUI customGUI = customBlock.getGUI(clicked);
-
+//        System.out.println("6666666");
         if (customGUI == null) return;
-
+//        System.out.println("77777777");
+        event.setCancelled(false);
         player.openInventory(customGUI.getInventory());
     }
 
@@ -138,23 +141,23 @@ public class CustomBlockManager implements Listener {
     public void onInteractEvent(PlayerInteractEvent event) {
         ItemStack item = event.getItem();
         Player player = event.getPlayer();
-
+        System.out.println("1111");
         if (event.getHand() != EquipmentSlot.HAND && event.getHand() != EquipmentSlot.OFF_HAND) return;
-
+        System.out.println("222");
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-
+        System.out.println("333");
         if (event.getItem() == null) return;
-
+        System.out.println("444");
         if (!player.isSneaking() && event.getClickedBlock().getState() instanceof InventoryHolder) return;
-
+        System.out.println("555");
         CustomBlock customBlockClicked = getCustomBlock(event.getClickedBlock());
-
+        System.out.println("666");
         if (!player.isSneaking() && (customBlockClicked != null && customBlockClicked.getGUI(event.getClickedBlock()) != null)) return;
-
+        System.out.println("777");
         CustomBlock customBlock = getCustomBlock(item.getType(), item.getDurability());
-
+        System.out.println("888");
         if (customBlock == null) return;
-
+        System.out.println("999");
         BlockFace blockFace = event.getBlockFace();
         Block clickedBlock = event.getClickedBlock();
         World world = clickedBlock.getWorld();
@@ -185,13 +188,13 @@ public class CustomBlockManager implements Listener {
                 System.out.println("Uncalled for block face! " + blockFace);
                 break;
         }
-
+        System.out.println("101010101:::: " + toPlaceBlock);
         if (toPlaceBlock == null || !toPlaceBlock.isEmpty()) return;
-
+        System.out.println("11 11 11");
         if (!customBlock.onPrePlace(toPlaceBlock, player)) return;
-
+        System.out.println("22 22 22");
         if (player.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount() - 1);
-
+        System.out.println("33 33 33");
         toPlaceBlock.setMetadata("material", new FixedMetadataValue(main, customBlock.getMaterial().name()));
         toPlaceBlock.setMetadata("damage", new FixedMetadataValue(main, customBlock.getDamage()));
 
@@ -199,12 +202,14 @@ public class CustomBlockManager implements Listener {
             toPlaceBlock.setMetadata("inventoryID", new FixedMetadataValue(main, customBlock.getGUI(toPlaceBlock).getUUID()));
         }
 
+        System.out.println("44 44 44");
         sendArmSwing(player, event.getHand());
 
         setBlockData(player, toPlaceBlock, customBlock.getMaterial(), customBlock.getDamage());
 
         event.setCancelled(true);
 
+        System.out.println("10101010101");
         customBlock.onPlace(toPlaceBlock, player);
     }
 

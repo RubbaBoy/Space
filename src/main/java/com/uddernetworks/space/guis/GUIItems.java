@@ -8,7 +8,8 @@ import org.bukkit.inventory.ItemStack;
 public enum GUIItems {
     WORKBENCH(new GUIItem(45, false, Material.DIAMOND_HOE, 4)),
     ALLOY_MIXER_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 5)),
-    CRYOGENIC_CONTAINER_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 6));
+    CRYOGENIC_CONTAINER_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 6)),
+    LIQUID_OXYGEN_GENERATOR_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 7));
 
 
     private GUIItem[] guiItems;
