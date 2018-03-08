@@ -4,22 +4,23 @@ import com.google.common.collect.ImmutableMap;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.utils.FastTask;
 import com.uddernetworks.space.utils.ItemBuilder;
-import com.uddernetworks.space.utils.Reflect;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomEntityTest extends EntityZombie {
 
+    private Main main;
     private CraftArmorStand armorStand;
     private CraftArmorStand armorStandPassenger1;
 
@@ -29,6 +30,8 @@ public class CustomEntityTest extends EntityZombie {
 
     public CustomEntityTest(Main main, Location location) {
         super(((CraftWorld) location.getWorld()).getHandle());
+        this.main = main;
+
         this.setPosition(location.getX(), location.getY(), location.getZ());
 
         armorStand = (CraftArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -71,86 +74,79 @@ public class CustomEntityTest extends EntityZombie {
         armorStandPassenger1.getEquipment().setItemInMainHand(rightLeg);
         armorStandPassenger1.getEquipment().setHelmet(body);
 
-
-        legMovement += adding;
-
         new FastTask(main).runRepeatingTask(true, () -> {
-//        Bukkit.getScheduler().runTaskTimer(main, () -> {
-            try {
-//                System.out.println("tttttttttttttttttttttttttttttttttttttttttttttttttt::::::  " + adding);
-
+            if (this.moving) {
                 legMovement += adding;
 
                 if ((adding > 0 && Math.abs(legMovement) > 25) || (adding < 0 && Math.abs(legMovement) > 25)) {
                     adding *= -1;
                     legMovement += adding;
                 }
+            } else {
+                legMovement = 0;
+            }
 
-//                System.out.println("legMovement = " + legMovement + " adding = " + adding);
+            if (this.moving || !this.sendStoppedPacket) {
+                sendStoppedPacket = true;
+                EntityArmorStand entityArmorStand = armorStandPassenger1.getHandle();
 
-                EntityArmorStand entityArmorStand = ((CraftArmorStand) armorStandPassenger1).getHandle();
-
-//            getDataWatcher().set(entityArmorStand.b, new Vector3f(Double.valueOf(toRadians(legMovement)).floatValue(), 0, 0));
-//            getDataWatcher().set(entityArmorStand.c, new Vector3f(Double.valueOf(toRadians(legMovement)).floatValue(), 0, 0));
-//            getDataWatcher().set(entityArmorStand.d, new Vector3f(Double.valueOf(toRadians(legMovement)).floatValue(), 0, 0));
-//            getDataWatcher().set(entityArmorStand.e, new Vector3f(Double.valueOf(toRadians(legMovement)).floatValue(), 0, 0));
-//                getDataWatcher().set(entityArmorStand.f, new Vector3f(Double.valueOf(toRadians(legMovement)).floatValue(), 0, 0));
-//            getDataWatcher().set(entityArmorStand.g, new Vector3f(Double.valueOf(toRadians(legMovement)).floatValue(), 0, 0));
-
-//                DataWatcher dataWatcher = entityArmorStand.getDataWatcher();
-
-//                Map<Integer, DataWatcher.Item<?>> d = (Map<Integer, DataWatcher.Item<?>>) Reflect.getField(dataWatcher, "d", false);
-
-//                d.put(14, new DataWatcher.Item<>(new DataWatcherObject<>(14, EntityArmorStand.d.b()), new Vector3f(legMovement, 0.0F, 0.0F))); //    Left
-//                d.put(15, new DataWatcher.Item<>(new DataWatcherObject<>(15, null), new Vector3f(-legMovement, 0.0F, 0.0F))); //   Right
+                /*
+                    b   headPose
+                    c   bodyPose
+                    d   leftArmPose
+                    e   rightArmPose
+                    f   leftLegPose
+                    g   rightLegPose
+                */
 
                 PacketPlayOutEntityMetadata packetPlayOutEntityMetadata = new PacketPlayOutEntityMetadata(entityArmorStand.getId(),
                         new DataWriterInjector(ImmutableMap.builder()
                                 .put(14, new DataWatcher.Item<>(new DataWatcherObject<>(14, EntityArmorStand.d.b()), new Vector3f(legMovement, 0.0F, 0.0F)))
-                                .put(15, new DataWatcher.Item<>(new DataWatcherObject<>(15, EntityArmorStand.d.b()), new Vector3f(-legMovement, 0.0F, 0.0F))).build()), true);
+                                .put(15, new DataWatcher.Item<>(new DataWatcherObject<>(15, EntityArmorStand.e.b()), new Vector3f(-legMovement, 0.0F, 0.0F))).build()), true);
+
                 Bukkit.getOnlinePlayers().forEach(forPlayer -> ((CraftPlayer) forPlayer).getHandle().playerConnection.sendPacket(packetPlayOutEntityMetadata));
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-//        }, 30L, 10L);
+        }, 0, 0.01);
+    }
 
+    public void runAttackAnimation() {
+        new FastTask(main).runRepeatingTask(true, () -> {
 
-        }, 0, 0.02);
+        }, 0, 0.01);
     }
 
     private int legMovement = 0;
 
-    private int adding = 2;
+    private int adding = 1;
 
+    private boolean sendStoppedPacket = false;
+    private boolean moving = false;
+
+    public void setStartPath() {
+        moving = true;
+    }
+
+    public void setEndPath() {
+        moving = false;
+        sendStoppedPacket = false;
+    }
+
+    // Tick
     @Override
     public void Y() {
-        Location location = getBukkitEntity().getLocation().add(0, 0, 0);
+        CraftEntity craftEntity = getBukkitEntity();
+        Location location = craftEntity.getLocation();
 
         armorStand.teleport(location);
         armorStandPassenger1.teleport(location.clone().subtract(0, 0.6875, 0));
 
-//        armorStandPassenger1.setLeftArmPose(new EulerAngle(toRadians(legMovement), 0, 0));
-//        armorStandPassenger1.setRightArmPose(new EulerAngle(toRadians(-legMovement), 0, 0));
-
-        /*
-        b   headPose
-        c   bodyPose
-        d   leftArmPose
-        e   rightArmPose
-        f   leftLegPose
-        g   rightLegPose
-         */
-
-
-//        PacketPlayOutEntityMetadata packetPlayOutEntityMetadata = new PacketPlayOutEntityMetadata(armorStandPassenger1.getEntityId(), new DataWatcher(), )
-
+//        CraftEntity craftEntity = getBukkitEntity();
+//        Location entityLocation = craftEntity.getLocation();
+        this.armorStand.setHeadPose(new EulerAngle(toRadians(location.getPitch()), 0, 0));
         super.Y();
     }
 
-    public void moveToLocation() {
-//        this.getNavigation().a(47.5, 91, 311.5, 0);
-    }
-
+    // Register goals
     @Override
     protected void r() {
         this.goalSelector.a(0, new PathfinderGoalAttackStuff(this, 1, false));
@@ -160,13 +156,22 @@ public class CustomEntityTest extends EntityZombie {
 //        this.goalSelector.a(0, new PathfinderGoalPersistantLookAtPlayer(this, new Location(world.getWorld(), 47.5, 91, 311.5), 10D));
 //        this.goalSelector.a(8, new PathfinderGoalPersistantLookAtPlayer(this, EntityHuman.class, 20.0F));
 
-//        this.goalSelector.a(0, new PathfinderGoalFloat(this));
+        this.goalSelector.a(1, new PathfinderGoalFloat(this));
 //        this.goalSelector.a(2, new PathfinderGoalZombieAttack(this, 1.0D, false));
 //        this.goalSelector.a(5, new PathfinderGoalMoveTowardsRestriction(this, 1.0D));
 //        this.goalSelector.a(7, new PathfinderGoalRandomStrollLand(this, 1.0D));
-//        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
-//        this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
+        this.goalSelector.a(2, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+        this.goalSelector.a(3, new PathfinderGoalRandomLookaround(this));
         this.do_();
+    }
+
+    @Override
+    public boolean B(Entity entity) {
+        Bukkit.getPlayer("RubbaBoy").sendMessage("Attacked player: " + entity);
+
+
+
+        return super.B(entity);
     }
 
 
@@ -195,7 +200,6 @@ public class CustomEntityTest extends EntityZombie {
         }
 
         @Override
-        public void e() {
-        }
+        public void e() {}
     }
 }

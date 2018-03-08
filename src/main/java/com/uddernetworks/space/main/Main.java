@@ -7,8 +7,10 @@ import com.uddernetworks.space.command.RocketCommand;
 import com.uddernetworks.space.command.SpaceCommand;
 import com.uddernetworks.space.entities.CustomEntities;
 import com.uddernetworks.space.entities.CustomEntityTest;
-import com.uddernetworks.space.entities.CustomEntityType;
-import com.uddernetworks.space.guis.*;
+import com.uddernetworks.space.guis.AlloyMixerGUI;
+import com.uddernetworks.space.guis.GUIManager;
+import com.uddernetworks.space.guis.ProgressBar;
+import com.uddernetworks.space.guis.ProgressBarManager;
 import com.uddernetworks.space.items.BasicItem;
 import com.uddernetworks.space.items.CustomIDManager;
 import com.uddernetworks.space.items.CustomItemManager;
@@ -20,10 +22,8 @@ import com.uddernetworks.space.utils.FastTaskTracker;
 import com.uddernetworks.space.utils.ItemBuilder;
 import com.uddernetworks.space.utils.QuadConsumer;
 import com.uddernetworks.space.utils.Reflect;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import net.minecraft.server.v1_12_R1.*;
-import net.minecraft.server.v1_12_R1.Slot;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -34,8 +34,7 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -44,16 +43,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
 import java.util.*;
 
 import static org.bukkit.Material.AIR;
@@ -251,11 +251,32 @@ public class Main extends JavaPlugin implements Listener {
         return fastTaskTracker;
     }
 
+    private ArmorStand armorStand;
+
+    @EventHandler
+    public void onPlayerClick(PlayerInteractAtEntityEvent event) {
+        this.armorStand = (ArmorStand) event.getRightClicked();
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        if (this.armorStand == null) return;
+
+//        System.out.println("pitch = " + event.getPlayer().getLocation().getPitch());
+//        System.out.println("yaw = " + event.getPlayer().getLocation().getYaw());
+
+//        this.armorStand.setHeadPose(new EulerAngle(toRadians(event.getPlayer().getLocation().getPitch()), toRadians(event.getPlayer().getLocation().getYaw()), 0));
+    }
+
+    private double toRadians(float degrese) {
+        return Math.toRadians(degrese % 360);
+    }
+
     public void updateVelocities() {
         org.bukkit.World world = Bukkit.getServer().getWorld("moon");
         if (world == null) return;
 
-        for (Entity entity : world.getEntities()) {
+        for (org.bukkit.entity.Entity entity : world.getEntities()) {
             if (entity instanceof Player) {
                 Player player = (Player) entity;
                 if (player.isFlying()) continue;
@@ -416,7 +437,7 @@ public class Main extends JavaPlugin implements Listener {
 
                         if (uuid == null) super.write(context, packet, channelPromise);
 
-                        Entity entity = Bukkit.getEntity(uuid);
+                        org.bukkit.entity.Entity entity = Bukkit.getEntity(uuid);
 
                         CraftEntity craftEntity = (CraftEntity) entity;
 
