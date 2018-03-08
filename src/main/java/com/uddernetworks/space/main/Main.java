@@ -5,6 +5,9 @@ import com.uddernetworks.command.CommandManager;
 import com.uddernetworks.space.blocks.*;
 import com.uddernetworks.space.command.RocketCommand;
 import com.uddernetworks.space.command.SpaceCommand;
+import com.uddernetworks.space.entities.CustomEntities;
+import com.uddernetworks.space.entities.CustomEntityTest;
+import com.uddernetworks.space.entities.CustomEntityType;
 import com.uddernetworks.space.guis.*;
 import com.uddernetworks.space.items.BasicItem;
 import com.uddernetworks.space.items.CustomIDManager;
@@ -17,6 +20,7 @@ import com.uddernetworks.space.utils.FastTaskTracker;
 import com.uddernetworks.space.utils.ItemBuilder;
 import com.uddernetworks.space.utils.QuadConsumer;
 import com.uddernetworks.space.utils.Reflect;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import net.minecraft.server.v1_12_R1.*;
 import net.minecraft.server.v1_12_R1.Slot;
@@ -26,10 +30,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -47,6 +53,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 import static org.bukkit.Material.AIR;
@@ -203,12 +210,17 @@ public class Main extends JavaPlugin implements Listener {
         workbenchRecipe.addIngredient('C', Material.WORKBENCH);
         workbenchRecipe.addIngredient('S', 7);
         workbenchRecipe.register();
+
+
+        CustomEntities.registerEntities();
     }
 
     @Override
     public void onDisable() {
         this.guiManager.clearGUIs();
         Bukkit.getOnlinePlayers().stream().map(CraftPlayer.class::cast).forEach(this::remove);
+
+        CustomEntities.unregisterEntities();
     }
 
     public GUIManager getGUIManager() {
@@ -381,15 +393,11 @@ public class Main extends JavaPlugin implements Listener {
                     if (packet instanceof PacketPlayInWindowClick) {
                         PacketPlayInWindowClick packetPlayInWindowClick = (PacketPlayInWindowClick) packet;
 
-                        System.out.println("PACKET:: " + packet);
-
                         EntityPlayer playerEntity = ((CraftPlayer) player).getHandle();
 
                         a(packetPlayInWindowClick, playerEntity);
 
                         return;
-
-//                    ItemStack itemstack2 = playerEntity.activeContainer.a(packetPlayInWindowClick.b(), packetPlayInWindowClick.c(), packetPlayInWindowClick.f(), playerEntity);
                     }
 
                     super.channelRead(context, packet);
@@ -400,6 +408,21 @@ public class Main extends JavaPlugin implements Listener {
                  */
                 @Override
                 public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
+
+                    if (packet instanceof PacketPlayOutSpawnEntityLiving) {
+                        PacketPlayOutSpawnEntityLiving packetPlayOutSpawnEntity = (PacketPlayOutSpawnEntityLiving) packet;
+
+                        UUID uuid = (UUID) Reflect.getField(packetPlayOutSpawnEntity, "b", false);
+
+                        Entity entity = Bukkit.getEntity(uuid);
+
+                        CraftEntity craftEntity = (CraftEntity) entity;
+
+                        net.minecraft.server.v1_12_R1.Entity NMSEntity = craftEntity.getHandle();
+
+                        if (NMSEntity instanceof CustomEntityTest) return;
+                    }
+
                     super.write(context, packet, channelPromise);
                 }
             };
@@ -490,7 +513,7 @@ public class Main extends JavaPlugin implements Listener {
                                     if (toPlace == 1) {
                                         action = InventoryAction.PLACE_ONE;
                                     } else if (toPlace == cursor.getCount()) {
-                                    action = InventoryAction.PLACE_ALL;
+                                        action = InventoryAction.PLACE_ALL;
                                     } else if (toPlace < 0) {
                                         action = toPlace != -1 ? InventoryAction.PICKUP_SOME : InventoryAction.PICKUP_ONE;
                                     } else if (toPlace != 0) {
@@ -978,7 +1001,7 @@ public class Main extends JavaPlugin implements Listener {
                     return ItemStack.a;
                 }
 
-                for(itemstack2 = shiftClick(container, entityhuman, i); !itemstack2.isEmpty() && c(slot2.getItem(), itemstack2); itemstack2 = shiftClick(container, entityhuman, i)) {
+                for (itemstack2 = shiftClick(container, entityhuman, i); !itemstack2.isEmpty() && c(slot2.getItem(), itemstack2); itemstack2 = shiftClick(container, entityhuman, i)) {
                     itemstack = itemstack2.cloneItemStack();
                 }
             } else {

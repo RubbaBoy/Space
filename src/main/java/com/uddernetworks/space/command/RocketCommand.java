@@ -6,24 +6,30 @@ import com.uddernetworks.command.ArgumentError;
 import com.uddernetworks.command.ArgumentList;
 import com.uddernetworks.command.Command;
 import com.uddernetworks.space.blocks.CustomBlock;
+import com.uddernetworks.space.entities.CustomEntityTest;
 import com.uddernetworks.space.items.CustomItem;
 import com.uddernetworks.space.items.IDHolder;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.nbt.NBTItem;
+import com.uddernetworks.space.utils.ItemBuilder;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
+import org.bukkit.util.EulerAngle;
 
 import java.lang.reflect.Field;
 import java.util.Random;
@@ -159,6 +165,74 @@ public class RocketCommand {
     public void hat(CommandSender sender, ArgumentList args) {
         Player player = (Player) sender;
         player.getInventory().setHelmet(player.getInventory().getItemInMainHand());
+    }
+
+    @Argument(format = "get *")
+    public void get(CommandSender sender, ArgumentList args) {
+        Player player = (Player) sender;
+        player.getInventory().setItemInMainHand(ItemBuilder.from(Material.DIAMOND_HOE).setDamage(args.nextArg().getInt()).setUnbreakable(true).build());
+    }
+
+    @Argument(format = "spawn")
+    public void spawn(CommandSender sender, ArgumentList args) {
+        Player player = (Player) sender;
+
+        CustomEntityTest customEntityTest = new CustomEntityTest(player.getLocation());
+        ((CraftWorld) player.getWorld()).getHandle().addEntity(customEntityTest, CreatureSpawnEvent.SpawnReason.CUSTOM);
+
+        customEntityTest.moveToLocation();
+    }
+
+    @Argument(format = "test")
+    public void test(CommandSender sender, ArgumentList args) {
+        Player player = (Player) sender;
+
+
+        CraftArmorStand armorStand = (CraftArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
+        CraftArmorStand armorStandPassenger1 = (CraftArmorStand) player.getWorld().spawnEntity(player.getLocation().subtract(0, 0.6875, 0), EntityType.ARMOR_STAND);
+//        CraftArmorStand armorStandPassenger2 = (CraftArmorStand) player.getWorld().spawnEntity(player.getLocation().subtract(0, 0.6, 0), EntityType.ARMOR_STAND);
+
+        armorStand.setGravity(false);
+        armorStandPassenger1.setGravity(false);
+
+        armorStandPassenger1.setMarker(true);
+//        armorStandPassenger2.setGravity(false);
+
+//        armorStand.addPassenger(armorStandPassenger1);
+//        armorStand.addPassenger(armorStandPassenger2);
+
+        ItemStack arm = ItemBuilder.from(Material.DIAMOND_HOE).setDamage(1001).setUnbreakable(true).build();
+        ItemStack leftLeg = ItemBuilder.from(Material.DIAMOND_HOE).setDamage(1002).setUnbreakable(true).build();
+        ItemStack rightLeg = ItemBuilder.from(Material.DIAMOND_HOE).setDamage(1003).setUnbreakable(true).build();
+        ItemStack body = ItemBuilder.from(Material.DIAMOND_HOE).setDamage(1004).setUnbreakable(true).build();
+        ItemStack head = ItemBuilder.from(Material.DIAMOND_HOE).setDamage(1005).setUnbreakable(true).build();
+
+        armorStand.setArms(true);
+        armorStand.setVisible(false);
+        armorStand.setBasePlate(false);
+
+
+        armorStandPassenger1.setArms(true);
+        armorStandPassenger1.setVisible(false);
+        armorStandPassenger1.setBasePlate(false);
+//        armorStandPassenger2.setArms(true);
+
+        armorStand.getEquipment().setItemInMainHand(arm);
+        armorStand.getEquipment().setItemInOffHand(arm);
+        armorStand.getEquipment().setHelmet(head);
+
+        armorStand.setLeftArmPose(new EulerAngle(toRadians(90), 0, 0));
+        armorStand.setRightArmPose(new EulerAngle(toRadians(90), 0, 0));
+
+        armorStandPassenger1.setLeftArmPose(new EulerAngle(0, 0, 0));
+        armorStandPassenger1.setRightArmPose(new EulerAngle(0, 0, 0));
+
+        armorStandPassenger1.getEquipment().setItemInOffHand(leftLeg);
+        armorStandPassenger1.getEquipment().setItemInMainHand(rightLeg);
+        armorStandPassenger1.getEquipment().setHelmet(body);
+
+//        armorStandPassenger1.getEquipment().setItemInMainHand(arm);
+//        armorStandPassenger1.getEquipment().setItemInOffHand(arm);
     }
 
     @Argument(format = "shit")

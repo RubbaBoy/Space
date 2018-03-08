@@ -133,8 +133,6 @@ public class LiquidOxygenGeneratorGUI extends CustomGUI {
                         1); // Count
 
                 Bukkit.getOnlinePlayers().forEach(forPlayer -> ((CraftPlayer) forPlayer).getHandle().playerConnection.sendPacket(packetPlayOutWorldParticles));
-
-                System.out.println("Spawning particle");
             }
 
             this.currentSmoke++;
