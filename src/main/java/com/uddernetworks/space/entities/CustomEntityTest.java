@@ -133,8 +133,6 @@ public class CustomEntityTest extends EntityZombie {
 
                 animationPosition += addingAnimation;
 
-//                System.out.println("animationPosition = " + animationPosition);
-
                 PacketPlayOutEntityMetadata packetPlayOutEntityMetadata = new PacketPlayOutEntityMetadata(entityArmorStand.getId(),
                         new DataWriterInjector(ImmutableMap.builder()
                                 .put(14, new DataWatcher.Item<>(new DataWatcherObject<>(14, EntityArmorStand.d.b()), new Vector3f(270 + animationPosition, 0.0F, 0.0F)))
@@ -202,8 +200,6 @@ public class CustomEntityTest extends EntityZombie {
 
     @Override
     public boolean B(Entity entity) {
-//        Bukkit.getPlayer("RubbaBoy").sendMessage("Attacked player: " + entity);
-
         runAttackAnimation();
 
         return super.B(entity);

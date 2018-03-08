@@ -148,6 +148,9 @@ public class Main extends JavaPlugin implements Listener {
         this.customItemManager.addCustomItem(new BasicItem(5, Material.DIAMOND_HOE, 56, "IC"));
         this.customItemManager.addCustomItem(new BasicItem(6, Material.DIAMOND_HOE, 57, "CPU"));
         this.customItemManager.addCustomItem(new BasicItem(7, Material.DIAMOND_HOE, 58, "Steel"));
+        this.customItemManager.addCustomItem(new BasicItem(8, Material.DIAMOND_HOE, 59, "Liquid Oxygen Generator Engine"));
+        this.customItemManager.addCustomItem(new BasicItem(9, Material.DIAMOND_HOE, 60, "Liquid Hydrogen Generator Engine"));
+        this.customItemManager.addCustomItem(new BasicItem(10, Material.DIAMOND_HOE, 61, "Gear"));
 
         /* Blocks */
 
@@ -169,6 +172,7 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 35, Material.GRAY_SHULKER_BOX, "Cryogenic Container"));
 
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 36, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator"));
+        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 37, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator"));
 
         /* Recipes */
 
@@ -210,6 +214,36 @@ public class Main extends JavaPlugin implements Listener {
         workbenchRecipe.addIngredient('C', Material.WORKBENCH);
         workbenchRecipe.addIngredient('S', 7);
         workbenchRecipe.register();
+
+        EasyShapedRecipe gearRecipe = new EasyShapedRecipe(this, "Gear", 10, " I ", "I I", " I ");
+        gearRecipe.addIngredient('I', Material.IRON_INGOT);
+        gearRecipe.register();
+
+        EasyShapedRecipe liquidOxygenGeneratorEngineRecipe = new EasyShapedRecipe(this, "LiquidOxygenGeneratorEngine", 8, " G ", "GRG", "III");
+        liquidOxygenGeneratorEngineRecipe.addIngredient('G', 10);
+        liquidOxygenGeneratorEngineRecipe.addIngredient('R', Material.REDSTONE);
+        liquidOxygenGeneratorEngineRecipe.addIngredient('I', Material.IRON_INGOT);
+        liquidOxygenGeneratorEngineRecipe.register();
+
+        EasyShapedRecipe liquidHydrogenGeneratorEngineRecipe = new EasyShapedRecipe(this, "LiquidHydrogenGeneratorEngine", 9, "   ", "GRG", "III");
+        liquidHydrogenGeneratorEngineRecipe.addIngredient('G', 10);
+        liquidHydrogenGeneratorEngineRecipe.addIngredient('R', Material.REDSTONE);
+        liquidHydrogenGeneratorEngineRecipe.addIngredient('I', Material.IRON_INGOT);
+        liquidHydrogenGeneratorEngineRecipe.register();
+
+        EasyShapedRecipe liquidOxygenGenerator = new EasyShapedRecipe(this, "LiquidOxygenGenerator", 113, "SCS", "SMS", "SLS");
+        liquidOxygenGenerator.addIngredient('C', 5);
+        liquidOxygenGenerator.addIngredient('L', 112);
+        liquidOxygenGenerator.addIngredient('M', 8);
+        liquidOxygenGenerator.addIngredient('S', 7);
+        liquidOxygenGenerator.register();
+
+        EasyShapedRecipe liquidHydrogenGenerator = new EasyShapedRecipe(this, "LiquidHydrogenGenerator", 114, "SCS", "SMS", "SLS");
+        liquidHydrogenGenerator.addIngredient('C', 5);
+        liquidHydrogenGenerator.addIngredient('L', 112);
+        liquidHydrogenGenerator.addIngredient('M', 9);
+        liquidHydrogenGenerator.addIngredient('S', 7);
+        liquidHydrogenGenerator.register();
 
 
         CustomEntities.registerEntities();
