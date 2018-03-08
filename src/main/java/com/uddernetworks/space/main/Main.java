@@ -414,9 +414,13 @@ public class Main extends JavaPlugin implements Listener {
 
                         UUID uuid = (UUID) Reflect.getField(packetPlayOutSpawnEntity, "b", false);
 
+                        if (uuid == null) super.write(context, packet, channelPromise);
+
                         Entity entity = Bukkit.getEntity(uuid);
 
                         CraftEntity craftEntity = (CraftEntity) entity;
+
+                        if (craftEntity == null) super.write(context, packet, channelPromise);
 
                         net.minecraft.server.v1_12_R1.Entity NMSEntity = craftEntity.getHandle();
 

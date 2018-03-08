@@ -177,7 +177,7 @@ public class RocketCommand {
     public void spawn(CommandSender sender, ArgumentList args) {
         Player player = (Player) sender;
 
-        CustomEntityTest customEntityTest = new CustomEntityTest(player.getLocation());
+        CustomEntityTest customEntityTest = new CustomEntityTest(main, player.getLocation());
         ((CraftWorld) player.getWorld()).getHandle().addEntity(customEntityTest, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         customEntityTest.moveToLocation();
