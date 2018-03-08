@@ -109,10 +109,45 @@ public class CustomEntityTest extends EntityZombie {
         }, 0, 0.01);
     }
 
-    public void runAttackAnimation() {
-        new FastTask(main).runRepeatingTask(true, () -> {
+    private int attackAnimationIndex = 0;
+    private int animationPosition = 0;
+    private int addingAnimation = 1;
 
-        }, 0, 0.01);
+    private FastTask fastTask;
+
+    public void runAttackAnimation() {
+        attackAnimationIndex = 0;
+        animationPosition = 0;
+        addingAnimation = 1;
+
+        EntityArmorStand entityArmorStand = armorStand.getHandle();
+
+        if (this.fastTask != null) return;
+
+        this.fastTask = new FastTask(main).runRepeatingTask(true, () -> {
+            if (attackAnimationIndex < 40) {
+                if ((addingAnimation > 0 && attackAnimationIndex >= 20)) {
+                    addingAnimation *= -1;
+                    animationPosition += addingAnimation;
+                }
+
+                animationPosition += addingAnimation;
+
+//                System.out.println("animationPosition = " + animationPosition);
+
+                PacketPlayOutEntityMetadata packetPlayOutEntityMetadata = new PacketPlayOutEntityMetadata(entityArmorStand.getId(),
+                        new DataWriterInjector(ImmutableMap.builder()
+                                .put(14, new DataWatcher.Item<>(new DataWatcherObject<>(14, EntityArmorStand.d.b()), new Vector3f(270 + animationPosition, 0.0F, 0.0F)))
+                                .put(15, new DataWatcher.Item<>(new DataWatcherObject<>(15, EntityArmorStand.e.b()), new Vector3f(270 + animationPosition, 0.0F, 0.0F))).build()), true);
+
+                Bukkit.getOnlinePlayers().forEach(forPlayer -> ((CraftPlayer) forPlayer).getHandle().playerConnection.sendPacket(packetPlayOutEntityMetadata));
+
+                attackAnimationIndex++;
+            } else {
+                this.fastTask.cancel();
+                this.fastTask = null;
+            }
+        }, 0, 0.0075);
     }
 
     private int legMovement = 0;
@@ -167,9 +202,9 @@ public class CustomEntityTest extends EntityZombie {
 
     @Override
     public boolean B(Entity entity) {
-        Bukkit.getPlayer("RubbaBoy").sendMessage("Attacked player: " + entity);
+//        Bukkit.getPlayer("RubbaBoy").sendMessage("Attacked player: " + entity);
 
-
+        runAttackAnimation();
 
         return super.B(entity);
     }
