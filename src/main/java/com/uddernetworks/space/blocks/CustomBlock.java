@@ -71,6 +71,12 @@ public abstract class CustomBlock extends IDHolder {
         block.getWorld().playEffect(block.getLocation().add(0, 0.5D, 0), Effect.STEP_SOUND, particle.getId());
     }
 
+
+//    public <T> T getData(String name, Class<T> clazz) {
+//
+//    }
+
+
     public CustomGUI getGUI(Block blockInstance) {
         System.out.println("======================================================================");
 //        Debugger debugger = new Debugger();

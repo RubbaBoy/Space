@@ -2,6 +2,7 @@ package com.uddernetworks.space.blocks;
 
 import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.main.Main;
+import com.uddernetworks.space.utils.ItemBuilder;
 import com.uddernetworks.space.utils.Reflect;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
@@ -230,11 +231,11 @@ public class CustomBlockManager implements Listener {
 
         EntityArmorStand entityArmorStand = new EntityArmorStand(entityPlayer.getWorld(), toPlaceBlock.getX(), toPlaceBlock.getY(), toPlaceBlock.getZ());
 
+//        entityArmorStand.setEquipment(EnumItemSlot.MAINHAND, ItemBuilder.from(Material.DIAMOND_HOE).setDamage());
+
         mobSpawnerAbstract.spawnDelay = 0;
 
         NBTTagCompound nbt = new NBTTagCompound();
-
-
 
         entityArmorStand.b(nbt);
 

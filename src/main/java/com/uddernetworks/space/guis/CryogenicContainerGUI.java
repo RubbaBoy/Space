@@ -20,15 +20,21 @@ public class CryogenicContainerGUI extends CustomGUI {
         updateSlots();
     }
 
-    public void addFill() {
-        if (currentlyFilled < maxFills) {
-            currentlyFilled++;
+//    public double getCurrentlyFilled() {
+//        return currentlyFilled;
+//    }
 
-            updateFills();
-        }
-    }
+
+
+//    public void addFill() {
+//        if (currentlyFilled < maxFills) {
+//            currentlyFilled++;
+//
+//            updateFills();
+//        }
+//    }
 
     public void updateFills() {
-        getInventory().setItem(46, progressBar.getItemStack(currentlyFilled / maxFills * 100D));
+//        getInventory().setItem(46, progressBar.getItemStack(currentlyFilled / maxFills * 100D));
     }
 }

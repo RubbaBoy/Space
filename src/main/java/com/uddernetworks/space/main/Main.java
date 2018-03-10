@@ -5,6 +5,7 @@ import com.uddernetworks.command.CommandManager;
 import com.uddernetworks.space.blocks.*;
 import com.uddernetworks.space.command.RocketCommand;
 import com.uddernetworks.space.command.SpaceCommand;
+import com.uddernetworks.space.database.DatabaseManager;
 import com.uddernetworks.space.entities.CustomEntities;
 import com.uddernetworks.space.entities.CustomEntityTest;
 import com.uddernetworks.space.guis.AlloyMixerGUI;
@@ -41,20 +42,24 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.*;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import java.io.File;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.bukkit.Material.AIR;
 
@@ -66,6 +71,8 @@ public class Main extends JavaPlugin implements Listener {
     private CustomItemManager customItemManager;
     private CustomBlockManager customBlockManager;
     private CustomIDManager customIDManager;
+    private DatabaseManager databaseManager;
+    private BlockDataManager blockDataManager;
 
     private HashMap<UUID, Vector> velocities;
     private HashMap<UUID, Location> positions;
@@ -86,6 +93,12 @@ public class Main extends JavaPlugin implements Listener {
         this.positions = new HashMap<>();
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        this.databaseManager = new DatabaseManager(this);
+        this.databaseManager.connect(new File(getDataFolder(), "data.db"));
+        this.databaseManager.initialize();
+
+        this.blockDataManager = new BlockDataManager(this);
 
         clickActions.put(ContainerAnvil.class, this::containerAnvil);
         clickActions.put(ContainerBeacon.class, this::containerBeacon);
@@ -255,6 +268,12 @@ public class Main extends JavaPlugin implements Listener {
         Bukkit.getOnlinePlayers().stream().map(CraftPlayer.class::cast).forEach(this::remove);
 
         CustomEntities.unregisterEntities();
+
+        try {
+            databaseManager.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public GUIManager getGUIManager() {
@@ -285,16 +304,44 @@ public class Main extends JavaPlugin implements Listener {
         return fastTaskTracker;
     }
 
-    private ArmorStand armorStand;
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public BlockDataManager getBlockDataManager() {
+        return blockDataManager;
+    }
 
     @EventHandler
-    public void onPlayerClick(PlayerInteractAtEntityEvent event) {
-        this.armorStand = (ArmorStand) event.getRightClicked();
+    public void onPlayerClick(PlayerInteractEvent event) {
+
+        if (event.getHand() != EquipmentSlot.HAND) return;
+
+        if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.AIR) return;
+
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+
+
+            String data = blockDataManager.getData(event.getClickedBlock(), "stringKey", String.class);
+
+            System.out.println("data = " + data);
+
+            event.getPlayer().sendMessage(ChatColor.GOLD + "Data for block is: " + data);
+
+        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+
+            String data = "Data here " + ThreadLocalRandom.current().nextInt(10000);
+
+            blockDataManager.setData(event.getClickedBlock(), "stringKey", data);
+
+            event.getPlayer().sendMessage(ChatColor.GOLD + "SET data for block: " + ChatColor.RED + data);
+        }
+
+        event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (this.armorStand == null) return;
 
 //        System.out.println("pitch = " + event.getPlayer().getLocation().getPitch());
 //        System.out.println("yaw = " + event.getPlayer().getLocation().getYaw());

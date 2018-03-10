@@ -109,8 +109,9 @@ public class LiquidOxygenGeneratorGUI extends CustomGUI {
                 this.tempFuel = this.tempFuel - this.fuelNeeded;
 
                 CryogenicContainerBlock cryogenicContainerBlock = (CryogenicContainerBlock) customBlock;
-                CryogenicContainerGUI cryogenicContainerGUI = (CryogenicContainerGUI) cryogenicContainerBlock.getGUI(container);
-                cryogenicContainerGUI.addFill();
+                cryogenicContainerBlock.addFill(container);
+//                CryogenicContainerGUI cryogenicContainerGUI = (CryogenicContainerGUI) cryogenicContainerBlock.getGUI(container);
+//                cryogenicContainerGUI.addFill();
             }
 
             if (this.currentSmoke > this.smokeDelay) {
