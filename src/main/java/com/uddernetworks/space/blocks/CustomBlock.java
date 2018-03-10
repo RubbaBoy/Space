@@ -18,6 +18,7 @@ import org.bukkit.metadata.MetadataValue;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class CustomBlock extends IDHolder {
@@ -71,67 +72,16 @@ public abstract class CustomBlock extends IDHolder {
         block.getWorld().playEffect(block.getLocation().add(0, 0.5D, 0), Effect.STEP_SOUND, particle.getId());
     }
 
-
-//    public <T> T getData(String name, Class<T> clazz) {
-//
-//    }
-
-
-    public CustomGUI getGUI(Block blockInstance) {
-        System.out.println("======================================================================");
-//        Debugger debugger = new Debugger();
-
-//        debugger.log("111");
-        List<MetadataValue> inventoryIDMeta = blockInstance.getMetadata("inventoryID");
-
-//        debugger.log("222");
-
-//        System.out.println("inventoryIDMeta = " + inventoryIDMeta.get(0).asString());
-
-        if (inventoryIDMeta.size() == 0 || inventoryIDMeta.get(0).asString().trim().equals("")) {
-            System.out.println("1111111111111111111111111");
-            CustomGUI ret = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
-
-            if (ret != null) {
-                System.out.println("3333333333333333333333333");
-                ret.setParentBlock(blockInstance);
-                blockInstance.setMetadata("inventoryID", new FixedMetadataValue(main, ret.getUUID()));
+    public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
+        main.getBlockDataManager().getData(blockInstance, "inventoryID", inventoryID -> {
+            if (inventoryID == null) {
+                CustomGUI ret = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
+                if (ret == null) return;
+                main.getBlockDataManager().setData(blockInstance, "inventoryID", ret.getUUID(), () -> customGUIConsumer.accept(ret));
+            } else {
+                customGUIConsumer.accept(main.getGUIManager().getGUI(UUID.fromString(inventoryID)));
             }
-
-            return ret;
-        } else {
-            System.out.println("22222222222222222222222222222");
-        }
-
-//        debugger.log("333");
-
-        UUID inventoryID = UUID.fromString(inventoryIDMeta.get(0).asString());
-
-        System.out.println("inventoryID = " + inventoryID);
-
-//        debugger.log("444");
-
-        CustomGUI customGUI = main.getGUIManager().getGUI(inventoryID);
-
-//        debugger.log("555");
-
-        CustomGUI ret = customGUI == null ? (customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get())) : customGUI;
-
-//        debugger.log("666");
-
-//        debugger.end();
-
-        if (ret != null) {
-//            inventoryIDMeta.clear();
-            System.out.println("44444444444");
-            ret.setParentBlock(blockInstance);
-            blockInstance.setMetadata("inventoryID", new FixedMetadataValue(main, ret.getUUID()));
-
-            List<MetadataValue> inventoryIDMeta2 = blockInstance.getMetadata("inventoryID");
-            System.out.println("NEWW inventoryIDMeta = " + inventoryIDMeta2.get(0).asString());
-        }
-
-        return ret;
+        });
     }
 
     abstract boolean hasGUI();

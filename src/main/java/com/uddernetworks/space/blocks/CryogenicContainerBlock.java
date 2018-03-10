@@ -37,14 +37,14 @@ public class CryogenicContainerBlock extends CustomBlock {
 
     @Override
     boolean hasGUI() {
-        return false;
+        return true;
     }
 
     public void addFill(Block block) {
-        main.getBlockDataManager().increment(block, "cryogenicContainer", 1, newValue -> {
-            CryogenicContainerGUI cryogenicContainerGUI = (CryogenicContainerGUI) getGUI(block);
+        main.getBlockDataManager().increment(block, "cryogenicContainer", 1, newValue -> getGUI(block, gui -> {
+            CryogenicContainerGUI cryogenicContainerGUI = (CryogenicContainerGUI) gui;
             cryogenicContainerGUI.setFills(newValue);
             cryogenicContainerGUI.updateFills();
-        });
+        }));
     }
 }

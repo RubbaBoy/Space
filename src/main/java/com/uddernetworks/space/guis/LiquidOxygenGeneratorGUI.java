@@ -83,7 +83,7 @@ public class LiquidOxygenGeneratorGUI extends CustomGUI {
         this.isProcessing = true;
         this.task = Bukkit.getScheduler().runTaskTimer(main, () -> {
             Block container = getParentBlock().getRelative(-1, 0, 0);
-            CustomBlock customBlock = main.getCustomBlockManager().getCustomBlock(container);
+            CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(container);
 
             if (customBlock == null || !customBlock.getName().equalsIgnoreCase("Cryogenic Container")) {
                 this.tempFuel = 0;

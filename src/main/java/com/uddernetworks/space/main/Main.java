@@ -106,6 +106,7 @@ public class Main extends JavaPlugin implements Listener {
         this.databaseManager.initialize();
 
         this.blockDataManager = new BlockDataManager(this);
+        this.blockDataManager.updateCaches(null);
 
         clickActions.put(ContainerAnvil.class, this::containerAnvil);
         clickActions.put(ContainerBeacon.class, this::containerBeacon);
