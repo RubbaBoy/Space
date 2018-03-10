@@ -41,7 +41,10 @@ public class CryogenicContainerBlock extends CustomBlock {
     }
 
     public void addFill(Block block) {
-        CryogenicContainerGUI cryogenicContainerGUI = (CryogenicContainerGUI) getGUI(block);
-        cryogenicContainerGUI.updateFills();
+        main.getBlockDataManager().increment(block, "cryogenicContainer", 1, newValue -> {
+            CryogenicContainerGUI cryogenicContainerGUI = (CryogenicContainerGUI) getGUI(block);
+            cryogenicContainerGUI.setFills(newValue);
+            cryogenicContainerGUI.updateFills();
+        });
     }
 }

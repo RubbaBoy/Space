@@ -33,19 +33,9 @@ public class DatabaseManager {
 
             System.out.println("Connection to SQLite has been established.");
 
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             main.getLogger().log(Level.SEVERE, "Error connecting to SQL database: " + e.getMessage());
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-//            try {
-//                if (conn != null) {
-//                    conn.close();
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
         }
     }
 
@@ -59,48 +49,7 @@ public class DatabaseManager {
         }
     }
 
-    public void insert(DatabaseTable table, Object... values) {
-        prepareUpdate(table, "INSERT INTO {0} VALUES ({1});", values);
-    }
-
-
-
     public Connection getConnection() {
         return this.connection;
     }
-
-
-    public ResultSet prepareQuery(DatabaseTable databaseTable, String sql, Object... values) {
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(MessageFormat.format(sql, databaseTable.getTableName(), getRepeatingQuestionMarks(values.length)))) {
-
-            for (int i = 0; i < values.length; i++) {
-                preparedStatement.setObject(i + 1, values[i]);
-            }
-
-            return preparedStatement.executeQuery();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public void prepareUpdate(DatabaseTable databaseTable, String sql, Object... values) {
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(MessageFormat.format(sql, databaseTable.getTableName(), getRepeatingQuestionMarks(values.length)))) {
-
-            for (int i = 0; i < values.length; i++) {
-                preparedStatement.setObject(i + 1, values[i]);
-            }
-
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String getRepeatingQuestionMarks(int amount) {
-        return StringUtils.repeat(", ?", amount).substring(2);
-    }
-
 }

@@ -17,6 +17,11 @@ public class CryogenicContainerGUI extends CustomGUI {
 
         addSlot(new PopulatedSlot(46, false, progressBar.getItemStack(0)));
 
+        main.getBlockDataManager().increment(getParentBlock(), "cryogenicContainer", 0, newAmount -> {
+            setFills(newAmount);
+            updateFills();
+        });
+
         updateSlots();
     }
 
@@ -34,7 +39,11 @@ public class CryogenicContainerGUI extends CustomGUI {
 //        }
 //    }
 
+    public void setFills(int currentlyFilled) {
+        this.currentlyFilled = currentlyFilled;
+    }
+
     public void updateFills() {
-//        getInventory().setItem(46, progressBar.getItemStack(currentlyFilled / maxFills * 100D));
+        getInventory().setItem(46, progressBar.getItemStack(currentlyFilled / maxFills * 100D));
     }
 }

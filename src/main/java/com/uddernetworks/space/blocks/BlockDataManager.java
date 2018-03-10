@@ -1,7 +1,7 @@
 package com.uddernetworks.space.blocks;
 
-import co.aikar.taskchain.BukkitTaskChainFactory;
 import com.uddernetworks.space.main.Main;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.block.Block;
 
 import java.sql.PreparedStatement;
@@ -52,6 +52,34 @@ public class BlockDataManager {
                 })
                 .syncLast(callback::accept)
                 .execute();
+    }
+
+    public void deleteData(Block block, Runnable callback) {
+        main.newChain()
+                .async(() -> { // DELETE FROM block_data WHERE coordinate LIKE 'ed60d88d-db1e-480a-b590-d88687caa7a6,62,90,324,%';
+                    try {
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("DELETE FROM block_data WHERE coordinate LIKE ?;");
+                        preparedStatement.setString(1, block.getWorld().getUID() + "," + block.getX() + "," + block.getY() + "," + block.getZ() + ",%");
+                        preparedStatement.execute();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                })
+                .sync(callback::run)
+                .execute();
+    }
+
+    public void increment(Block block, String key, int incrementBy, Consumer<Integer> newValue) {
+        getData(block, key, data -> {
+            if (StringUtils.isNumeric(data)) {
+                if (incrementBy != 0) {
+                    int value = Integer.valueOf(data) + incrementBy;
+                    setData(block, key, value, () -> newValue.accept(value));
+                }
+            } else {
+                setData(block, key, incrementBy, () -> newValue.accept(incrementBy));
+            }
+        });
     }
 
 }
