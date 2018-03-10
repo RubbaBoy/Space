@@ -1,5 +1,8 @@
 package com.uddernetworks.space.main;
 
+import co.aikar.taskchain.BukkitTaskChainFactory;
+import co.aikar.taskchain.TaskChain;
+import co.aikar.taskchain.TaskChainFactory;
 import com.google.common.collect.ImmutableMap;
 import com.uddernetworks.command.CommandManager;
 import com.uddernetworks.space.blocks.*;
@@ -74,6 +77,8 @@ public class Main extends JavaPlugin implements Listener {
     private DatabaseManager databaseManager;
     private BlockDataManager blockDataManager;
 
+    private TaskChainFactory taskChainFactory;
+
     private HashMap<UUID, Vector> velocities;
     private HashMap<UUID, Location> positions;
     private HashMap<UUID, Boolean> onGround;
@@ -93,6 +98,8 @@ public class Main extends JavaPlugin implements Listener {
         this.positions = new HashMap<>();
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        this.taskChainFactory = BukkitTaskChainFactory.create(this);
 
         this.databaseManager = new DatabaseManager(this);
         this.databaseManager.connect(new File(getDataFolder(), "data.db"));
@@ -312,6 +319,13 @@ public class Main extends JavaPlugin implements Listener {
         return blockDataManager;
     }
 
+    public <T> TaskChain<T> newChain() {
+        return this.taskChainFactory.newChain();
+    }
+    public <T> TaskChain<T> newSharedChain(String name) {
+        return this.taskChainFactory.newSharedChain(name);
+    }
+
     @EventHandler
     public void onPlayerClick(PlayerInteractEvent event) {
 
@@ -321,20 +335,18 @@ public class Main extends JavaPlugin implements Listener {
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-
-            String data = blockDataManager.getData(event.getClickedBlock(), "stringKey", String.class);
-
-            System.out.println("data = " + data);
-
-            event.getPlayer().sendMessage(ChatColor.GOLD + "Data for block is: " + data);
+            blockDataManager.getData(event.getClickedBlock(), "intKey", result -> {
+                event.getPlayer().sendMessage(ChatColor.GOLD + "Data for block is: " + result);
+            });
 
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 
-            String data = "Data here " + ThreadLocalRandom.current().nextInt(10000);
+            int data = ThreadLocalRandom.current().nextInt(10000);
 
-            blockDataManager.setData(event.getClickedBlock(), "stringKey", data);
+            blockDataManager.setData(event.getClickedBlock(), "intKey", data, () -> {
+                event.getPlayer().sendMessage(ChatColor.GOLD + "SET data for block: " + ChatColor.RED + data);
+            });
 
-            event.getPlayer().sendMessage(ChatColor.GOLD + "SET data for block: " + ChatColor.RED + data);
         }
 
         event.setCancelled(true);

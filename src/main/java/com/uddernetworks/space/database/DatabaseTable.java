@@ -2,10 +2,7 @@ package com.uddernetworks.space.database;
 
 public enum DatabaseTable {
     BLOCK_DATA("block_data", "CREATE TABLE IF NOT EXISTS block_data (\n" +
-            "  x INT NOT NULL,\n" +
-            "  y INT NOT NULL,\n" +
-            "  z INT NOT NULL,\n" +
-            "  key VARCHAR(255) NOT NULL,\n" +
+            "  coordinate VARCHAR(512) NOT NULL UNIQUE,\n" +
             "  value TEXT DEFAULT ''\n" +
             ");");
 

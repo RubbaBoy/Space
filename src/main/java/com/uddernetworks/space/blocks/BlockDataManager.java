@@ -1,13 +1,13 @@
 package com.uddernetworks.space.blocks;
 
-import com.google.gson.internal.Primitives;
+import co.aikar.taskchain.BukkitTaskChainFactory;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.block.Block;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 public class BlockDataManager {
 
@@ -17,51 +17,41 @@ public class BlockDataManager {
         this.main = main;
     }
 
-    public void setData(Block block, String key, Object object) {
-        try {
-            PreparedStatement preparedStatement;
-
-            if (getData(block, key, Object.class) == null) {
-                System.out.println("Inserting");
-                preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("INSERT INTO block_data VALUES (?, ?, ?, ?, ?);");
-                preparedStatement.setInt(1, block.getX());
-                preparedStatement.setInt(2, block.getY());
-                preparedStatement.setInt(3, block.getZ());
-                preparedStatement.setString(4, key);
-                preparedStatement.setObject(5, object);
-            } else {
-                System.out.println("Updating");
-                preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("UPDATE block_data SET value = ? WHERE x = ? AND y = ? AND z = ? AND key = ?;");
-                preparedStatement.setObject(1, object);
-                preparedStatement.setInt(2, block.getX());
-                preparedStatement.setInt(3, block.getY());
-                preparedStatement.setInt(4, block.getZ());
-                preparedStatement.setString(5, key);
-            }
-
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void setData(Block block, String key, Object value, Runnable callback) {
+        main.newChain()
+                .async(() -> {
+                    try {
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("INSERT OR REPLACE INTO block_data VALUES (?, ?);");
+                        preparedStatement.setString(1, block.getWorld().getUID() + "," + block.getX() + "," + block.getY() + "," + block.getZ() + "," + key);
+                        preparedStatement.setString(2, value.toString());
+                        preparedStatement.execute();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                })
+                .sync(callback::run)
+                .execute();
     }
 
-    public <T> T getData(Block block, String key, Class<T> type) {
-        try {
-            PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT value FROM block_data WHERE x = ? AND y = ? AND z = ? AND key = ?;");
+    public void getData(Block block, String key, Consumer<String> callback) {
+        main.newChain()
+                .asyncFirst(() -> {
+                    try {
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT value FROM block_data WHERE coordinate = ?;");
 
-            preparedStatement.setInt(1, block.getX());
-            preparedStatement.setInt(2, block.getY());
-            preparedStatement.setInt(3, block.getZ());
-            preparedStatement.setString(4, key);
+                        preparedStatement.setString(1, block.getWorld().getUID() + "," + block.getX() + "," + block.getY() + "," + block.getZ() + "," + key);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+                        ResultSet resultSet = preparedStatement.executeQuery();
 
-            return resultSet.isClosed() ? null : Primitives.wrap(type).cast(resultSet.getObject("value"));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+                        return resultSet.isClosed() ? null : resultSet.getString("value");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
 
-        return null;
+                    return null;
+                })
+                .syncLast(callback::accept)
+                .execute();
     }
 
 }
