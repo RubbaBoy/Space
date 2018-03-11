@@ -126,7 +126,7 @@ public class CustomBlockManager implements Listener {
         Block clicked = event.getClickedBlock();
         Player player = event.getPlayer();
 
-        if (event.getHand() != EquipmentSlot.HAND && event.getHand() != EquipmentSlot.OFF_HAND) return;
+        if (event.getHand() != EquipmentSlot.HAND) return;
 
         if (player.isSneaking() || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
@@ -140,7 +140,9 @@ public class CustomBlockManager implements Listener {
         event.setCancelled(false);
 
         customBlock.getGUI(clicked, customGUI -> {
-            player.openInventory(customGUI.getInventory());
+            if (customGUI != null) {
+                player.openInventory(customGUI.getInventory());
+            }
         });
     }
 

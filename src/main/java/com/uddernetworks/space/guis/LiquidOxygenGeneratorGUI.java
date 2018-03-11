@@ -25,7 +25,8 @@ public class LiquidOxygenGeneratorGUI extends CustomGUI {
     private boolean isProcessing = false;
 
     private int tempFuel = 0;
-    private int fuelNeeded = 102_400; // In ticks. 102,400 is 64 coal per fill (150 fills per Cryogenic Container), which will take 16 seconds per 64 coal   Wool is 100, 12 pieces of wool is needed, should take 6.5 seconds at 10 ticks. Coal is 1,600, Lava bucket is 20,000
+//    private int fuelNeeded = 102_400; // In ticks. 102,400 is 64 coal per fill (150 fills per Cryogenic Container), which will take 16 seconds per 64 coal   Wool is 100, 12 pieces of wool is needed, should take 6.5 seconds at 10 ticks. Coal is 1,600, Lava bucket is 20,000
+    private int fuelNeeded = 1600; // In ticks. 102,400 is 64 coal per fill (150 fills per Cryogenic Container), which will take 16 seconds per 64 coal   Wool is 100, 12 pieces of wool is needed, should take 6.5 seconds at 10 ticks. Coal is 1,600, Lava bucket is 20,000
     private BukkitTask task;
     private int smokeDelay = 0; // The amount of 5 tick intervals that should go by until it spawns smoke. A value of 4 will spawn one after each second.
     private int currentSmoke = 0;
@@ -110,8 +111,6 @@ public class LiquidOxygenGeneratorGUI extends CustomGUI {
 
                 CryogenicContainerBlock cryogenicContainerBlock = (CryogenicContainerBlock) customBlock;
                 cryogenicContainerBlock.addFill(container);
-//                CryogenicContainerGUI cryogenicContainerGUI = (CryogenicContainerGUI) cryogenicContainerBlock.getGUI(container);
-//                cryogenicContainerGUI.addFill();
             }
 
             if (this.currentSmoke > this.smokeDelay) {

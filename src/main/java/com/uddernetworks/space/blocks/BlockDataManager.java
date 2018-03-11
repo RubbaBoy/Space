@@ -1,5 +1,6 @@
 package com.uddernetworks.space.blocks;
 
+import com.google.common.collect.ImmutableMap;
 import com.uddernetworks.space.main.Main;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -18,6 +19,7 @@ public class BlockDataManager {
 
     private Main main;
     private Map<Block, CustomBlock> customBlockCache = new HashMap<>();
+    private Map<String, Map<Block, String>> generalCache = new HashMap<>();
 
     public BlockDataManager(Main main) {
         this.main = main;
@@ -26,6 +28,8 @@ public class BlockDataManager {
     public void setData(Block block, String key, Object value, Runnable callback) {
         if (key.equals("customBlock")) {
             this.customBlockCache.put(block, main.getCustomIDManager().getCustomBlockById(Integer.valueOf(value.toString())));
+        } else {
+            setCache(block, key, value.toString());
         }
 
         main.newChain()
@@ -44,6 +48,13 @@ public class BlockDataManager {
     }
 
     public void getData(Block block, String key, Consumer<String> callback) {
+        String cachedReturn = getCache(block, key);
+
+        if (cachedReturn != null) {
+            callback.accept(cachedReturn);
+            return;
+        }
+
         main.newChain()
                 .asyncFirst(() -> {
                     try {
@@ -66,6 +77,7 @@ public class BlockDataManager {
 
     public void deleteData(Block block, Runnable callback) {
         this.customBlockCache.remove(block);
+        removeCache(block);
 
         main.newChain()
                 .async(() -> {
@@ -94,11 +106,11 @@ public class BlockDataManager {
         });
     }
 
-    public void updateCaches(Runnable callback) { // customBlock
+    public void updateCaches(Runnable callback) {
         main.newChain()
                 .asyncFirst(() -> {
                     try {
-                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT * FROM block_data WHERE coordinate = ?;");
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT * FROM block_data WHERE coordinate LIKE ?;");
 
                         preparedStatement.setString(1, "%customBlock");
 
@@ -135,16 +147,26 @@ public class BlockDataManager {
                 .execute();
     }
 
-    public void addCachedValue(Block block, CustomBlock customBlock) {
-        if (customBlock == null) {
-            this.customBlockCache.remove(block);
+    public CustomBlock getCustomBlock(Block block) {
+        System.out.println("block = " + block);
+        return this.customBlockCache.get(block);
+    }
+
+    private void setCache(Block block, String key, String value) {
+        if (this.generalCache.containsKey(key)) {
+            this.generalCache.get(key).put(block, value);
         } else {
-            this.customBlockCache.put(block, customBlock);
+            this.generalCache.put(key, new HashMap<>(ImmutableMap.of(block, value)));
         }
     }
 
-    public CustomBlock getCustomBlock(Block block) {
-        return this.customBlockCache.get(block);
+    private void removeCache(Block block) {
+        this.generalCache.values().forEach(values -> values.remove(block));
+    }
+
+    private String getCache(Block block, String key) {
+        if (!this.generalCache.containsKey(key)) return null;
+        return this.generalCache.get(key).get(block);
     }
 
 }

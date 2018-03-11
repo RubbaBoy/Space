@@ -41,6 +41,7 @@ import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Weather;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -323,11 +324,12 @@ public class Main extends JavaPlugin implements Listener {
     public <T> TaskChain<T> newChain() {
         return this.taskChainFactory.newChain();
     }
+
     public <T> TaskChain<T> newSharedChain(String name) {
         return this.taskChainFactory.newSharedChain(name);
     }
 
-    @EventHandler
+//    @EventHandler
     public void onPlayerClick(PlayerInteractEvent event) {
 
         if (event.getHand() != EquipmentSlot.HAND) return;

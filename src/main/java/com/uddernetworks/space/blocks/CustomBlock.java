@@ -74,8 +74,10 @@ public abstract class CustomBlock extends IDHolder {
 
     public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
         main.getBlockDataManager().getData(blockInstance, "inventoryID", inventoryID -> {
-            if (inventoryID == null) {
+            System.out.println("inventoryID = " + inventoryID);
+            if (inventoryID == null || main.getGUIManager().getGUI(UUID.fromString(inventoryID)) == null) {
                 CustomGUI ret = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
+                System.out.println("ret = " + ret);
                 if (ret == null) return;
                 main.getBlockDataManager().setData(blockInstance, "inventoryID", ret.getUUID(), () -> customGUIConsumer.accept(ret));
             } else {
