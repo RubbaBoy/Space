@@ -3,14 +3,12 @@ package com.uddernetworks.space.guis;
 import com.uddernetworks.space.blocks.CryogenicContainerBlock;
 import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.main.Main;
-import com.uddernetworks.space.utils.ItemBuilder;
 import net.minecraft.server.v1_12_R1.EnumParticle;
 import net.minecraft.server.v1_12_R1.PacketPlayOutWorldParticles;
 import net.minecraft.server.v1_12_R1.TileEntityFurnace;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
@@ -18,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.UUID;
-import java.util.stream.IntStream;
 
 public class LiquidOxygenGeneratorGUI extends CustomGUI {
 
@@ -55,6 +52,17 @@ public class LiquidOxygenGeneratorGUI extends CustomGUI {
         }
 
         updateSlots();
+    }
+
+    @Override
+    public void setParentBlock(Block parentBlock) {
+        super.setParentBlock(parentBlock);
+
+        main.getBlockDataManager().getData(getParentBlock(), "inventoryContents", data -> {
+            System.out.println("data = " + data);
+            if (data == null) return;
+            getInventory().setContents(InventoryUtils.deserializeInventory(data));
+        });
     }
 
     private int removeFuel() {

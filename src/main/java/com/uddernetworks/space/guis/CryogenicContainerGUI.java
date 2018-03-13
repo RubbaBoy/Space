@@ -1,6 +1,7 @@
 package com.uddernetworks.space.guis;
 
 import com.uddernetworks.space.main.Main;
+import org.bukkit.block.Block;
 
 import java.util.UUID;
 
@@ -17,12 +18,18 @@ public class CryogenicContainerGUI extends CustomGUI {
 
         addSlot(new PopulatedSlot(46, false, progressBar.getItemStack(0)));
 
+        updateSlots();
+    }
+
+    @Override
+    public void setParentBlock(Block parentBlock) {
+        super.setParentBlock(parentBlock);
+
+        System.out.println("PARENT = " + getParentBlock());
         main.getBlockDataManager().increment(getParentBlock(), "cryogenicContainer", 0, newAmount -> {
             setFills(newAmount);
             updateFills();
         });
-
-        updateSlots();
     }
 
     public void setFills(int currentlyFilled) {

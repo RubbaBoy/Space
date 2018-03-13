@@ -48,6 +48,7 @@ public class BlockDataManager {
     }
 
     public void getData(Block block, String key, Consumer<String> callback) {
+        System.out.println("block = " + block);
         String cachedReturn = getCache(block, key);
 
         if (cachedReturn != null) {

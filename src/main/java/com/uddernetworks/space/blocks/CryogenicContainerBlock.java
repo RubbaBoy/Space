@@ -17,12 +17,12 @@ public class CryogenicContainerBlock extends CustomBlock {
 
     @Override
     boolean onBreak(Block block, Player player) {
-        return false;
+        return true;
     }
 
     @Override
     boolean onPrePlace(Block block, Player player) {
-        return false;
+        return true;
     }
 
     @Override

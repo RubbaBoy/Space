@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +99,22 @@ public class CustomGUI implements InventoryHolder, Listener {
                         if (slot.getSlotAction().takeOut(slot.getIndex(), event.getCurrentItem())) {
                             event.setCancelled(false);
                             event.setResult(Event.Result.ALLOW);
+
+//                            Bukkit.getScheduler().runTaskLater(main, () -> {
+                                ItemStack[] itemStacks = inventory.getContents().clone();
+                                itemStacks[slot.getIndex()] = event.getCurrentItem().clone();
+
+                                main.getBlockDataManager().setData(getParentBlock(), "inventoryContents", InventoryUtils.serializeInventory(itemStacks), () -> {});
+//                            }, 1L);
                         }
                     } else {
                         if (slot.getSlotAction().putIn(slot.getIndex(), event.getCursor())) {
                             event.setCancelled(false);
                             event.setResult(Event.Result.ALLOW);
+
+                            ItemStack[] itemStacks = inventory.getContents().clone();
+                            itemStacks[slot.getIndex()] = event.getCursor().clone();
+                            main.getBlockDataManager().setData(getParentBlock(), "inventoryContents", InventoryUtils.serializeInventory(itemStacks), () -> {});
                         }
                     }
                 }
