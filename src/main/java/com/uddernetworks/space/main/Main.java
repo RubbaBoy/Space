@@ -273,6 +273,8 @@ public class Main extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        this.guiManager.saveInventories();
+
         this.guiManager.clearGUIs();
         Bukkit.getOnlinePlayers().stream().map(CraftPlayer.class::cast).forEach(this::remove);
 

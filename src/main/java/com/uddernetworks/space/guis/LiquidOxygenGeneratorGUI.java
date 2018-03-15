@@ -144,6 +144,6 @@ public class LiquidOxygenGeneratorGUI extends CustomGUI {
             }
 
             this.currentSmoke++;
-        }, 0L, 5L);
+        }, 1L, 5L);
     }
 }

@@ -4,6 +4,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class InventoryUtils {
@@ -31,6 +32,8 @@ public class InventoryUtils {
             List<ItemStack> itemStackList = (List<ItemStack>) yamlConfiguration.getList("items");
 
             System.out.println("itemStackList = " + itemStackList);
+
+            System.out.println("OTHER SHIT = \n\n" + Arrays.toString(itemStackList.toArray(new ItemStack[0])));
 
             return itemStackList.toArray(new ItemStack[0]);
         } catch (InvalidConfigurationException e) {

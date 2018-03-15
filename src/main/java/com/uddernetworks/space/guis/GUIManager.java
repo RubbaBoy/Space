@@ -43,4 +43,14 @@ public class GUIManager {
         guis.clear();
     }
 
+    public void saveInventories() {
+        this.guis.forEach(gui -> {
+            if (gui instanceof LiquidOxygenGeneratorGUI || gui instanceof AlloyMixerGUI) {
+                main.getBlockDataManager().setData(gui.getParentBlock(), "inventoryContents", InventoryUtils.serializeInventory(gui.getInventory().getContents()), () -> {
+                    System.out.println("Saved GUI: " + gui.getUUID());
+                });
+            }
+        });
+    }
+
 }
