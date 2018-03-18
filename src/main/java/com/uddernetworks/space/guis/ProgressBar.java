@@ -21,6 +21,8 @@ public class ProgressBar {
         percentage = Math.min(100, percentage / 100);
         percentage = percentage * damages.length;
 
+        System.out.println("Samage = " + damages[(int) Math.round(percentage)]);
+
         return ItemBuilder.from(material).setDamage(damages[(int) Math.round(percentage)]).setUnbreakable(true).addFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     }
 

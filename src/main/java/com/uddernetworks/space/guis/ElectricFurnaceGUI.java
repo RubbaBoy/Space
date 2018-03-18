@@ -3,8 +3,10 @@ package com.uddernetworks.space.guis;
 import com.uddernetworks.space.blocks.AnimatedBlock;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.utils.FastTask;
+import net.minecraft.server.v1_12_R1.PacketPlayOutSetSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
@@ -16,23 +18,26 @@ public class ElectricFurnaceGUI extends CustomGUI {
     private double update = 1;
     private double speedInSeconds = 5;
     private boolean processing = false;
-//    private ProgressBar progressBar;
+    private ProgressBar progressBar;
     private FastTask task;
     private FastTask task2;
     private int windowID;
     private AnimatedBlock animatedBlock;
+
+    private int adding = 1;
+    private int index = 0;
 
     public ElectricFurnaceGUI(Main main, String title, int size, UUID uuid) {
         super(main, title, size, uuid, GUIItems.ELECTRIC_FURNACE_MAIN);
 
         this.main = main;
 
-//        this.progressBar = main.getProgressBarManager().getProgressBar("ElectricFurnaceBar");
+        this.progressBar = main.getProgressBarManager().getProgressBar("ElectricFurnaceBar");
         this.animatedBlock = (AnimatedBlock) main.getCustomIDManager().getCustomBlockById(115);
 
-//        addSlot(new PopulatedSlot(46, false, progressBar.getItemStack(0)));
+        addSlot(new PopulatedSlot(19, false, progressBar.getItemStack(0)));
 
-        addSlot(new UnsettableSlot(49, this::updateDoing));
+//        addSlot(new UnsettableSlot(49, this::updateDoing));
 
         SlotAction slotAction = new SlotAction() {
             @Override
@@ -56,6 +61,26 @@ public class ElectricFurnaceGUI extends CustomGUI {
         Bukkit.getScheduler().runTaskLater(main, () -> {
             this.animatedBlock.startAnimation(getParentBlock(), 2);
         }, 40L);
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
+            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 19, CraftItemStack.asNMSCopy(progressBar.getItemStack(index / 17D * 100D)));
+
+            getInventory().getViewers().stream()
+                    .map(player -> ((CraftPlayer) player).getHandle())
+                    .forEach(entityPlayer -> {
+                        System.out.println("Updating for: " + entityPlayer.displayName);
+                        entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot);
+                    });
+
+            index += adding;
+
+            if ((adding > 0 && index >= 17) || (adding < 0 && index < 0)) {
+                adding *= -1;
+
+                index += adding;
+            }
+
+        }, 0L, 2L);
     }
 
     private int getWindowID() {

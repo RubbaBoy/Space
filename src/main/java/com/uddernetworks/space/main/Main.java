@@ -152,6 +152,12 @@ public class Main extends JavaPlugin implements Listener {
 
         this.progressBarManager.addProgressBar(new ProgressBar("CryogenicContainerBar", Material.DIAMOND_HOE, damages2));
 
+        int[] damages3 = new int[17];
+
+        for (int i = 0; i < 17; i++) damages3[i] = i + 111 + 122 + 151;
+
+        this.progressBarManager.addProgressBar(new ProgressBar("ElectricFurnaceBar", Material.DIAMOND_HOE, damages3));
+
         this.customIDManager = new CustomIDManager(this);
 
         /* GUIs */
@@ -196,7 +202,7 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 37, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator"));
         this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 115, Material.DIAMOND_HOE, new short[] {38, 39, 40, 41, 42, 43}, Material.WHITE_SHULKER_BOX, "Electric Furnace", () -> {
             System.out.println("Creating new GUI");
-            return getGUIManager().addGUI(new ElectricFurnaceGUI(this, "Electric Furnace", 54, UUID.randomUUID()));
+            return getGUIManager().addGUI(new ElectricFurnaceGUI(this, "Electric Furnace", 27, UUID.randomUUID()));
         }));
 
         /* Recipes */
@@ -338,7 +344,7 @@ public class Main extends JavaPlugin implements Listener {
         return this.taskChainFactory.newSharedChain(name);
     }
 
-//    @EventHandler
+    //    @EventHandler
     public void onPlayerClick(PlayerInteractEvent event) {
 
         if (event.getHand() != EquipmentSlot.HAND) return;
