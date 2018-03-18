@@ -17,7 +17,6 @@ import com.uddernetworks.space.items.CustomIDManager;
 import com.uddernetworks.space.items.CustomItemManager;
 import com.uddernetworks.space.items.EasyShapedRecipe;
 import com.uddernetworks.space.recipies.AlloyMixerRecipe;
-import com.uddernetworks.space.recipies.ElectricFurnaceRecipe;
 import com.uddernetworks.space.recipies.RecipeManager;
 import com.uddernetworks.space.recipies.WorkbenchRecipe;
 import com.uddernetworks.space.utils.FastTaskTracker;
@@ -37,10 +36,8 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Weather;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,15 +45,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.*;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.io.File;
@@ -157,6 +154,12 @@ public class Main extends JavaPlugin implements Listener {
         for (int i = 0; i < 17; i++) damages3[i] = i + 111 + 122 + 151;
 
         this.progressBarManager.addProgressBar(new ProgressBar("ElectricFurnaceBar", Material.DIAMOND_HOE, damages3));
+
+        int[] damages4 = new int[23];
+
+        for (int i = 0; i < 23; i++) damages4[i] = i + 111 + 122 + 151 + 17;
+
+        this.progressBarManager.addProgressBar(new ProgressBar("FurnaceArrowBar", Material.DIAMOND_HOE, damages4));
 
         this.customIDManager = new CustomIDManager(this);
 

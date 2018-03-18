@@ -18,7 +18,8 @@ public class ElectricFurnaceGUI extends CustomGUI {
     private double update = 1;
     private double speedInSeconds = 5;
     private boolean processing = false;
-    private ProgressBar progressBar;
+    private ProgressBar fuelProgress;
+    private ProgressBar arrowProgress;
     private FastTask task;
     private FastTask task2;
     private int windowID;
@@ -27,15 +28,21 @@ public class ElectricFurnaceGUI extends CustomGUI {
     private int adding = 1;
     private int index = 0;
 
+    private int adding2 = 1;
+    private int index2 = 0;
+
     public ElectricFurnaceGUI(Main main, String title, int size, UUID uuid) {
         super(main, title, size, uuid, GUIItems.ELECTRIC_FURNACE_MAIN);
 
         this.main = main;
 
-        this.progressBar = main.getProgressBarManager().getProgressBar("ElectricFurnaceBar");
+        this.fuelProgress = main.getProgressBarManager().getProgressBar("ElectricFurnaceBar");
+        this.arrowProgress = main.getProgressBarManager().getProgressBar("FurnaceArrowBar");
+
         this.animatedBlock = (AnimatedBlock) main.getCustomIDManager().getCustomBlockById(115);
 
-        addSlot(new PopulatedSlot(19, false, progressBar.getItemStack(0)));
+        addSlot(new PopulatedSlot(19, false, fuelProgress.getItemStack(0)));
+        addSlot(new PopulatedSlot(20, false, arrowProgress.getItemStack(0)));
 
 //        addSlot(new UnsettableSlot(49, this::updateDoing));
 
@@ -63,12 +70,12 @@ public class ElectricFurnaceGUI extends CustomGUI {
         }, 40L);
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
-            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 19, CraftItemStack.asNMSCopy(progressBar.getItemStack(index / 17D * 100D)));
+            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 19, CraftItemStack.asNMSCopy(fuelProgress.getItemStack(index / 17D * 100D)));
 
             getInventory().getViewers().stream()
                     .map(player -> ((CraftPlayer) player).getHandle())
                     .forEach(entityPlayer -> {
-                        System.out.println("Updating for: " + entityPlayer.displayName);
+//                        System.out.println("Updating for: " + entityPlayer.displayName);
                         entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot);
                     });
 
@@ -78,6 +85,29 @@ public class ElectricFurnaceGUI extends CustomGUI {
                 adding *= -1;
 
                 index += adding;
+            }
+
+        }, 0L, 2L);
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
+
+//            System.out.println("index2 = " + index2);
+
+            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 20, CraftItemStack.asNMSCopy(arrowProgress.getItemStack(index2 / 23D * 100D)));
+
+            getInventory().getViewers().stream()
+                    .map(player -> ((CraftPlayer) player).getHandle())
+                    .forEach(entityPlayer -> {
+//                        System.out.println("Updating for: " + entityPlayer.displayName);
+                        entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot);
+                    });
+
+            index2 += adding2;
+
+            if ((adding2 > 0 && index2 >= 23) || (adding2 < 0 && index2 < 0)) {
+                adding2 *= -1;
+
+                index2 += adding2;
             }
 
         }, 0L, 2L);
@@ -98,7 +128,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
 //            this.task = new FastTask(main).runRepeatingTask(true, () -> {
 //                if (!this.processing) return;
 //
-//                PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 46, CraftItemStack.asNMSCopy(progressBar.getItemStack(amount)));
+//                PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 46, CraftItemStack.asNMSCopy(fuelProgress.getItemStack(amount)));
 //
 //                amount += update;
 //
@@ -177,7 +207,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
     }
 
     private void resetMeter() {
-//        PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 46, CraftItemStack.asNMSCopy(progressBar.getItemStack(0)));
+//        PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 46, CraftItemStack.asNMSCopy(fuelProgress.getItemStack(0)));
 //
 //        getInventory().getViewers().stream()
 //                .map(player -> ((CraftPlayer) player).getHandle())
