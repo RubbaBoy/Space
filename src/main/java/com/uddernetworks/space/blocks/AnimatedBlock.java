@@ -35,7 +35,7 @@ public class AnimatedBlock extends CustomBlock {
         this.damages = damages;
     }
 
-    // Speed is the time it takes for one full animation
+    // Speed is the time it takes for one full animation in seconds
     public void startAnimation(Block block, double speed) {
         System.out.println("block = " + block);
         currentCycleIndex.put(block, new MutableInt().setLoopbackCap(damages.length - 1));

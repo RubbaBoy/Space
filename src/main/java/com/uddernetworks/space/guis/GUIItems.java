@@ -9,7 +9,8 @@ public enum GUIItems {
     WORKBENCH(new GUIItem(45, false, Material.DIAMOND_HOE, 4)),
     ALLOY_MIXER_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 5)),
     CRYOGENIC_CONTAINER_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 6)),
-    LIQUID_OXYGEN_GENERATOR_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 7));
+    LIQUID_OXYGEN_GENERATOR_MAIN(new GUIItem(45, false, Material.DIAMOND_HOE, 7)),
+    ELECTRIC_FURNACE_MAIN(new GUIItem(18, false, Material.DIAMOND_HOE, 8));
 
 
     private GUIItem[] guiItems;

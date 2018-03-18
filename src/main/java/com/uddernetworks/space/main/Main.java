@@ -11,15 +11,13 @@ import com.uddernetworks.space.command.SpaceCommand;
 import com.uddernetworks.space.database.DatabaseManager;
 import com.uddernetworks.space.entities.CustomEntities;
 import com.uddernetworks.space.entities.CustomEntityTest;
-import com.uddernetworks.space.guis.AlloyMixerGUI;
-import com.uddernetworks.space.guis.GUIManager;
-import com.uddernetworks.space.guis.ProgressBar;
-import com.uddernetworks.space.guis.ProgressBarManager;
+import com.uddernetworks.space.guis.*;
 import com.uddernetworks.space.items.BasicItem;
 import com.uddernetworks.space.items.CustomIDManager;
 import com.uddernetworks.space.items.CustomItemManager;
 import com.uddernetworks.space.items.EasyShapedRecipe;
 import com.uddernetworks.space.recipies.AlloyMixerRecipe;
+import com.uddernetworks.space.recipies.ElectricFurnaceRecipe;
 import com.uddernetworks.space.recipies.RecipeManager;
 import com.uddernetworks.space.recipies.WorkbenchRecipe;
 import com.uddernetworks.space.utils.FastTaskTracker;
@@ -28,6 +26,7 @@ import com.uddernetworks.space.utils.QuadConsumer;
 import com.uddernetworks.space.utils.Reflect;
 import io.netty.channel.*;
 import net.minecraft.server.v1_12_R1.*;
+import net.minecraft.server.v1_12_R1.Slot;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -188,13 +187,17 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new BasicBlock(this, 109, Material.DIAMOND_HOE, 30, Material.STONE, "Aluminum Ore"));
         this.customBlockManager.addCustomBlock(new BasicBlock(this, 110, Material.DIAMOND_HOE, 31, Material.WHITE_SHULKER_BOX, "Aluminum Block"));
         this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 111, Material.DIAMOND_HOE, new short[] {32, 33, 34}, Material.WHITE_SHULKER_BOX, "Alloy Mixer", () -> {
-            System.out.println("Creating new GUI");
+            System.out.println("Creating new AlloyMixer GUI");
             return getGUIManager().addGUI(new AlloyMixerGUI(this, "Alloy Mixer", 54, UUID.randomUUID()));
         }));
         this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 35, Material.GRAY_SHULKER_BOX, "Cryogenic Container"));
 
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 36, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator"));
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 37, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator"));
+        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 115, Material.DIAMOND_HOE, new short[] {38, 39, 40, 41, 42, 43}, Material.WHITE_SHULKER_BOX, "Electric Furnace", () -> {
+            System.out.println("Creating new GUI");
+            return getGUIManager().addGUI(new ElectricFurnaceGUI(this, "Electric Furnace", 54, UUID.randomUUID()));
+        }));
 
         /* Recipes */
 
@@ -211,6 +214,10 @@ public class Main extends JavaPlugin implements Listener {
         /* Alloy Mixer Recipes */
 
         this.recipeManager.addRecipe(new AlloyMixerRecipe(this, this.customItemManager.getCustomItem("Carbon").toItemStack(), ItemBuilder.itemFrom(Material.IRON_INGOT), this.customItemManager.getCustomItem("Steel").toItemStack()));
+
+        /* Electric Furnace Recipes */
+
+//        this.recipeManager.addRecipe(new ElectricFurnaceRecipe(this, null, null));
 
 
         EasyShapedRecipe icRecipe = new EasyShapedRecipe(this, "IC", 5, "   ", "CCC", "SSS");

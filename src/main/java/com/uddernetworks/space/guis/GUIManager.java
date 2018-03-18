@@ -1,7 +1,12 @@
 package com.uddernetworks.space.guis;
 
 import com.uddernetworks.space.main.Main;
+import net.minecraft.server.v1_12_R1.PacketPlayOutWindowData;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;

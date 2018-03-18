@@ -9,6 +9,7 @@ import net.minecraft.server.v1_12_R1.PacketPlayOutSetSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
