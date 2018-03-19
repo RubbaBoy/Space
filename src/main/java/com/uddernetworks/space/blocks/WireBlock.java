@@ -55,11 +55,6 @@ public class WireBlock extends CustomBlock {
         boolean eastWire = isBlockWire(east) && !east.equals(imagineDestroyed);
         boolean westWire = isBlockWire(west) && !west.equals(imagineDestroyed);
 
-        System.out.println("northWire = " + northWire);
-        System.out.println("southWire = " + southWire);
-        System.out.println("eastWire = " + eastWire);
-        System.out.println("westWire = " + westWire);
-
         if ((northWire || southWire) && !eastWire && !westWire) {
             setTypeTo(blockInstance, 118);
         } else if ((eastWire || westWire) && !northWire && !southWire) {
@@ -72,11 +67,9 @@ public class WireBlock extends CustomBlock {
             setTypeTo(blockInstance, 121);
         } else if ((northWire && eastWire) && !southWire && !westWire) {
             setTypeTo(blockInstance, 122);
-        }
-
-
-
-        else {
+        } else if (!northWire && !southWire && !eastWire && !westWire) {
+            setTypeTo(blockInstance, 116);
+        } else {
             setTypeTo(blockInstance, 123);
         }
 
