@@ -32,6 +32,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
@@ -170,17 +171,17 @@ public class Main extends JavaPlugin implements Listener {
 
         /* Items */
 
-        this.customItemManager.addCustomItem(new BasicItem(0, Material.DIAMOND_HOE, 51, "Carbon"));
-        this.customItemManager.addCustomItem(new BasicItem(1, Material.DIAMOND_HOE, 52, "Magnesium Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(2, Material.DIAMOND_HOE, 53, "Raw Silicon"));
-        this.customItemManager.addCustomItem(new BasicItem(3, Material.DIAMOND_HOE, 54, "Copper Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(4, Material.DIAMOND_HOE, 55, "Aluminum Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(5, Material.DIAMOND_HOE, 56, "IC"));
-        this.customItemManager.addCustomItem(new BasicItem(6, Material.DIAMOND_HOE, 57, "CPU"));
-        this.customItemManager.addCustomItem(new BasicItem(7, Material.DIAMOND_HOE, 58, "Steel"));
-        this.customItemManager.addCustomItem(new BasicItem(8, Material.DIAMOND_HOE, 59, "Liquid Oxygen Generator Engine"));
-        this.customItemManager.addCustomItem(new BasicItem(9, Material.DIAMOND_HOE, 60, "Liquid Hydrogen Generator Engine"));
-        this.customItemManager.addCustomItem(new BasicItem(10, Material.DIAMOND_HOE, 61, "Gear"));
+        this.customItemManager.addCustomItem(new BasicItem(0, Material.DIAMOND_HOE, 80, "Carbon"));
+        this.customItemManager.addCustomItem(new BasicItem(1, Material.DIAMOND_HOE, 81, "Magnesium Ingot"));
+        this.customItemManager.addCustomItem(new BasicItem(2, Material.DIAMOND_HOE, 82, "Raw Silicon"));
+        this.customItemManager.addCustomItem(new BasicItem(3, Material.DIAMOND_HOE, 83, "Copper Ingot"));
+        this.customItemManager.addCustomItem(new BasicItem(4, Material.DIAMOND_HOE, 84, "Aluminum Ingot"));
+        this.customItemManager.addCustomItem(new BasicItem(5, Material.DIAMOND_HOE, 85, "IC"));
+        this.customItemManager.addCustomItem(new BasicItem(6, Material.DIAMOND_HOE, 86, "CPU"));
+        this.customItemManager.addCustomItem(new BasicItem(7, Material.DIAMOND_HOE, 87, "Steel"));
+        this.customItemManager.addCustomItem(new BasicItem(8, Material.DIAMOND_HOE, 88, "Liquid Oxygen Generator Engine"));
+        this.customItemManager.addCustomItem(new BasicItem(9, Material.DIAMOND_HOE, 89, "Liquid Hydrogen Generator Engine"));
+        this.customItemManager.addCustomItem(new BasicItem(10, Material.DIAMOND_HOE, 90, "Gear"));
 
         /* Blocks */
 
@@ -207,6 +208,19 @@ public class Main extends JavaPlugin implements Listener {
             System.out.println("Creating new GUI");
             return getGUIManager().addGUI(new ElectricFurnaceGUI(this, "Electric Furnace", 27, UUID.randomUUID()));
         }));
+
+
+        /* DEBUG ONLY */
+
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 116, Material.DIAMOND_HOE, 44, Material.REDSTONE_BLOCK, "Wire"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 117, Material.DIAMOND_HOE, 45, Material.REDSTONE_BLOCK, "Wire Line X"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 118, Material.DIAMOND_HOE, 46, Material.REDSTONE_BLOCK, "Wire Line Z"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 119, Material.DIAMOND_HOE, 47, Material.REDSTONE_BLOCK, "Wire Turn SE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 120, Material.DIAMOND_HOE, 48, Material.REDSTONE_BLOCK, "Wire Turn SW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 121, Material.DIAMOND_HOE, 49, Material.REDSTONE_BLOCK, "Wire Turn NW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 122, Material.DIAMOND_HOE, 50, Material.REDSTONE_BLOCK, "Wire Turn NE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 123, Material.DIAMOND_HOE, 51, Material.REDSTONE_BLOCK, "Wire Cross"));
+
 
         /* Recipes */
 
@@ -374,7 +388,9 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
+    public void onPlayerMove(PlayerInteractEvent event) {
+
+        Location location = event.getClickedBlock().getLocation();
 
 //        System.out.println("pitch = " + event.getPlayer().getLocation().getPitch());
 //        System.out.println("yaw = " + event.getPlayer().getLocation().getYaw());

@@ -47,7 +47,7 @@ public class AnimatedBlock extends CustomBlock {
 
 //            setAnimation(block, damages[currentIndex]);
 
-            main.getCustomBlockManager().setBlockData(block.getWorld().getPlayers().get(0), block, getMaterial(), damages[currentIndex]);
+            main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damages[currentIndex]);
 
             currentCycleIndex.get(block).increment();
         }, 0, Double.valueOf(speed / damages.length * 20).longValue());

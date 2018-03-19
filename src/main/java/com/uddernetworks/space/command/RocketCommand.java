@@ -12,6 +12,7 @@ import com.uddernetworks.space.items.IDHolder;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.nbt.NBTItem;
 import com.uddernetworks.space.utils.ItemBuilder;
+import net.minecraft.server.v1_12_R1.BlockStepAbstract;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
@@ -150,14 +151,10 @@ public class RocketCommand {
     @Argument(format = "stuff")
     public void stuff(CommandSender sender, ArgumentList args) {
         Player player = (Player) sender;
-//        player.getInventory().setHelmet(player.getInventory().getItemInMainHand());
 
-        ItemStack item = main.getCustomItemManager().getCustomItem("Copper Ingot").toItemStack();
 
-        NBTItem nbtItem = new NBTItem(item);
-        nbtItem.getTag().setInt("random", ThreadLocalRandom.current().nextInt());
 
-        player.getInventory().setItemInMainHand(nbtItem.toItemStack());
+
     }
 
 

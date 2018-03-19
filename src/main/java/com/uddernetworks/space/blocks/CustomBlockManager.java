@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftCreatureSpawner;
@@ -105,16 +106,17 @@ public class CustomBlockManager implements Listener {
 
         if (customBlock == null) return;
 
-            customBlock.spawnParticles(block);
+        customBlock.spawnParticles(block);
 
-            if (player.getGameMode() != GameMode.CREATIVE) block.getWorld().dropItemNaturally(block.getLocation(), customBlock.toItemStack());
+        if (player.getGameMode() != GameMode.CREATIVE) block.getWorld().dropItemNaturally(block.getLocation(), customBlock.toItemStack());
 
         if (!customBlock.onBreak(block, player)) {
             event.setCancelled(true);
             return;
         }
 
-        main.getBlockDataManager().deleteData(block, () -> {});
+        main.getBlockDataManager().deleteData(block, () -> {
+        });
 
 //        block.setMetadata("inventoryID", new FixedMetadataValue(main, new ArrayList<>()));
 //        block.setMetadata("material", new FixedMetadataValue(main, new ArrayList<>()));
@@ -207,7 +209,7 @@ public class CustomBlockManager implements Listener {
         main.getBlockDataManager().setData(toPlaceBlock, "customBlock", customBlock.getID(), () -> {
             sendArmSwing(player, event.getHand());
 
-            setBlockData(player, finalToPlaceBlock, customBlock.getMaterial(), customBlock.getDamage());
+            setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), customBlock.getDamage());
 
             customBlock.onPlace(finalToPlaceBlock, player);
         });
@@ -215,7 +217,7 @@ public class CustomBlockManager implements Listener {
         event.setCancelled(true);
     }
 
-    public void setBlockData(Player player, Block toPlaceBlock, Material material, short damage) {
+    public void setBlockData(World world, Block toPlaceBlock, Material material, short damage) {
         toPlaceBlock.setType(Material.MOB_SPAWNER);
 
         CreatureSpawner cs = (CreatureSpawner) toPlaceBlock.getState();
@@ -228,9 +230,7 @@ public class CustomBlockManager implements Listener {
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
         nbtTagCompound.setShort("RequiredPlayerRange", (short) 0);
 
-        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-
-        EntityArmorStand entityArmorStand = new EntityArmorStand(entityPlayer.getWorld(), toPlaceBlock.getX(), toPlaceBlock.getY(), toPlaceBlock.getZ());
+        EntityArmorStand entityArmorStand = new EntityArmorStand(((CraftWorld) world).getHandle(), toPlaceBlock.getX(), toPlaceBlock.getY(), toPlaceBlock.getZ());
 
         mobSpawnerAbstract.spawnDelay = 0;
 

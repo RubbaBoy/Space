@@ -17,6 +17,8 @@ import java.util.function.Consumer;
 
 public class BlockDataManager {
 
+    private static final boolean POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK = true;
+
     private Main main;
     private Map<Block, CustomBlock> customBlockCache = new HashMap<>();
     private Map<String, Map<Block, String>> generalCache = new HashMap<>();
@@ -32,6 +34,8 @@ public class BlockDataManager {
             setCache(block, key, value.toString());
         }
 
+        if (POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK) callback.run();
+
         main.newChain()
                 .async(() -> {
                     try {
@@ -43,7 +47,9 @@ public class BlockDataManager {
                         e.printStackTrace();
                     }
                 })
-                .sync(callback::run)
+                .sync(() -> {
+                    if (!POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK) callback.run();
+                })
                 .execute();
     }
 
