@@ -67,7 +67,7 @@ public class WireBlock extends CustomBlock {
             setTypeTo(blockInstance, 121);
         } else if ((northWire && eastWire) && !southWire && !westWire) {
             setTypeTo(blockInstance, 122);
-        } else if (!northWire && !southWire && !eastWire && !westWire) {
+        } else if (!northWire && !southWire) {
             setTypeTo(blockInstance, 116);
         } else {
             setTypeTo(blockInstance, 123);
