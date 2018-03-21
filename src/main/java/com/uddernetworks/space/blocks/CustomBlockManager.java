@@ -3,6 +3,7 @@ package com.uddernetworks.space.blocks;
 import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.utils.ItemBuilder;
+import com.uddernetworks.space.utils.MutableInt;
 import com.uddernetworks.space.utils.Reflect;
 import net.minecraft.server.v1_12_R1.*;
 import org.apache.commons.lang.StringUtils;
@@ -201,15 +202,17 @@ public class CustomBlockManager implements Listener {
         }
         if (toPlaceBlock == null || !toPlaceBlock.isEmpty()) return;
 
-        if (!customBlock.onPrePlace(toPlaceBlock, player)) return;
+        BlockPrePlace blockPrePlace = new BlockPrePlace(customBlock.getID(), customBlock.getDamage());
+
+        if (!customBlock.onPrePlace(toPlaceBlock, player, blockPrePlace)) return;
 
         if (player.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount() - 1);
 
         Block finalToPlaceBlock = toPlaceBlock;
-        main.getBlockDataManager().setData(toPlaceBlock, "customBlock", customBlock.getID(), () -> {
+        main.getBlockDataManager().setData(toPlaceBlock, "customBlock", blockPrePlace.getId(), () -> {
             sendArmSwing(player, event.getHand());
 
-            setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), customBlock.getDamage());
+            setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), (short) blockPrePlace.getDamage());
 
             customBlock.onPlace(finalToPlaceBlock, player);
         });
@@ -218,6 +221,7 @@ public class CustomBlockManager implements Listener {
     }
 
     public void setBlockData(World world, Block toPlaceBlock, Material material, short damage) {
+        System.out.println(material.name() + ":  " + damage);
         toPlaceBlock.setType(Material.MOB_SPAWNER);
 
         CreatureSpawner cs = (CreatureSpawner) toPlaceBlock.getState();
@@ -248,6 +252,8 @@ public class CustomBlockManager implements Listener {
 
         NBTTagCompound nbttagcompound1;
 
+        System.out.println(net.minecraft.server.v1_12_R1.Item.getById(material.getId()));
+
         net.minecraft.server.v1_12_R1.ItemStack itemstack = new net.minecraft.server.v1_12_R1.ItemStack(net.minecraft.server.v1_12_R1.Item.getById(material.getId()));
 
         nbttagcompound1 = new NBTTagCompound();
@@ -269,6 +275,8 @@ public class CustomBlockManager implements Listener {
         pose.set("Head", var1);
 
         nbt.set("Pose", pose);
+
+//        System.out.println("nbt = " + nbt);
 
         entityArmorStand.a(nbt);
 
@@ -293,5 +301,32 @@ public class CustomBlockManager implements Listener {
         stopSpamingCrap.setShort("SpawnRange", (short) 0);
 
         mobSpawnerAbstract.a(stopSpamingCrap);
+    }
+
+
+    class BlockPrePlace {
+        private int id;
+        private int damage;
+
+        public BlockPrePlace(int id, int damage) {
+            this.id = id;
+            this.damage = damage;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getDamage() {
+            return damage;
+        }
+
+        public void setDamage(int damage) {
+            this.damage = damage;
+        }
     }
 }

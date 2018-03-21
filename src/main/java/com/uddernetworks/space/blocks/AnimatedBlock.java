@@ -19,44 +19,84 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AnimatedBlock extends CustomBlock {
 
 //    private Consumer<Player> openInventory;
 
-    private short[] damages;
+    private short[][] damages;
+    private Map<Block, short[]> animations = new HashMap<>();
     private Map<Block, BukkitTask> fastTasks = new HashMap<>();
+    private Map<Block, Double> speeds = new HashMap<>();
     private Map<Block, MutableInt> currentCycleIndex = new HashMap<>();
 
     public AnimatedBlock(Main main, int id, Material material, short[] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
-        super(main, id, material, damages[0], particle, name, customGUISupplier);
+        this(main, id, material, new short[][] {damages}, particle, name, customGUISupplier);
+    }
+
+    public AnimatedBlock(Main main, int id, Material material, short[][] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
+        super(main, id, material, damages[0][0], particle, name, customGUISupplier);
 
         this.damages = damages;
+    }
+
+    public void setDamages(Block block, short[] damages) {
+        this.animations.put(block, damages);
+
+        if (fastTasks.containsKey(block)) {
+            fastTasks.get(block).cancel();
+            fastTasks.remove(block);
+
+            startAnimation(block, speeds.get(block));
+        }
     }
 
     // Speed is the time it takes for one full animation in seconds
     public void startAnimation(Block block, double speed) {
         System.out.println("block = " + block);
-        currentCycleIndex.put(block, new MutableInt().setLoopbackCap(damages.length - 1));
+        speeds.put(block, speed);
 
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(main, () -> {
-            int currentIndex = currentCycleIndex.get(block).getValue();
+        if (fastTasks.containsKey(block)) {
+            fastTasks.get(block).cancel();
+            fastTasks.remove(block);
+        }
 
-            if (block.getWorld().getPlayers().size() <= 0) return;
+        getBlockDamages(block, blockDamages -> {
+            currentCycleIndex.put(block, new MutableInt().setLoopbackCap(blockDamages.length - 1));
 
-//            setAnimation(block, damages[currentIndex]);
+            BukkitTask task = Bukkit.getScheduler().runTaskTimer(main, () -> {
+                int currentIndex = currentCycleIndex.get(block).getValue();
 
-            main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damages[currentIndex]);
+                if (block.getWorld().getPlayers().size() <= 0) return;
 
-            currentCycleIndex.get(block).increment();
-        }, 0, Double.valueOf(speed / damages.length * 20).longValue());
+                main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), blockDamages[currentIndex]);
 
-//        FastTask task = new FastTask(main).runRepeatingTask(false, () -> {
+                currentCycleIndex.get(block).increment();
+            }, 0, Double.valueOf(speed / blockDamages.length * 20).longValue());
 
-//        }, 0, speed / damages.length);
+            fastTasks.put(block, task);
+        });
+    }
 
-        fastTasks.put(block, task);
+    public void getBlockDamages(Block block, Consumer<short[]> callback) {
+        if (animations.containsKey(block)) {
+            callback.accept(animations.get(block));
+        } else {
+            main.getBlockDataManager().getData(block, "direction", directionString -> {
+                if (directionString == null) {
+                    animations.put(block, damages[0]);
+                    callback.accept(damages[0]);
+                    return;
+                }
+
+                int direction = Integer.valueOf(directionString);
+
+                animations.put(block, damages[direction]);
+                callback.accept(damages[direction]);
+            });
+        }
     }
 
     public void stopAnimation(Block block) {
@@ -68,24 +108,14 @@ public class AnimatedBlock extends CustomBlock {
 
     public void resetAnimation(Block block) {
         stopAnimation(block);
-        setAnimation(block, damages[0]);
+
+        getBlockDamages(block, damages -> setAnimation(block, damages[0]));
     }
 
     public void setAnimation(Block block, int data) {
-
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.sendBlockChange(block.getLocation(), block.getType(), (byte) data);
         });
-
-//        World world = ((CraftWorld) block.getLocation().getWorld()).getHandle();
-//        BlockPosition blockPosition = new BlockPosition(block.getX(), block.getY(), block.getZ());
-//
-//        PacketPlayOutBlockChange packetPlayOutBlockChange = new PacketPlayOutBlockChange(world, blockPosition);
-//
-//        int combined = block.getTypeId() + (data << 12);
-//        packetPlayOutBlockChange.block = net.minecraft.server.v1_12_R1.Block.getByCombinedId(combined);
-//
-//        Bukkit.getOnlinePlayers().stream().map(CraftPlayer.class::cast).map(CraftPlayer::getHandle).forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutBlockChange));
     }
 
 
@@ -95,7 +125,7 @@ public class AnimatedBlock extends CustomBlock {
     }
 
     @Override
-    boolean onPrePlace(Block block, Player player) {
+    boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
         return true;
     }
 

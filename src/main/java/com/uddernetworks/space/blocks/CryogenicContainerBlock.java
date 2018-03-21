@@ -21,7 +21,7 @@ public class CryogenicContainerBlock extends CustomBlock {
     }
 
     @Override
-    boolean onPrePlace(Block block, Player player) {
+    boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
         return true;
     }
 

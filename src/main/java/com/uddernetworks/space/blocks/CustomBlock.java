@@ -55,6 +55,10 @@ public abstract class CustomBlock extends IDHolder {
         return name;
     }
 
+    public Supplier<CustomGUI> getCustomGUISupplier() {
+        return customGUISupplier;
+    }
+
     @Override
     public ItemStack toItemStack() {
         return staticDrop.clone();
@@ -62,7 +66,7 @@ public abstract class CustomBlock extends IDHolder {
 
     abstract boolean onBreak(Block block, Player player);
 
-    abstract boolean onPrePlace(Block block, Player player);
+    abstract boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace);
 
     abstract void onPlace(Block block, Player player);
 

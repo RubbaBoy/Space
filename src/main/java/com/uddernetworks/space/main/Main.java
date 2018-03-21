@@ -204,7 +204,8 @@ public class Main extends JavaPlugin implements Listener {
 
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 36, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator"));
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 37, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator"));
-        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 115, Material.DIAMOND_HOE, new short[] {38, 39, 40, 41, 42, 43}, Material.WHITE_SHULKER_BOX, "Electric Furnace", () -> {
+//        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 115, Material.DIAMOND_HOE, new short[] {38, 39, 40, 41, 42, 43}, Material.WHITE_SHULKER_BOX, "Electric Furnace", );
+        this.customBlockManager.addCustomBlock(new DirectionalBlock(this, 115, Material.DIAMOND_AXE, new short[][] {{61, 62, 63, 64, 65, 66}, {67, 68, 69, 70, 71, 72}, {73, 74, 75, 76, 77, 78}, {79, 80, 81, 82, 83, 84}}, Material.WHITE_SHULKER_BOX, "Electric Furnace", () -> {
             System.out.println("Creating new GUI");
             return getGUIManager().addGUI(new ElectricFurnaceGUI(this, "Electric Furnace", 27, UUID.randomUUID()));
         }));
@@ -390,7 +391,7 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerInteractEvent event) {
 
-        Location location = event.getClickedBlock().getLocation();
+//        Location location = event.getClickedBlock().getLocation();
 
 //        System.out.println("pitch = " + event.getPlayer().getLocation().getPitch());
 //        System.out.println("yaw = " + event.getPlayer().getLocation().getYaw());
