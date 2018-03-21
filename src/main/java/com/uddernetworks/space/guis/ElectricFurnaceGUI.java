@@ -5,6 +5,7 @@ import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.utils.FastTask;
 import net.minecraft.server.v1_12_R1.PacketPlayOutSetSlot;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -65,10 +66,6 @@ public class ElectricFurnaceGUI extends CustomGUI {
 
         updateSlots();
 
-        Bukkit.getScheduler().runTaskLater(main, () -> {
-            this.animatedBlock.startAnimation(getParentBlock(), 2);
-        }, 40L);
-
         Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
             PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 19, CraftItemStack.asNMSCopy(fuelProgress.getItemStack(index / 17D * 100D)));
 
@@ -111,6 +108,14 @@ public class ElectricFurnaceGUI extends CustomGUI {
             }
 
         }, 0L, 2L);
+    }
+
+    @Override
+    public void setParentBlock(Block parentBlock) {
+        super.setParentBlock(parentBlock);
+
+        // For testing
+        this.animatedBlock.startAnimation(getParentBlock(), 2);
     }
 
     private int getWindowID() {

@@ -26,7 +26,7 @@ public class AnimatedBlock extends CustomBlock {
 
 //    private Consumer<Player> openInventory;
 
-    private short[][] damages;
+    short[][] damages;
     private Map<Block, short[]> animations = new HashMap<>();
     private Map<Block, BukkitTask> fastTasks = new HashMap<>();
     private Map<Block, Double> speeds = new HashMap<>();
@@ -43,6 +43,7 @@ public class AnimatedBlock extends CustomBlock {
     }
 
     public void setDamages(Block block, short[] damages) {
+        System.out.println("AnimatedBlock.setDamages");
         this.animations.put(block, damages);
 
         if (fastTasks.containsKey(block)) {
@@ -121,6 +122,12 @@ public class AnimatedBlock extends CustomBlock {
 
     @Override
     boolean onBreak(Block block, Player player) {
+        if (fastTasks.containsKey(block)) {
+            System.out.println("Cancelling stuffffffffffff");
+            fastTasks.get(block).cancel();
+            fastTasks.remove(block);
+        }
+
         return true;
     }
 

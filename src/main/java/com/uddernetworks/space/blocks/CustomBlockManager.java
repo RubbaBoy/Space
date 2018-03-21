@@ -204,24 +204,34 @@ public class CustomBlockManager implements Listener {
 
         BlockPrePlace blockPrePlace = new BlockPrePlace(customBlock.getID(), customBlock.getDamage());
 
+        Block finalToPlaceBlock = toPlaceBlock;
+        Runnable runnable = () -> {
+            if (player.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount() - 1);
+
+//            Block finalToPlaceBlock = finalToPlaceBlock;
+            main.getBlockDataManager().setData(finalToPlaceBlock, "customBlock", blockPrePlace.getId(), () -> {
+                sendArmSwing(player, event.getHand());
+
+                setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), (short) blockPrePlace.getDamage());
+
+                customBlock.onPlace(finalToPlaceBlock, player);
+            });
+
+            event.setCancelled(true);
+        };
+
+        blockPrePlace.setCallback(runnable);
+
         if (!customBlock.onPrePlace(toPlaceBlock, player, blockPrePlace)) return;
 
-        if (player.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount() - 1);
-
-        Block finalToPlaceBlock = toPlaceBlock;
-        main.getBlockDataManager().setData(toPlaceBlock, "customBlock", blockPrePlace.getId(), () -> {
-            sendArmSwing(player, event.getHand());
-
-            setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), (short) blockPrePlace.getDamage());
-
-            customBlock.onPlace(finalToPlaceBlock, player);
-        });
-
-        event.setCancelled(true);
+        if (blockPrePlace.isUsingCallback()) {
+            event.setCancelled(true);
+        } else {
+            runnable.run();
+        }
     }
 
     public void setBlockData(World world, Block toPlaceBlock, Material material, short damage) {
-        System.out.println(material.name() + ":  " + damage);
         toPlaceBlock.setType(Material.MOB_SPAWNER);
 
         CreatureSpawner cs = (CreatureSpawner) toPlaceBlock.getState();
@@ -251,8 +261,6 @@ public class CustomBlockManager implements Listener {
         }
 
         NBTTagCompound nbttagcompound1;
-
-        System.out.println(net.minecraft.server.v1_12_R1.Item.getById(material.getId()));
 
         net.minecraft.server.v1_12_R1.ItemStack itemstack = new net.minecraft.server.v1_12_R1.ItemStack(net.minecraft.server.v1_12_R1.Item.getById(material.getId()));
 
@@ -307,6 +315,8 @@ public class CustomBlockManager implements Listener {
     class BlockPrePlace {
         private int id;
         private int damage;
+        private boolean usingCallback = false;
+        private Runnable callback;
 
         public BlockPrePlace(int id, int damage) {
             this.id = id;
@@ -327,6 +337,22 @@ public class CustomBlockManager implements Listener {
 
         public void setDamage(int damage) {
             this.damage = damage;
+        }
+
+        public boolean isUsingCallback() {
+            return usingCallback;
+        }
+
+        public void setUsingCallback(boolean usingCallback) {
+            this.usingCallback = usingCallback;
+        }
+
+        public void setCallback(Runnable callback) {
+            this.callback = callback;
+        }
+
+        public Runnable getCallback() {
+            return callback;
         }
     }
 }

@@ -14,60 +14,64 @@ import java.util.function.Supplier;
 public class DirectionalBlock extends AnimatedBlock {
 
     // N S E W
-    private short[][] damages;
+//    private short[][] damages;
     private static final BlockFace[] axis = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 
     public DirectionalBlock(Main main, int id, Material material, short[][] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
-        super(main, id, material, damages[0], particle, name, customGUISupplier);
-        this.damages = damages;
+        super(main, id, material, damages, particle, name, customGUISupplier);
     }
 
     @Override
     boolean onBreak(Block block, Player player) {
+        super.onBreak(block, player);
         return true;
     }
 
     @Override
     boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
+        int direction = Math.round(player.getLocation().getYaw() / 90f) & 0x3;
+
+        BlockFace blockFace = axis[direction].getOppositeFace();
+
+        System.out.println("Direction = " + axis[direction]);
+
+        System.out.println("damages = " + Arrays.deepToString(damages));
+
+        int index = 0;
+
+        switch (blockFace) {
+            case NORTH:
+                index = 0;
+                break;
+            case SOUTH:
+                index = 1;
+                break;
+            case EAST:
+                index = 2;
+                break;
+            case WEST:
+                index = 3;
+                break;
+        }
+
+        setDamages(block, damages[index]);
+
+        main.getBlockDataManager().setData(block, "direction", index, () -> {});
+
+        blockPrePlace.setUsingCallback(true);
+
+        getBlockDamages(block, damages -> {
+            setTypeTo(block, damages[0]);
+            blockPrePlace.setDamage(damages[0]);
+            blockPrePlace.getCallback().run();
+        });
+
         return true;
     }
 
     @Override
     void onPlace(Block block, Player player) {
-        int direction = Math.round(player.getLocation().getYaw() / 90f) & 0x3;
 
-        main.getBlockDataManager().setData(block, "direction", direction, () -> {});
-
-//        System.out.println("raw dir = " + direction);
-        System.out.println("Direction = " + axis[direction]);
-
-        System.out.println("damages = " + Arrays.deepToString(damages));
-
-//        System.out.println();
-        switch (axis[direction].getOppositeFace()) {
-            case NORTH:
-                System.out.println("NORTH");
-                setDamages(block, damages[0]);
-                break;
-            case SOUTH:
-                System.out.println("SOUTH");
-                setDamages(block, damages[1]);
-                break;
-            case EAST:
-                System.out.println("EAST");
-                setDamages(block, damages[2]);
-                break;
-            case WEST:
-                System.out.println("WEST");
-                setDamages(block, damages[3]);
-                break;
-        }
-
-//        System.out.println(Arrays.toString(getBlockDamages(block)));
-
-        getBlockDamages(block, damages -> {
-            setTypeTo(block, damages[0]);
-        });
     }
 
     @Override
