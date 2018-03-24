@@ -13,9 +13,11 @@ import java.util.function.Supplier;
 
 public class DirectionalBlock extends AnimatedBlock {
 
-    // N S E W
-//    private short[][] damages;
     private static final BlockFace[] axis = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+
+    public DirectionalBlock(Main main, int id, Material material, short[] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
+        super(main, id, material, damages, particle, name, customGUISupplier);
+    }
 
     public DirectionalBlock(Main main, int id, Material material, short[][] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
         super(main, id, material, damages, particle, name, customGUISupplier);
@@ -56,7 +58,8 @@ public class DirectionalBlock extends AnimatedBlock {
 
         setDamages(block, damages[index]);
 
-        main.getBlockDataManager().setData(block, "direction", index, () -> {});
+        main.getBlockDataManager().setData(block, "direction", index, () -> {
+        });
 
         blockPrePlace.setUsingCallback(true);
 

@@ -13,7 +13,7 @@ import java.util.List;
 public class WireBlock extends CustomBlock {
 
     public WireBlock(Main main, int id, Material material, int damage, Material particle, String name) {
-        super(main, id, material, damage, particle, name, null);
+        super(main, id, material, damage, false, particle, name, null);
     }
 
     @Override

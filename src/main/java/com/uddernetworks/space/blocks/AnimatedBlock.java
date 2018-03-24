@@ -2,17 +2,10 @@ package com.uddernetworks.space.blocks;
 
 import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.main.Main;
-import com.uddernetworks.space.utils.FastTask;
 import com.uddernetworks.space.utils.MutableInt;
-import net.minecraft.server.v1_12_R1.BlockPosition;
-import net.minecraft.server.v1_12_R1.IBlockData;
-import net.minecraft.server.v1_12_R1.PacketPlayOutBlockChange;
-import net.minecraft.server.v1_12_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitTask;
@@ -37,7 +30,7 @@ public class AnimatedBlock extends CustomBlock {
     }
 
     public AnimatedBlock(Main main, int id, Material material, short[][] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
-        super(main, id, material, damages[0][0], particle, name, customGUISupplier);
+        super(main, id, material, damages[0][0], false, particle, name, customGUISupplier);
 
         this.damages = damages;
     }

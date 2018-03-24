@@ -12,7 +12,7 @@ import java.util.UUID;
 public class LiquidOxygenGeneratorBlock extends CustomBlock {
 
     public LiquidOxygenGeneratorBlock(Main main, int id, Material material, int damage, Material particle, String name) {
-        super(main, id, material, damage, particle, name, () -> main.getGUIManager().addGUI(new LiquidOxygenGeneratorGUI(main, "Liquid Oxygen Generator", 54, UUID.randomUUID())));
+        super(main, id, material, damage, false, particle, name, () -> main.getGUIManager().addGUI(new LiquidOxygenGeneratorGUI(main, "Liquid Oxygen Generator", 54, UUID.randomUUID())));
     }
 
     @Override

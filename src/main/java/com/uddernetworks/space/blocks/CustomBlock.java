@@ -3,7 +3,6 @@ package com.uddernetworks.space.blocks;
 import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.items.IDHolder;
 import com.uddernetworks.space.main.Main;
-import com.uddernetworks.space.utils.Debugger;
 import com.uddernetworks.space.utils.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -13,10 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -26,16 +22,18 @@ public abstract class CustomBlock extends IDHolder {
     Main main;
     private Material material;
     private short damage;
+    private boolean electrical;
     private Material particle;
     private String name;
     private ItemStack staticDrop;
     private Supplier<CustomGUI> customGUISupplier;
 
-    public CustomBlock(Main main, int id, Material material, int damage, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
+    public CustomBlock(Main main, int id, Material material, int damage, boolean electrical, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
         super(id);
         this.main = main;
         this.material = material;
         this.damage = (short) damage;
+        this.electrical = electrical;
         this.particle = particle;
         this.name = name;
         this.customGUISupplier = customGUISupplier;
@@ -57,6 +55,10 @@ public abstract class CustomBlock extends IDHolder {
 
     public Supplier<CustomGUI> getCustomGUISupplier() {
         return customGUISupplier;
+    }
+
+    public boolean isElectrical() {
+        return electrical;
     }
 
     @Override

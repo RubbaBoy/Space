@@ -16,6 +16,7 @@ import com.uddernetworks.space.items.BasicItem;
 import com.uddernetworks.space.items.CustomIDManager;
 import com.uddernetworks.space.items.CustomItemManager;
 import com.uddernetworks.space.items.EasyShapedRecipe;
+import com.uddernetworks.space.meta.EnhancedMetadataManager;
 import com.uddernetworks.space.recipies.AlloyMixerRecipe;
 import com.uddernetworks.space.recipies.RecipeManager;
 import com.uddernetworks.space.recipies.WorkbenchRecipe;
@@ -32,7 +33,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
@@ -48,7 +48,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
@@ -60,7 +59,6 @@ import org.bukkit.util.Vector;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static org.bukkit.Material.AIR;
 
@@ -74,12 +72,13 @@ public class Main extends JavaPlugin implements Listener {
     private CustomIDManager customIDManager;
     private DatabaseManager databaseManager;
     private BlockDataManager blockDataManager;
+    private EnhancedMetadataManager enhancedMetadataManager;
 
     private TaskChainFactory taskChainFactory;
 
-    private HashMap<UUID, Vector> velocities;
-    private HashMap<UUID, Location> positions;
-    private HashMap<UUID, Boolean> onGround;
+    private Map<UUID, Vector> velocities;
+    private Map<UUID, Location> positions;
+    private Map<UUID, Boolean> onGround;
     private FastTaskTracker fastTaskTracker;
 
     private Map<Class<? extends Container>, QuadConsumer<Container, EntityHuman, Integer, ItemStackHolder>> clickActions = new HashMap<>();
@@ -127,6 +126,7 @@ public class Main extends JavaPlugin implements Listener {
         this.customItemManager = new CustomItemManager(this);
         this.customBlockManager = new CustomBlockManager(this);
         this.fastTaskTracker = new FastTaskTracker(this);
+        this.enhancedMetadataManager = new EnhancedMetadataManager(this);
 
         getServer().getPluginManager().registerEvents(this, this);
 
@@ -164,11 +164,6 @@ public class Main extends JavaPlugin implements Listener {
 
         this.customIDManager = new CustomIDManager(this);
 
-        /* GUIs */
-
-//        this.guiManager.addGUI(new Workbench(this, "WorkbenchBlock", 54));
-//        this.guiManager.addGUI(new AlloyMixerGUI(this, "AlloyMixer", 54));
-
         /* Items */
 
         this.customItemManager.addCustomItem(new BasicItem(0, Material.DIAMOND_HOE, 80, "Carbon"));
@@ -185,42 +180,42 @@ public class Main extends JavaPlugin implements Listener {
 
         /* Blocks */
 
-        this.customBlockManager.addCustomBlock(new WorkbenchBlock(this, 100, Material.DIAMOND_HOE, 21, Material.WOOL, "Spaceship Workbench"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 101, Material.DIAMOND_HOE, 22, Material.STONE, "Carbon Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 102, Material.DIAMOND_HOE, 23, Material.BLACK_SHULKER_BOX, "Carbon Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 103, Material.DIAMOND_HOE, 24, Material.STONE, "Magnesium Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 104, Material.DIAMOND_HOE, 25, Material.GRAY_SHULKER_BOX, "Magnesium Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 105, Material.DIAMOND_HOE, 26, Material.STONE, "Silicon Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 106, Material.DIAMOND_HOE, 27, Material.GRAY_SHULKER_BOX, "Silicon Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 107, Material.DIAMOND_HOE, 28, Material.STONE, "Copper Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 108, Material.DIAMOND_HOE, 29, Material.ORANGE_SHULKER_BOX, "Copper Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 109, Material.DIAMOND_HOE, 30, Material.STONE, "Aluminum Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 110, Material.DIAMOND_HOE, 31, Material.WHITE_SHULKER_BOX, "Aluminum Block"));
-        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 111, Material.DIAMOND_HOE, new short[] {32, 33, 34}, Material.WHITE_SHULKER_BOX, "Alloy Mixer", () -> {
+        this.customBlockManager.addCustomBlock(new DirectionalBlock(this, 100, Material.DIAMOND_HOE, new short[][] {{21}, {22}, {23}, {24}}, Material.WOOL, "Spaceship Workbench", () -> getGUIManager().addGUI(new Workbench(this, "Workbench", 54, UUID.randomUUID()))));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 101, Material.DIAMOND_HOE, 25, Material.STONE, "Carbon Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 102, Material.DIAMOND_HOE, 26, Material.BLACK_SHULKER_BOX, "Carbon Block"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 103, Material.DIAMOND_HOE, 27, Material.STONE, "Magnesium Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 104, Material.DIAMOND_HOE, 28, Material.GRAY_SHULKER_BOX, "Magnesium Block"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 105, Material.DIAMOND_HOE, 29, Material.STONE, "Silicon Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 106, Material.DIAMOND_HOE, 30, Material.GRAY_SHULKER_BOX, "Silicon Block"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 107, Material.DIAMOND_HOE, 31, Material.STONE, "Copper Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 108, Material.DIAMOND_HOE, 32, Material.ORANGE_SHULKER_BOX, "Copper Block"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 109, Material.DIAMOND_HOE, 33, Material.STONE, "Aluminum Ore"));
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 110, Material.DIAMOND_HOE, 34, Material.WHITE_SHULKER_BOX, "Aluminum Block"));
+        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 111, Material.DIAMOND_HOE, new short[] {35, 36, 37}, Material.WHITE_SHULKER_BOX, "Alloy Mixer", () -> {
             System.out.println("Creating new AlloyMixer GUI");
             return getGUIManager().addGUI(new AlloyMixerGUI(this, "Alloy Mixer", 54, UUID.randomUUID()));
         }));
-        this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 35, Material.GRAY_SHULKER_BOX, "Cryogenic Container"));
+        this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 38, Material.GRAY_SHULKER_BOX, "Cryogenic Container"));
 
-        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 36, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator"));
-        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 37, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator"));
-//        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 115, Material.DIAMOND_HOE, new short[] {38, 39, 40, 41, 42, 43}, Material.WHITE_SHULKER_BOX, "Electric Furnace", );
+        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 39, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator"));
+        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 40, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator"));
         this.customBlockManager.addCustomBlock(new DirectionalBlock(this, 115, Material.DIAMOND_AXE, new short[][] {{61, 62, 63, 64, 65, 66}, {67, 68, 69, 70, 71, 72}, {73, 74, 75, 76, 77, 78}, {79, 80, 81, 82, 83, 84}}, Material.WHITE_SHULKER_BOX, "Electric Furnace", () -> {
             System.out.println("Creating new GUI");
             return getGUIManager().addGUI(new ElectricFurnaceGUI(this, "Electric Furnace", 27, UUID.randomUUID()));
         }));
+        this.customBlockManager.addCustomBlock(new GeneratorBlock(this, 116, Material.DIAMOND_HOE, new short[][] {{41}, {41}, {41}, {41}}, Material.ORANGE_SHULKER_BOX, "Generator"));
 
 
         /* DEBUG ONLY */
 
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 116, Material.DIAMOND_HOE, 44, Material.REDSTONE_BLOCK, "Wire"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 117, Material.DIAMOND_HOE, 45, Material.REDSTONE_BLOCK, "Wire Line X"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 118, Material.DIAMOND_HOE, 46, Material.REDSTONE_BLOCK, "Wire Line Z"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 119, Material.DIAMOND_HOE, 47, Material.REDSTONE_BLOCK, "Wire Turn SE"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 120, Material.DIAMOND_HOE, 48, Material.REDSTONE_BLOCK, "Wire Turn SW"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 121, Material.DIAMOND_HOE, 49, Material.REDSTONE_BLOCK, "Wire Turn NW"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 122, Material.DIAMOND_HOE, 50, Material.REDSTONE_BLOCK, "Wire Turn NE"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 123, Material.DIAMOND_HOE, 51, Material.REDSTONE_BLOCK, "Wire Cross"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 117, Material.DIAMOND_HOE, 44, Material.REDSTONE_BLOCK, "Wire"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 118, Material.DIAMOND_HOE, 45, Material.REDSTONE_BLOCK, "Wire Line X"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 119, Material.DIAMOND_HOE, 46, Material.REDSTONE_BLOCK, "Wire Line Z"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 120, Material.DIAMOND_HOE, 47, Material.REDSTONE_BLOCK, "Wire Turn SE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 121, Material.DIAMOND_HOE, 48, Material.REDSTONE_BLOCK, "Wire Turn SW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 122, Material.DIAMOND_HOE, 49, Material.REDSTONE_BLOCK, "Wire Turn NW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 123, Material.DIAMOND_HOE, 50, Material.REDSTONE_BLOCK, "Wire Turn NE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 124, Material.DIAMOND_HOE, 51, Material.REDSTONE_BLOCK, "Wire Cross"));
 
 
         /* Recipes */
@@ -354,6 +349,10 @@ public class Main extends JavaPlugin implements Listener {
         return blockDataManager;
     }
 
+    public EnhancedMetadataManager getEnhancedMetadataManager() {
+        return enhancedMetadataManager;
+    }
+
     public <T> TaskChain<T> newChain() {
         return this.taskChainFactory.newChain();
     }
@@ -362,30 +361,51 @@ public class Main extends JavaPlugin implements Listener {
         return this.taskChainFactory.newSharedChain(name);
     }
 
-    //    @EventHandler
+//    //    @EventHandler
+//    public void onPlayerClick(PlayerInteractEvent event) {
+//
+//        if (event.getHand() != EquipmentSlot.HAND) return;
+//
+//        if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.AIR) return;
+//
+//        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+//
+//            blockDataManager.getData(event.getClickedBlock(), "intKey", result -> {
+//                event.getPlayer().sendMessage(ChatColor.GOLD + "Data for block is: " + result);
+//            });
+//
+//        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+//
+//            int data = ThreadLocalRandom.current().nextInt(10000);
+//
+//            blockDataManager.setData(event.getClickedBlock(), "intKey", data, () -> {
+//                event.getPlayer().sendMessage(ChatColor.GOLD + "SET data for block: " + ChatColor.RED + data);
+//            });
+//
+//        }
+//
+//        event.setCancelled(true);
+//    }
+
+    private Block block;
+
+    @EventHandler
     public void onPlayerClick(PlayerInteractEvent event) {
-
         if (event.getHand() != EquipmentSlot.HAND) return;
-
-        if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.AIR) return;
+        if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.STICK) return;
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            event.setCancelled(true);
 
-            blockDataManager.getData(event.getClickedBlock(), "intKey", result -> {
-                event.getPlayer().sendMessage(ChatColor.GOLD + "Data for block is: " + result);
-            });
+            block = event.getClickedBlock();
 
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            event.setCancelled(true);
 
-            int data = ThreadLocalRandom.current().nextInt(10000);
-
-            blockDataManager.setData(event.getClickedBlock(), "intKey", data, () -> {
-                event.getPlayer().sendMessage(ChatColor.GOLD + "SET data for block: " + ChatColor.RED + data);
-            });
-
+            event.getPlayer().sendMessage("Clicked Type = " + event.getClickedBlock().getType());
+            event.getPlayer().sendMessage("Type = " + block.getType());
         }
 
-        event.setCancelled(true);
     }
 
     @EventHandler
