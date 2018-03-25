@@ -3,6 +3,7 @@ package com.uddernetworks.space.blocks;
 import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.items.IDHolder;
 import com.uddernetworks.space.main.Main;
+import com.uddernetworks.space.meta.EnhancedMetadata;
 import com.uddernetworks.space.utils.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -23,6 +24,7 @@ public abstract class CustomBlock extends IDHolder {
     private Material material;
     private short damage;
     private boolean electrical;
+    private int defaultInputPower;
     private Material particle;
     private String name;
     private ItemStack staticDrop;
@@ -57,8 +59,66 @@ public abstract class CustomBlock extends IDHolder {
         return customGUISupplier;
     }
 
+    public void setElectrical(boolean electrical) {
+        this.electrical = electrical;
+    }
+
     public boolean isElectrical() {
         return electrical;
+    }
+
+    public void setDefaultInputPower(int defaultInputPower) {
+        this.defaultInputPower = defaultInputPower;
+    }
+
+    /**
+     * The power required for the block
+     */
+    public int getPower() {
+        return this.defaultInputPower;
+    }
+
+    /**
+     * The power that the block is currently receiving
+     */
+    public int getPower(Block blockInstance) {
+        EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
+
+        return (int) enhancedMetadata.getData("currentPower", this.defaultInputPower);
+    }
+
+    /**
+     * Sets the power the block is currently receiving
+     */
+    public void setPower(Block blockInstance, int power) {
+        EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
+
+        enhancedMetadata.setData("currentPower", power);
+    }
+
+    /**
+     * The power the block outputs
+     */
+    public int getOutputPower(Block blockInstance) {
+        EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
+
+        return (int) enhancedMetadata.getData("outputPower", -1);
+    }
+
+    /**
+     * Sets the amount of power the block outputs
+     */
+    public boolean setOutputPower(Block blockInstance, int power) {
+        EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
+
+        int currentPower = (int) enhancedMetadata.getData("outputPower", -1);
+
+        if (currentPower != power) {
+            enhancedMetadata.setData("outputPower", power);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

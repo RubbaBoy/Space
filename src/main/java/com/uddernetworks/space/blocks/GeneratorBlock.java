@@ -1,8 +1,8 @@
 package com.uddernetworks.space.blocks;
 
-import com.uddernetworks.space.guis.CryogenicContainerGUI;
 import com.uddernetworks.space.guis.GeneratorGUI;
 import com.uddernetworks.space.main.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -14,10 +14,12 @@ public class GeneratorBlock extends DirectionalBlock {
 
     public GeneratorBlock(Main main, int id, Material material, short[][] damages, Material particle, String name) {
         super(main, id, material, damages, particle, name, () -> main.getGUIManager().addGUI(new GeneratorGUI(main, "Generator", 54, UUID.randomUUID())));
+        setElectrical(true);
     }
 
     @Override
     boolean onBreak(Block block, Player player) {
+        main.getCircuitMapManager().removeBlock(block);
         return true;
     }
 
@@ -28,7 +30,12 @@ public class GeneratorBlock extends DirectionalBlock {
 
     @Override
     void onPlace(Block block, Player player) {
+        main.getCircuitMapManager().addBlock(block);
 
+        Bukkit.getScheduler().runTaskLater(main, () -> {
+            System.out.println("Setting powered");
+            setPowered(block, true);
+        }, 40L);
     }
 
     @Override
@@ -41,16 +48,9 @@ public class GeneratorBlock extends DirectionalBlock {
         return true;
     }
 
-    public void addFill(Block block) {
-        main.getBlockDataManager().increment(block, "cryogenicContainer", 1, newValue -> getGUI(block, gui -> {
-            CryogenicContainerGUI cryogenicContainerGUI = (CryogenicContainerGUI) gui;
-            cryogenicContainerGUI.setFills(newValue);
-            cryogenicContainerGUI.updateFills();
-        }));
-    }
-
     public void setPowered(Block block, boolean powered) {
-        // Powered status uses MetaData because it's much faster and doesn't matter if it's persistant
+        // Powered status uses EnhancedMetadata because it's much faster and doesn't matter if it's persistent
 
+        setOutputPower(block, powered ? 7000 : 0);
     }
 }

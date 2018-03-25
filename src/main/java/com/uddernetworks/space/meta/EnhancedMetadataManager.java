@@ -29,8 +29,11 @@ public class EnhancedMetadataManager implements Listener {
 
     public EnhancedMetadata getMetadata(Block block, boolean defaultMutable) {
         PersistantBlock currentBlock = new PersistantBlock(block);
+        System.out.println("defaultMutable = " + defaultMutable);
         if (defaultMutable) {
             EnhancedMetadata enhancedMetadata = getRaw(block, null);
+
+            System.out.println("enhancedMetadata = " + enhancedMetadata);
 
             if (enhancedMetadata == null) {
                 enhancedMetadata = new EnhancedMetadata();
@@ -50,9 +53,13 @@ public class EnhancedMetadataManager implements Listener {
 
     private EnhancedMetadata getRaw(Block block, EnhancedMetadata def) {
         for (PersistantBlock persistantBlock : this.metadataHashMap.keySet()) {
-            if (persistantBlock.equals(block)) return this.metadataHashMap.get(persistantBlock);
+            if (persistantBlock.equals(block)) {
+                System.out.println("Retting not default");
+                return this.metadataHashMap.get(persistantBlock);
+            }
         }
 
+        System.out.println("Retting default");
         return def;
     }
 

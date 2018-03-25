@@ -1,6 +1,7 @@
 package com.uddernetworks.space.blocks;
 
 import com.uddernetworks.space.main.Main;
+import com.uddernetworks.space.meta.EnhancedMetadata;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -13,7 +14,7 @@ import java.util.List;
 public class WireBlock extends CustomBlock {
 
     public WireBlock(Main main, int id, Material material, int damage, Material particle, String name) {
-        super(main, id, material, damage, false, particle, name, null);
+        super(main, id, material, damage, true, particle, name, null);
     }
 
     @Override
@@ -21,6 +22,7 @@ public class WireBlock extends CustomBlock {
         List<Block> list = new ArrayList<>();
         list.add(block);
         updateState(block, list, block);
+        main.getCircuitMapManager().removeBlock(block);
         return true;
     }
 
@@ -32,6 +34,7 @@ public class WireBlock extends CustomBlock {
     @Override
     void onPlace(Block block, Player player) {
         updateState(block, new ArrayList<>(), null);
+        main.getCircuitMapManager().addBlock(block);
     }
 
     @Override
@@ -56,21 +59,21 @@ public class WireBlock extends CustomBlock {
         boolean westWire = isBlockWire(west) && !west.equals(imagineDestroyed);
 
         if ((northWire || southWire) && !eastWire && !westWire) {
-            setTypeTo(blockInstance, 118);
-        } else if ((eastWire || westWire) && !northWire && !southWire) {
-            setTypeTo(blockInstance, 117);
-        } else if ((southWire && eastWire) && !northWire && !westWire) {
             setTypeTo(blockInstance, 119);
-        } else if ((southWire && westWire) && !northWire && !eastWire) {
+        } else if ((eastWire || westWire) && !northWire && !southWire) {
+            setTypeTo(blockInstance, 118);
+        } else if ((southWire && eastWire) && !northWire && !westWire) {
             setTypeTo(blockInstance, 120);
-        } else if ((northWire && westWire) && !southWire && !eastWire) {
+        } else if ((southWire && westWire) && !northWire && !eastWire) {
             setTypeTo(blockInstance, 121);
-        } else if ((northWire && eastWire) && !southWire && !westWire) {
+        } else if ((northWire && westWire) && !southWire && !eastWire) {
             setTypeTo(blockInstance, 122);
-        } else if (!northWire && !southWire) {
-            setTypeTo(blockInstance, 116);
-        } else {
+        } else if ((northWire && eastWire) && !southWire && !westWire) {
             setTypeTo(blockInstance, 123);
+        } else if (!northWire && !southWire) {
+            setTypeTo(blockInstance, 117);
+        } else {
+            setTypeTo(blockInstance, 124);
         }
 
         if (northWire && !updatedBlocks.contains(north)) {
@@ -95,11 +98,13 @@ public class WireBlock extends CustomBlock {
     }
 
     private void setTypeTo(Block block, int customBlockID) {
-        main.getCustomBlockManager().setBlockData(block.getWorld(), block, Material.DIAMOND_HOE, main.getCustomIDManager().getCustomBlockById(customBlockID).getDamage());
+        System.out.println("customBlockID = " + customBlockID);
+        System.out.println("Damage = " + main.getCustomIDManager().getCustomBlockById(customBlockID).getDamage());
+        main.getCustomBlockManager().setBlockData(block.getWorld(), block, Material.DIAMOND_AXE, main.getCustomIDManager().getCustomBlockById(customBlockID).getDamage());
     }
 
     private boolean isBlockWire(Block block) {
-        return main.getBlockDataManager().getCustomBlock(block) instanceof WireBlock;
+        return main.getBlockDataManager().getCustomBlock(block) != null && main.getBlockDataManager().getCustomBlock(block).isElectrical();
     }
 
 }

@@ -9,6 +9,7 @@ import com.uddernetworks.space.blocks.*;
 import com.uddernetworks.space.command.RocketCommand;
 import com.uddernetworks.space.command.SpaceCommand;
 import com.uddernetworks.space.database.DatabaseManager;
+import com.uddernetworks.space.electricity.CircuitMapManager;
 import com.uddernetworks.space.entities.CustomEntities;
 import com.uddernetworks.space.entities.CustomEntityTest;
 import com.uddernetworks.space.guis.*;
@@ -37,6 +38,8 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -73,6 +76,7 @@ public class Main extends JavaPlugin implements Listener {
     private DatabaseManager databaseManager;
     private BlockDataManager blockDataManager;
     private EnhancedMetadataManager enhancedMetadataManager;
+    private CircuitMapManager circuitMapManager;
 
     private TaskChainFactory taskChainFactory;
 
@@ -104,6 +108,8 @@ public class Main extends JavaPlugin implements Listener {
 
         this.blockDataManager = new BlockDataManager(this);
         this.blockDataManager.updateCaches(null);
+
+        this.circuitMapManager = new CircuitMapManager(this);
 
         clickActions.put(ContainerAnvil.class, this::containerAnvil);
         clickActions.put(ContainerBeacon.class, this::containerBeacon);
@@ -208,14 +214,14 @@ public class Main extends JavaPlugin implements Listener {
 
         /* DEBUG ONLY */
 
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 117, Material.DIAMOND_HOE, 44, Material.REDSTONE_BLOCK, "Wire"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 118, Material.DIAMOND_HOE, 45, Material.REDSTONE_BLOCK, "Wire Line X"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 119, Material.DIAMOND_HOE, 46, Material.REDSTONE_BLOCK, "Wire Line Z"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 120, Material.DIAMOND_HOE, 47, Material.REDSTONE_BLOCK, "Wire Turn SE"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 121, Material.DIAMOND_HOE, 48, Material.REDSTONE_BLOCK, "Wire Turn SW"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 122, Material.DIAMOND_HOE, 49, Material.REDSTONE_BLOCK, "Wire Turn NW"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 123, Material.DIAMOND_HOE, 50, Material.REDSTONE_BLOCK, "Wire Turn NE"));
-        this.customBlockManager.addCustomBlock(new WireBlock(this, 124, Material.DIAMOND_HOE, 51, Material.REDSTONE_BLOCK, "Wire Cross"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 117, Material.DIAMOND_AXE, 1, Material.REDSTONE_BLOCK, "Wire"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 118, Material.DIAMOND_AXE, 2, Material.REDSTONE_BLOCK, "Wire Line X"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 119, Material.DIAMOND_AXE, 3, Material.REDSTONE_BLOCK, "Wire Line Z"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 120, Material.DIAMOND_AXE, 4, Material.REDSTONE_BLOCK, "Wire Turn SE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 121, Material.DIAMOND_AXE, 5, Material.REDSTONE_BLOCK, "Wire Turn SW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 122, Material.DIAMOND_AXE, 6, Material.REDSTONE_BLOCK, "Wire Turn NW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 123, Material.DIAMOND_AXE, 7, Material.REDSTONE_BLOCK, "Wire Turn NE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 124, Material.DIAMOND_AXE, 8, Material.REDSTONE_BLOCK, "Wire Cross"));
 
 
         /* Recipes */
@@ -353,6 +359,10 @@ public class Main extends JavaPlugin implements Listener {
         return enhancedMetadataManager;
     }
 
+    public CircuitMapManager getCircuitMapManager() {
+        return circuitMapManager;
+    }
+
     public <T> TaskChain<T> newChain() {
         return this.taskChainFactory.newChain();
     }
@@ -387,7 +397,8 @@ public class Main extends JavaPlugin implements Listener {
 //        event.setCancelled(true);
 //    }
 
-    private Block block;
+    private List<Block> blocks = new ArrayList<>();
+    private List<ArmorStand> armorStands = new ArrayList<>();
 
     @EventHandler
     public void onPlayerClick(PlayerInteractEvent event) {
@@ -397,13 +408,43 @@ public class Main extends JavaPlugin implements Listener {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
 
-            block = event.getClickedBlock();
+            blocks.remove(event.getClickedBlock());
+            blocks.add(event.getClickedBlock());
 
-        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            event.setCancelled(true);
+            event.getPlayer().sendMessage(ChatColor.GOLD + "Added block");
+        } else if (event.getAction() == Action.RIGHT_CLICK_AIR) {
+            event.getPlayer().sendMessage(ChatColor.GOLD + "Showing power levels");
 
-            event.getPlayer().sendMessage("Clicked Type = " + event.getClickedBlock().getType());
-            event.getPlayer().sendMessage("Type = " + block.getType());
+            armorStands.forEach(ArmorStand::remove);
+            armorStands.clear();
+
+            for (Block block : blocks) {
+                CustomBlock customBlock = blockDataManager.getCustomBlock(block);
+
+                if (customBlock == null) return;
+
+                ArmorStand armorStand = (ArmorStand) event.getPlayer().getWorld().spawnEntity(block.getLocation().add(0.5, -1, 0.5), EntityType.ARMOR_STAND);
+                armorStand.setVisible(false);
+                armorStand.setGravity(false);
+                armorStand.setCustomNameVisible(true);
+                armorStand.setCustomName(ChatColor.GOLD + "Output: " + customBlock.getOutputPower(block));
+
+                armorStands.add(armorStand);
+
+                ArmorStand armorStand2 = (ArmorStand) event.getPlayer().getWorld().spawnEntity(block.getLocation().add(0.5, -1.3, 0.5), EntityType.ARMOR_STAND);
+                armorStand2.setVisible(false);
+                armorStand2.setGravity(false);
+                armorStand2.setCustomNameVisible(true);
+                armorStand2.setCustomName(ChatColor.RED + "Power: " + customBlock.getPower(block));
+
+                armorStands.add(armorStand2);
+            }
+
+        } else if (event.getAction() == Action.LEFT_CLICK_AIR) {
+            event.getPlayer().sendMessage(ChatColor.GOLD + "Cleared ArmorStands");
+
+            armorStands.forEach(ArmorStand::remove);
+            armorStands.clear();
         }
 
     }
