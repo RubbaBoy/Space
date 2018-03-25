@@ -98,8 +98,6 @@ public class WireBlock extends CustomBlock {
     }
 
     private void setTypeTo(Block block, int customBlockID) {
-        System.out.println("customBlockID = " + customBlockID);
-        System.out.println("Damage = " + main.getCustomIDManager().getCustomBlockById(customBlockID).getDamage());
         main.getCustomBlockManager().setBlockData(block.getWorld(), block, Material.DIAMOND_AXE, main.getCustomIDManager().getCustomBlockById(customBlockID).getDamage());
     }
 

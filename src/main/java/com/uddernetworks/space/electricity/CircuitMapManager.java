@@ -34,9 +34,13 @@ public class CircuitMapManager {
 
             if (circuitMap == null) continue;
 
+            System.out.println("=========== FOUND CIRCUIT MAP ON " + blockFace.name() + " SIDEEE!!!!!");
+
             circuitMap.addBlock(block);
             return;
         }
+
+        System.out.println("Making new circuit map!!!!!!!!!!!!!! ------------------------------------");
 
         this.circuitMaps.add(new CircuitMap(main, block));
     }

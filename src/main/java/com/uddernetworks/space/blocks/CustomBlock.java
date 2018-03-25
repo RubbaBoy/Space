@@ -6,6 +6,7 @@ import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.meta.EnhancedMetadata;
 import com.uddernetworks.space.utils.ItemBuilder;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,6 +25,7 @@ public abstract class CustomBlock extends IDHolder {
     private Material material;
     private short damage;
     private boolean electrical;
+    private boolean wantPower = false;
     private int defaultInputPower;
     private Material particle;
     private String name;
@@ -65,6 +67,14 @@ public abstract class CustomBlock extends IDHolder {
 
     public boolean isElectrical() {
         return electrical;
+    }
+
+    public boolean wantPower() {
+        return wantPower;
+    }
+
+    public void setWantPower(boolean wantPower) {
+        this.wantPower = wantPower;
     }
 
     public void setDefaultInputPower(int defaultInputPower) {

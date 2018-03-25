@@ -30,12 +30,13 @@ public class GeneratorBlock extends DirectionalBlock {
 
     @Override
     void onPlace(Block block, Player player) {
+        setPowered(block, true);
         main.getCircuitMapManager().addBlock(block);
 
-        Bukkit.getScheduler().runTaskLater(main, () -> {
-            System.out.println("Setting powered");
-            setPowered(block, true);
-        }, 40L);
+//        Bukkit.getScheduler().runTaskLater(main, () -> {
+//            System.out.println("Setting powered");
+//            setPowered(block, true);
+//        }, 40L);
     }
 
     @Override

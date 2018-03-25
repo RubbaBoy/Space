@@ -24,7 +24,7 @@ public class EnhancedMetadataManager implements Listener {
     }
 
     public EnhancedMetadata getMetadata(Block block) {
-        return getMetadata(block, false);
+        return getMetadata(block, true);
     }
 
     public EnhancedMetadata getMetadata(Block block, boolean defaultMutable) {
