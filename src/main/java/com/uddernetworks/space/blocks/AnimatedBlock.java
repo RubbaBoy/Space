@@ -49,7 +49,6 @@ public class AnimatedBlock extends CustomBlock {
 
     // Speed is the time it takes for one full animation in seconds
     public void startAnimation(Block block, double speed) {
-        System.out.println("block = " + block);
         speeds.put(block, speed);
 
         if (fastTasks.containsKey(block)) {

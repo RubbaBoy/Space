@@ -2,8 +2,11 @@ package com.uddernetworks.space.electricity;
 
 import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.main.Main;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +20,8 @@ public class CircuitMap {
     private List<Block> generatingBlocks = new ArrayList<>();
     private List<Block> wireBlocks = new ArrayList<>();
 
+    private List<ArmorStand> armorStands = new ArrayList<>();
+
     public CircuitMap(Main main, Block block) {
         this.main = main;
         this.blocks.add(block);
@@ -24,8 +29,18 @@ public class CircuitMap {
     }
 
     public void updatePower() {
+        updatePower(null);
+    }
+
+    public void updatePower(Block exclude) {
         powerHungryBlocks.clear();
         generatingBlocks.clear();
+        wireBlocks.clear();
+
+        basePower = 0;
+
+        armorStands.forEach(ArmorStand::remove);
+        armorStands.clear();
 
         for (Block block : new ArrayList<>(this.blocks)) {
             addBlocksNear(block);
@@ -33,9 +48,9 @@ public class CircuitMap {
 
         for (Block block : new ArrayList<>(this.blocks)) {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
-            if (customBlock == null || !customBlock.isElectrical()) {
+            if (customBlock == null || !customBlock.isElectrical() || block.equals(exclude)) {
                 this.blocks.remove(block);
-                return;
+                continue;
             }
 
 //            int blockInputPower = customBlock.getPower(block);
@@ -71,10 +86,29 @@ public class CircuitMap {
 
             customBlock.setPower(wireBlock, basePower);
         }
+
+        for (Block block : this.blocks) {
+            CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
+
+            ArmorStand armorStand = (ArmorStand) block.getWorld().spawnEntity(block.getLocation().add(0.5, -1, 0.5), EntityType.ARMOR_STAND);
+            armorStand.setVisible(false);
+            armorStand.setGravity(false);
+            armorStand.setCustomNameVisible(true);
+            armorStand.setCustomName(ChatColor.GOLD + "Output: " + customBlock.getOutputPower(block));
+
+            armorStands.add(armorStand);
+
+            ArmorStand armorStand2 = (ArmorStand) block.getWorld().spawnEntity(block.getLocation().add(0.5, -1.3, 0.5), EntityType.ARMOR_STAND);
+            armorStand2.setVisible(false);
+            armorStand2.setGravity(false);
+            armorStand2.setCustomNameVisible(true);
+            armorStand2.setCustomName(ChatColor.RED + "Power: " + customBlock.getPower(block));
+
+            armorStands.add(armorStand2);
+        }
     }
 
     private void addBlocksNear(Block block) {
-//        if (this.blocks.contains(block)) return;
         for (BlockFace blockFace : new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
             Block nearBlock = block.getRelative(blockFace);
 
@@ -99,7 +133,9 @@ public class CircuitMap {
 
     public void removeBlock(Block block) {
         this.blocks.remove(block);
-        if (this.blocks.size() > 0) updatePower();
+        armorStands.forEach(ArmorStand::remove);
+        armorStands.clear();
+        if (this.blocks.size() > 0) updatePower(block);
     }
 
     private int[] splitIntoParts(int whole, int parts) {

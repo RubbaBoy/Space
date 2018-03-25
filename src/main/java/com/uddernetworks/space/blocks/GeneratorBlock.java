@@ -19,6 +19,7 @@ public class GeneratorBlock extends DirectionalBlock {
 
     @Override
     boolean onBreak(Block block, Player player) {
+        System.out.println("BREAKING GENERATORRRRRRRRRRRRRRRRRRRRRRRRRRR");
         main.getCircuitMapManager().removeBlock(block);
         return true;
     }

@@ -426,6 +426,7 @@ public class Main extends JavaPlugin implements Listener {
                 ArmorStand armorStand = (ArmorStand) event.getPlayer().getWorld().spawnEntity(block.getLocation().add(0.5, -1, 0.5), EntityType.ARMOR_STAND);
                 armorStand.setVisible(false);
                 armorStand.setGravity(false);
+                armorStand.setMarker(true);
                 armorStand.setCustomNameVisible(true);
                 armorStand.setCustomName(ChatColor.GOLD + "Output: " + customBlock.getOutputPower(block));
 
@@ -434,6 +435,7 @@ public class Main extends JavaPlugin implements Listener {
                 ArmorStand armorStand2 = (ArmorStand) event.getPlayer().getWorld().spawnEntity(block.getLocation().add(0.5, -1.3, 0.5), EntityType.ARMOR_STAND);
                 armorStand2.setVisible(false);
                 armorStand2.setGravity(false);
+                armorStand.setMarker(true);
                 armorStand2.setCustomNameVisible(true);
                 armorStand2.setCustomName(ChatColor.RED + "Power: " + customBlock.getPower(block));
 

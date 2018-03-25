@@ -54,7 +54,6 @@ public class BlockDataManager {
     }
 
     public void getData(Block block, String key, Consumer<String> callback) {
-        System.out.println("block = " + block);
         String cachedReturn = getCache(block, key);
 
         if (cachedReturn != null) {
@@ -155,7 +154,6 @@ public class BlockDataManager {
     }
 
     public CustomBlock getCustomBlock(Block block) {
-        System.out.println("block = " + block);
         return this.customBlockCache.get(block);
     }
 

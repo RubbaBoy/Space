@@ -34,6 +34,7 @@ import org.bukkit.metadata.MetadataValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.function.Consumer;
 
 public class CustomBlockManager implements Listener {
@@ -283,8 +284,6 @@ public class CustomBlockManager implements Listener {
         pose.set("Head", var1);
 
         nbt.set("Pose", pose);
-
-//        System.out.println("nbt = " + nbt);
 
         entityArmorStand.a(nbt);
 

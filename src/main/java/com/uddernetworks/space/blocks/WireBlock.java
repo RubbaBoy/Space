@@ -1,7 +1,6 @@
 package com.uddernetworks.space.blocks;
 
 import com.uddernetworks.space.main.Main;
-import com.uddernetworks.space.meta.EnhancedMetadata;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -48,15 +47,17 @@ public class WireBlock extends CustomBlock {
     }
 
     public void updateState(Block blockInstance, List<Block> updatedBlocks, Block imagineDestroyed) {
+        if (!(main.getBlockDataManager().getCustomBlock(blockInstance) instanceof WireBlock)) return;
+
         Block north = blockInstance.getRelative(BlockFace.NORTH);
         Block south = blockInstance.getRelative(BlockFace.SOUTH);
         Block east = blockInstance.getRelative(BlockFace.EAST);
         Block west = blockInstance.getRelative(BlockFace.WEST);
 
-        boolean northWire = isBlockWire(north) && !north.equals(imagineDestroyed);
-        boolean southWire = isBlockWire(south) && !south.equals(imagineDestroyed);
-        boolean eastWire = isBlockWire(east) && !east.equals(imagineDestroyed);
-        boolean westWire = isBlockWire(west) && !west.equals(imagineDestroyed);
+        boolean northWire = isBlockElectrical(north) && !north.equals(imagineDestroyed);
+        boolean southWire = isBlockElectrical(south) && !south.equals(imagineDestroyed);
+        boolean eastWire = isBlockElectrical(east) && !east.equals(imagineDestroyed);
+        boolean westWire = isBlockElectrical(west) && !west.equals(imagineDestroyed);
 
         if ((northWire || southWire) && !eastWire && !westWire) {
             setTypeTo(blockInstance, 119);
@@ -101,7 +102,7 @@ public class WireBlock extends CustomBlock {
         main.getCustomBlockManager().setBlockData(block.getWorld(), block, Material.DIAMOND_AXE, main.getCustomIDManager().getCustomBlockById(customBlockID).getDamage());
     }
 
-    private boolean isBlockWire(Block block) {
+    private boolean isBlockElectrical(Block block) {
         return main.getBlockDataManager().getCustomBlock(block) != null && main.getBlockDataManager().getCustomBlock(block).isElectrical();
     }
 
