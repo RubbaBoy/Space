@@ -1,5 +1,6 @@
 package com.uddernetworks.space.electricity;
 
+import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -12,8 +13,28 @@ public class CircuitMapManager {
     private Main main;
     private List<CircuitMap> circuitMaps = new ArrayList<>();
 
+
     public CircuitMapManager(Main main) {
         this.main = main;
+    }
+
+    public void printStatus() {
+        System.out.println("----------===============[START PRINT STATUS]===============----------");
+        for (CircuitMap circuitMap : circuitMaps) {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.append("\n\nCircuit Map =").append(circuitMap.toString());
+
+            for (Block block : circuitMap.getBlocks()) {
+                CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
+                stringBuilder.append("\n").append(customBlock.getName()).append("(\t").append(block.getX()).append(", ").append(block.getY()).append(", ").append(block.getZ()).append(")");
+            }
+
+            System.out.println(stringBuilder.append("\n\n\n"));
+        }
+
+        System.out.println("----------===============[END PRINT STATUS]===============----------");
+
     }
 
     public CircuitMap getCircuitMap(Block block) {
@@ -43,7 +64,10 @@ public class CircuitMapManager {
 
         System.out.println("Making new circuit map!!!!!!!!!!!!!! ------------------------------------");
 
-        this.circuitMaps.add(new CircuitMap(main, block));
+        CircuitMap circuitMap = new CircuitMap(main, block);
+        this.circuitMaps.add(circuitMap);
+
+        circuitMap.updatePower();
     }
 
     public void removeBlock(Block block) {
@@ -62,5 +86,13 @@ public class CircuitMapManager {
 
     public void updateCircuit(Block block) {
         getCircuitMap(block).updatePower();
+    }
+
+    public void removeCircuit(CircuitMap circuitMap) {
+        this.circuitMaps.remove(circuitMap);
+    }
+
+    public void addCircuit(CircuitMap circuitMap) {
+        this.circuitMaps.add(circuitMap);
     }
 }

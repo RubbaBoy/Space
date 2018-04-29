@@ -1,8 +1,10 @@
 package com.uddernetworks.space.electricity;
 
 import com.uddernetworks.space.blocks.CustomBlock;
+import com.uddernetworks.space.blocks.WireBlock;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
@@ -11,7 +13,9 @@ import org.bukkit.entity.EntityType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CircuitMap {
 
@@ -27,7 +31,6 @@ public class CircuitMap {
     public CircuitMap(Main main, Block block) {
         this.main = main;
         this.blocks.add(block);
-        updatePower();
     }
 
     public void updatePower() {
@@ -45,7 +48,7 @@ public class CircuitMap {
         armorStands.clear();
 
         for (Block block : new ArrayList<>(this.blocks)) {
-            addBlocksNear(block);
+            addBlocksNear(block, exclude);
         }
 
         for (Block block : new ArrayList<>(this.blocks)) {
@@ -58,27 +61,16 @@ public class CircuitMap {
             int blockOutputPower = customBlock.getMaxLoad(block);
 
             if (blockOutputPower != -1) {
+//                block.getLocation().add(0, 3, 0).getBlock().setType(Material.DIAMOND_BLOCK);
                 generatingBlocks.add(block);
                 basePower += blockOutputPower;
             } else if (customBlock.wantPower()) {
+//                block.getLocation().add(0, 3, 0).getBlock().setType(Material.REDSTONE_BLOCK);
                 powerHungryBlocks.add(block);
             } else {
                 wireBlocks.add(block);
             }
         }
-
-//        int[] powers = splitIntoParts(basePower, powerHungryBlocks.size());
-//
-//        System.out.println("generatingBlocks = " + generatingBlocks);
-//
-//        System.out.println("powerHungryBlocks = " + powerHungryBlocks);
-//
-//        for (int i = 0; i < powers.length; i++) {
-//            Block block = powerHungryBlocks.get(i);
-//            CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
-//
-//            customBlock.setOutputPower(block, powers[i]);
-//        }
 
         List<CachedBlock> blockList = powerHungryBlocks.stream().map(block -> {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
@@ -87,19 +79,12 @@ public class CircuitMap {
 
         int remaining = basePower;
 
-        System.out.println("(FIRST) Remaining = " + remaining);
-
-        System.out.println("blockList = " + blockList);
-
         while (remaining > 0 && !blockList.isEmpty()) {
             remaining = distributeWithRemaining(remaining, true, blockList);
-            System.out.println("remaining = " + remaining);
         }
 
         if (!blockList.isEmpty()) blockList.forEach(cachedBlock -> cachedBlock.apply(true));
 
-
-        System.out.println("generatingBlocks = " + generatingBlocks);
 
         blockList = generatingBlocks.stream().map(block -> {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
@@ -108,17 +93,12 @@ public class CircuitMap {
 
         remaining = basePower - remaining;
 
-        System.out.println("(FIRST) Total load (REMAINING) = " + remaining);
-
         while (remaining > 0 && !blockList.isEmpty()) {
             remaining = distributeWithRemaining(remaining, false, blockList);
-            System.out.println("remaining = " + remaining);
         }
 
         if (!blockList.isEmpty()) blockList.forEach(cachedBlock -> cachedBlock.apply(false));
 
-
-        System.out.println("wireBlocks = " + wireBlocks);
 
         for (Block wireBlock : wireBlocks) {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(wireBlock);
@@ -163,21 +143,49 @@ public class CircuitMap {
     }
 
     private void addBlocksNear(Block block) {
+        addBlocksNear(block, null);
+    }
+
+    private void addBlocksNear(Block block, Block exclude) {
         for (BlockFace blockFace : new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
             Block nearBlock = block.getRelative(blockFace);
 
-            if (!this.blocks.contains(nearBlock)) {
+            if (!this.blocks.contains(nearBlock) && !nearBlock.equals(exclude)) {
+//                System.out.println("1");
                 if (isBlockElectrical(nearBlock)) {
+
+                    CircuitMap circuitMap = main.getCircuitMapManager().getCircuitMap(nearBlock);
+
+                    System.out.println(blockFace + "  Custom = " + main.getBlockDataManager().getCustomBlock(nearBlock) + "\tmap = " + circuitMap);
+
+                    if (circuitMap != null) {
+                        circuitMap.clearDebug();
+                        this.blocks.addAll(circuitMap.blocks);
+                        main.getCircuitMapManager().removeCircuit(circuitMap);
+                        continue;
+                    }
+
+                    System.out.println("blockFace = " + blockFace + " " + nearBlock + " exclude     = " + exclude);
+
                     this.blocks.add(nearBlock);
-                    addBlocksNear(nearBlock);
+
+                    if (main.getBlockDataManager().getCustomBlock(nearBlock) instanceof WireBlock) {
+                        addBlocksNear(nearBlock, exclude);
+                    }
                 }
             }
         }
     }
 
+    private void clearDebug() {
+        armorStands.forEach(ArmorStand::remove);
+        armorStands.clear();
+    }
+
     public void addBlock(Block block) {
         System.out.println("block = " + block);
         this.blocks.add(block);
+        addBlocksNear(block);
         updatePower();
     }
 
@@ -187,10 +195,81 @@ public class CircuitMap {
     }
 
     public void removeBlock(Block block) {
-        this.blocks.remove(block);
+        System.out.println("BEFORE======");
+
+        main.getCircuitMapManager().printStatus();
+
+        System.out.println("REMOVING ARMOR STANDS: " + armorStands.size());
         armorStands.forEach(ArmorStand::remove);
+        this.blocks.remove(block);
+//        armorStands.forEach(ArmorStand::remove);
         armorStands.clear();
-        if (this.blocks.size() > 0) updatePower(block);
+        System.out.println("NOW SIZE: " + armorStands.size());
+//        if (this.blocks.size() > 0) updatePower(block);
+//        if (this.blocks.size() > 0) {
+        this.blocks.clear();
+
+//            this.blocks.add(block);
+//            addBlocksNear(block);
+//            updatePower(block);
+
+        // For preventing updates of the same circuit multiple times
+        List<CircuitMap> updatedCircuits = new ArrayList<>();
+        boolean first = true;
+
+        for (BlockFace blockFace : new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
+            Block nearBlock = block.getRelative(blockFace);
+            if (nearBlock.equals(block)) continue;
+
+            CircuitMap circuitMap = main.getCircuitMapManager().getCircuitMap(nearBlock);
+
+            System.out.println(blockFace + "  Custom = " + main.getBlockDataManager().getCustomBlock(nearBlock));
+
+            if (circuitMap != null) {
+//                    if (!updatedCircuits.contains(circuitMap) && circuitMap != this) {
+//                        circuitMap.updatePower(nearBlock);
+//                        updatedCircuits.add(circuitMap);
+//                    }
+
+                continue;
+            }
+
+            if (isBlockElectrical(nearBlock)) {
+                if (first) {
+                    first = false;
+                    circuitMap = this;
+                    this.blocks.add(nearBlock);
+                } else {
+                    circuitMap = new CircuitMap(main, nearBlock);
+                    main.getCircuitMapManager().addCircuit(circuitMap);
+                }
+
+
+                updatedCircuits.add(circuitMap);
+//                    circuitMap.blocks.add(nearBlock);
+
+                System.out.println("BEFORE CONTAINS =  " + circuitMap.getBlocks().contains(block));
+
+                if (main.getBlockDataManager().getCustomBlock(nearBlock) instanceof WireBlock) {
+                    circuitMap.addBlocksNear(nearBlock, block);
+                }
+
+                System.out.println("AFTERRR CONTAINS =  " + circuitMap.getBlocks().contains(block));
+
+//                    Material material = Material.values()[ThreadLocalRandom.current().nextInt(Material.values().length)];
+
+                for (Block block1 : circuitMap.blocks) {
+                    block1.getLocation().subtract(0, 1, 0).getBlock().setType(Material.GOLD_BLOCK);
+                }
+
+                circuitMap.updatePower(block);
+            }
+        }
+//        }
+
+        System.out.println("FINBISHED REMOVAL!!!!!!!!!!!!!!!!!!!!!!! of: (" + block.getX() + ", " + block.getY() + ", " + block.getZ() + ")");
+
+        main.getCircuitMapManager().printStatus();
     }
 
     private static int distributeWithRemaining(int amount, boolean supply, List<CachedBlock> blocks) {
