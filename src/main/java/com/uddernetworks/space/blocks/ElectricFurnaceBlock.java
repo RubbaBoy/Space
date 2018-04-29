@@ -1,8 +1,8 @@
 package com.uddernetworks.space.blocks;
 
+import com.uddernetworks.space.guis.ElectricFurnaceGUI;
 import com.uddernetworks.space.guis.GeneratorGUI;
 import com.uddernetworks.space.main.Main;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -10,12 +10,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.UUID;
 
-public class GeneratorBlock extends DirectionalBlock {
+public class ElectricFurnaceBlock extends DirectionalBlock {
 
-    public GeneratorBlock(Main main, int id, Material material, short[][] damages, Material particle, String name) {
-        super(main, id, material, damages, particle, name, () -> main.getGUIManager().addGUI(new GeneratorGUI(main, "Generator", 54, UUID.randomUUID())));
+    public ElectricFurnaceBlock(Main main, int id, Material material, short[][] damages, Material particle, String name) {
+        super(main, id, material, damages, particle, name, () -> main.getGUIManager().addGUI(new ElectricFurnaceGUI(main, "Electric Furnace", 27, UUID.randomUUID())));
+
+        setWantPower(true);
         setElectrical(true);
-        setDefaultMaxLoad(0);
+        setDefaultDemand(1000);
     }
 
     @Override
@@ -32,7 +34,6 @@ public class GeneratorBlock extends DirectionalBlock {
 
     @Override
     void onPlace(Block block, Player player) {
-        setPowered(block, true);
         main.getCircuitMapManager().addBlock(block);
     }
 
@@ -44,11 +45,5 @@ public class GeneratorBlock extends DirectionalBlock {
     @Override
     boolean hasGUI() {
         return true;
-    }
-
-    public void setPowered(Block block, boolean powered) {
-        // Powered status uses EnhancedMetadata because it's much faster and doesn't matter if it's persistent
-
-        setMaxLoad(block, powered ? 7000 : 0);
     }
 }

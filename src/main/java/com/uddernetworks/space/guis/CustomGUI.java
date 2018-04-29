@@ -4,6 +4,7 @@ import com.uddernetworks.space.main.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -29,6 +30,7 @@ public class CustomGUI implements InventoryHolder, Listener {
     private Inventory inventory;
     private UUID uuid;
     private Block parentBlock = null;
+    private int windowID;
 
     public CustomGUI(Main main, String title, InventoryType inventoryType, UUID uuid, GUIItems guiItems) {
         this.main = main;
@@ -80,6 +82,11 @@ public class CustomGUI implements InventoryHolder, Listener {
 
     public Block getParentBlock() {
         return parentBlock;
+    }
+
+    public int getWindowID() {
+        this.windowID = getInventory().getViewers().size() > 0 ? ((CraftPlayer) getInventory().getViewers().get(0)).getHandle().activeContainer.windowId : this.windowID;
+        return this.windowID;
     }
 
     public void onClose(HumanEntity closer) {

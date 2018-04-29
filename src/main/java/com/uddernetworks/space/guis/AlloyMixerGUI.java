@@ -25,7 +25,7 @@ public class AlloyMixerGUI extends CustomGUI {
     private ProgressBar progressBar;
     private FastTask task;
     private FastTask task2;
-    private int windowID;
+//    private int windowID;
     private AnimatedBlock animatedBlock;
 
     public AlloyMixerGUI(Main main, String title, int size, UUID uuid) {
@@ -60,10 +60,10 @@ public class AlloyMixerGUI extends CustomGUI {
         updateSlots();
     }
 
-    private int getWindowID() {
-        this.windowID = getInventory().getViewers().size() > 0 ? ((CraftPlayer) getInventory().getViewers().get(0)).getHandle().activeContainer.windowId : this.windowID;
-        return this.windowID;
-    }
+//    private int getWindowID() {
+//        this.windowID = getInventory().getViewers().size() > 0 ? ((CraftPlayer) getInventory().getViewers().get(0)).getHandle().activeContainer.windowId : this.windowID;
+//        return this.windowID;
+//    }
 
     private void startProcessing() {
         if (!this.processing) {

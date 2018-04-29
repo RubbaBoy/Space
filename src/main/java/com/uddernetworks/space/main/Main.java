@@ -168,48 +168,55 @@ public class Main extends JavaPlugin implements Listener {
 
         this.progressBarManager.addProgressBar(new ProgressBar("FurnaceArrowBar", Material.DIAMOND_HOE, damages4));
 
+        int[] damages5 = new int[16];
+
+        for (int i = 0; i < 16; i++) damages5[i] = i + 111 + 122 + 151 + 17 + 23;
+
+        this.progressBarManager.addProgressBar(new ProgressBar("GeneratorLoad", Material.DIAMOND_HOE, damages5));
+
         this.customIDManager = new CustomIDManager(this);
 
         /* Items */
 
-        this.customItemManager.addCustomItem(new BasicItem(0, Material.DIAMOND_HOE, 80, "Carbon"));
-        this.customItemManager.addCustomItem(new BasicItem(1, Material.DIAMOND_HOE, 81, "Magnesium Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(2, Material.DIAMOND_HOE, 82, "Raw Silicon"));
-        this.customItemManager.addCustomItem(new BasicItem(3, Material.DIAMOND_HOE, 83, "Copper Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(4, Material.DIAMOND_HOE, 84, "Aluminum Ingot"));
-        this.customItemManager.addCustomItem(new BasicItem(5, Material.DIAMOND_HOE, 85, "IC"));
-        this.customItemManager.addCustomItem(new BasicItem(6, Material.DIAMOND_HOE, 86, "CPU"));
-        this.customItemManager.addCustomItem(new BasicItem(7, Material.DIAMOND_HOE, 87, "Steel"));
-        this.customItemManager.addCustomItem(new BasicItem(8, Material.DIAMOND_HOE, 88, "Liquid Oxygen Generator Engine"));
-        this.customItemManager.addCustomItem(new BasicItem(9, Material.DIAMOND_HOE, 89, "Liquid Hydrogen Generator Engine"));
-        this.customItemManager.addCustomItem(new BasicItem(10, Material.DIAMOND_HOE, 90, "Gear"));
+        this.customItemManager.addCustomItem(new BasicItem(0, Material.DIAMOND_HOE, 80, "Carbon")); // Wiki
+        this.customItemManager.addCustomItem(new BasicItem(1, Material.DIAMOND_HOE, 81, "Magnesium Ingot")); // WIki
+        this.customItemManager.addCustomItem(new BasicItem(2, Material.DIAMOND_HOE, 82, "Raw Silicon")); // Wiki
+        this.customItemManager.addCustomItem(new BasicItem(3, Material.DIAMOND_HOE, 83, "Copper Ingot")); // Wiki
+        this.customItemManager.addCustomItem(new BasicItem(4, Material.DIAMOND_HOE, 84, "Aluminum Ingot")); // Wiki
+        this.customItemManager.addCustomItem(new BasicItem(5, Material.DIAMOND_HOE, 85, "IC")); // Wiki
+        this.customItemManager.addCustomItem(new BasicItem(6, Material.DIAMOND_HOE, 86, "CPU")); // Wiki
+        this.customItemManager.addCustomItem(new BasicItem(7, Material.DIAMOND_HOE, 87, "Steel")); // Wiki
+        this.customItemManager.addCustomItem(new BasicItem(8, Material.DIAMOND_HOE, 88, "Liquid Oxygen Generator Engine")); // Wiki
+        this.customItemManager.addCustomItem(new BasicItem(9, Material.DIAMOND_HOE, 89, "Liquid Hydrogen Generator Engine")); // WIki
+        this.customItemManager.addCustomItem(new BasicItem(10, Material.DIAMOND_HOE, 90, "Gear")); // Wiki
 
         /* Blocks */
 
-        this.customBlockManager.addCustomBlock(new DirectionalBlock(this, 100, Material.DIAMOND_HOE, new short[][] {{21}, {22}, {23}, {24}}, Material.WOOL, "Spaceship Workbench", () -> getGUIManager().addGUI(new Workbench(this, "Workbench", 54, UUID.randomUUID()))));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 101, Material.DIAMOND_HOE, 25, Material.STONE, "Carbon Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 102, Material.DIAMOND_HOE, 26, Material.BLACK_SHULKER_BOX, "Carbon Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 103, Material.DIAMOND_HOE, 27, Material.STONE, "Magnesium Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 104, Material.DIAMOND_HOE, 28, Material.GRAY_SHULKER_BOX, "Magnesium Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 105, Material.DIAMOND_HOE, 29, Material.STONE, "Silicon Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 106, Material.DIAMOND_HOE, 30, Material.GRAY_SHULKER_BOX, "Silicon Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 107, Material.DIAMOND_HOE, 31, Material.STONE, "Copper Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 108, Material.DIAMOND_HOE, 32, Material.ORANGE_SHULKER_BOX, "Copper Block"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 109, Material.DIAMOND_HOE, 33, Material.STONE, "Aluminum Ore"));
-        this.customBlockManager.addCustomBlock(new BasicBlock(this, 110, Material.DIAMOND_HOE, 34, Material.WHITE_SHULKER_BOX, "Aluminum Block"));
-        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 111, Material.DIAMOND_HOE, new short[] {35, 36, 37}, Material.WHITE_SHULKER_BOX, "Alloy Mixer", () -> {
+        this.customBlockManager.addCustomBlock(new DirectionalBlock(this, 100, Material.DIAMOND_HOE, new short[][] {{21}, {22}, {23}, {24}}, Material.WOOL, "Spaceship Workbench", () -> getGUIManager().addGUI(new Workbench(this, "Workbench", 54, UUID.randomUUID())))); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 101, Material.DIAMOND_HOE, 25, Material.STONE, "Carbon Ore")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 102, Material.DIAMOND_HOE, 26, Material.BLACK_SHULKER_BOX, "Carbon Block")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 103, Material.DIAMOND_HOE, 27, Material.STONE, "Magnesium Ore")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 104, Material.DIAMOND_HOE, 28, Material.GRAY_SHULKER_BOX, "Magnesium Block")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 105, Material.DIAMOND_HOE, 29, Material.STONE, "Silicon Ore")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 106, Material.DIAMOND_HOE, 30, Material.GRAY_SHULKER_BOX, "Silicon Block")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 107, Material.DIAMOND_HOE, 31, Material.STONE, "Copper Ore")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 108, Material.DIAMOND_HOE, 32, Material.ORANGE_SHULKER_BOX, "Copper Block")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 109, Material.DIAMOND_HOE, 33, Material.STONE, "Aluminum Ore")); // Wiki
+        this.customBlockManager.addCustomBlock(new BasicBlock(this, 110, Material.DIAMOND_HOE, 34, Material.WHITE_SHULKER_BOX, "Aluminum Block")); // Wiki
+        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 111, Material.DIAMOND_HOE, new short[] {35, 36, 37}, Material.WHITE_SHULKER_BOX, "Alloy Mixer", () -> { // Wiki
             System.out.println("Creating new AlloyMixer GUI");
             return getGUIManager().addGUI(new AlloyMixerGUI(this, "Alloy Mixer", 54, UUID.randomUUID()));
         }));
-        this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 38, Material.GRAY_SHULKER_BOX, "Cryogenic Container"));
+        this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 38, Material.GRAY_SHULKER_BOX, "Cryogenic Container")); // Wiki
 
-        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 39, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator"));
-        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 40, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator"));
-        this.customBlockManager.addCustomBlock(new DirectionalBlock(this, 115, Material.DIAMOND_AXE, new short[][] {{61, 62, 63, 64, 65, 66}, {67, 68, 69, 70, 71, 72}, {73, 74, 75, 76, 77, 78}, {79, 80, 81, 82, 83, 84}}, Material.WHITE_SHULKER_BOX, "Electric Furnace", () -> {
-            System.out.println("Creating new GUI");
-            return getGUIManager().addGUI(new ElectricFurnaceGUI(this, "Electric Furnace", 27, UUID.randomUUID()));
-        }));
-        this.customBlockManager.addCustomBlock(new GeneratorBlock(this, 116, Material.DIAMOND_HOE, new short[][] {{41}, {41}, {41}, {41}}, Material.ORANGE_SHULKER_BOX, "Generator"));
+        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 39, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator")); // Wiki
+        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 40, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator")); // Wiki
+        this.customBlockManager.addCustomBlock(new ElectricFurnaceBlock(this, 115, Material.DIAMOND_AXE, new short[][] {
+                {61, 62, 63, 64, 65, 66},
+                {67, 68, 69, 70, 71, 72},
+                {73, 74, 75, 76, 77, 78},
+                {79, 80, 81, 82, 83, 84}}, Material.WHITE_SHULKER_BOX, "Electric Furnace")); // Wiki
+        this.customBlockManager.addCustomBlock(new GeneratorBlock(this, 116, Material.DIAMOND_HOE, new short[][] {{41}, {42}, {43}, {44}}, Material.ORANGE_SHULKER_BOX, "Generator")); // NOT ON WIKI, need to fix model
 
 
         /* DEBUG ONLY */
@@ -437,7 +444,7 @@ public class Main extends JavaPlugin implements Listener {
                 armorStand2.setGravity(false);
                 armorStand.setMarker(true);
                 armorStand2.setCustomNameVisible(true);
-                armorStand2.setCustomName(ChatColor.RED + "Power: " + customBlock.getPower(block));
+                armorStand2.setCustomName(ChatColor.RED + "Power: " + customBlock.getSupply(block));
 
                 armorStands.add(armorStand2);
             }

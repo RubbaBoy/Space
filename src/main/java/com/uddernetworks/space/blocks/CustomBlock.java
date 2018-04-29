@@ -27,6 +27,8 @@ public abstract class CustomBlock extends IDHolder {
     private boolean electrical;
     private boolean wantPower = false;
     private int defaultInputPower;
+    private int defaultDemand;
+    private int defaultMaxLoad = -1;
     private Material particle;
     private String name;
     private ItemStack staticDrop;
@@ -81,17 +83,18 @@ public abstract class CustomBlock extends IDHolder {
         this.defaultInputPower = defaultInputPower;
     }
 
-    /**
-     * The power required for the block
-     */
-    public int getPower() {
-        return this.defaultInputPower;
+    public void setDefaultDemand(int defaultDemand) {
+        this.defaultDemand = defaultDemand;
+    }
+
+    public void setDefaultMaxLoad(int defaultMaxLoad) {
+        this.defaultMaxLoad = defaultMaxLoad;
     }
 
     /**
      * The power that the block is currently receiving
      */
-    public int getPower(Block blockInstance) {
+    public int getSupply(Block blockInstance) {
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         return (int) enhancedMetadata.getData("currentPower", this.defaultInputPower);
@@ -100,14 +103,51 @@ public abstract class CustomBlock extends IDHolder {
     /**
      * Sets the power the block is currently receiving
      */
-    public void setPower(Block blockInstance, int power) {
+    public void setSupply(Block blockInstance, int power) {
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         enhancedMetadata.setData("currentPower", power);
     }
 
     /**
-     * The power the block outputs
+     * Gets the power that the block is demanding in order to work
+     */
+    public int getDemand(Block blockInstance) {
+        EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
+
+        return (int) enhancedMetadata.getData("demand", this.defaultDemand);
+    }
+
+    /**
+     * Sets the power that the block is demanding in order to work
+     */
+    public void setDemand(Block blockInstance, int power) {
+        EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
+
+        enhancedMetadata.setData("demand", power);
+    }
+
+    /**
+     * Gets the maximum load the block may output
+     */
+    public int getMaxLoad(Block blockInstance) {
+        EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
+
+        return (int) enhancedMetadata.getData("maxLoad", this.defaultMaxLoad);
+    }
+
+    /**
+     * Sets the maximum load the block may output
+     */
+    public void setMaxLoad(Block blockInstance, int load) {
+        System.out.println("blockInstance = [" + blockInstance + "], load = [" + load + "]");
+        EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
+
+        enhancedMetadata.setData("maxLoad", load);
+    }
+
+    /**
+     * The power the block outputs, this is its load
      */
     public int getOutputPower(Block blockInstance) {
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);

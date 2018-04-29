@@ -27,6 +27,7 @@ public class CircuitMapManager {
     }
 
     public void addBlock(Block block) {
+        System.out.println("block = " + block);
         for (BlockFace blockFace : new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
             Block nearBlock = block.getRelative(blockFace);
 

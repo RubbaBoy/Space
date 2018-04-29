@@ -9,7 +9,9 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CircuitMap {
 
@@ -53,8 +55,7 @@ public class CircuitMap {
                 continue;
             }
 
-//            int blockInputPower = customBlock.getPower(block);
-            int blockOutputPower = customBlock.getOutputPower(block);
+            int blockOutputPower = customBlock.getMaxLoad(block);
 
             if (blockOutputPower != -1) {
                 generatingBlocks.add(block);
@@ -66,45 +67,98 @@ public class CircuitMap {
             }
         }
 
-        int[] powers = splitIntoParts(basePower, powerHungryBlocks.size());
+//        int[] powers = splitIntoParts(basePower, powerHungryBlocks.size());
+//
+//        System.out.println("generatingBlocks = " + generatingBlocks);
+//
+//        System.out.println("powerHungryBlocks = " + powerHungryBlocks);
+//
+//        for (int i = 0; i < powers.length; i++) {
+//            Block block = powerHungryBlocks.get(i);
+//            CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
+//
+//            customBlock.setOutputPower(block, powers[i]);
+//        }
+
+        List<CachedBlock> blockList = powerHungryBlocks.stream().map(block -> {
+            CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
+            return new CachedBlock(block, customBlock, customBlock.getDemand(block));
+        }).collect(Collectors.toList());
+
+        int remaining = basePower;
+
+        System.out.println("(FIRST) Remaining = " + remaining);
+
+        System.out.println("blockList = " + blockList);
+
+        while (remaining > 0 && !blockList.isEmpty()) {
+            remaining = distributeWithRemaining(remaining, true, blockList);
+            System.out.println("remaining = " + remaining);
+        }
+
+        if (!blockList.isEmpty()) blockList.forEach(cachedBlock -> cachedBlock.apply(true));
+
 
         System.out.println("generatingBlocks = " + generatingBlocks);
 
-        System.out.println("powerHungryBlocks = " + powerHungryBlocks);
-
-        for (int i = 0; i < powers.length; i++) {
-            Block block = powerHungryBlocks.get(i);
+        blockList = generatingBlocks.stream().map(block -> {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
+            return new CachedBlock(block, customBlock, customBlock.getMaxLoad(block));
+        }).collect(Collectors.toList());
 
-            customBlock.setOutputPower(block, powers[i]);
+        remaining = basePower - remaining;
+
+        System.out.println("(FIRST) Total load (REMAINING) = " + remaining);
+
+        while (remaining > 0 && !blockList.isEmpty()) {
+            remaining = distributeWithRemaining(remaining, false, blockList);
+            System.out.println("remaining = " + remaining);
         }
+
+        if (!blockList.isEmpty()) blockList.forEach(cachedBlock -> cachedBlock.apply(false));
+
 
         System.out.println("wireBlocks = " + wireBlocks);
 
         for (Block wireBlock : wireBlocks) {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(wireBlock);
 
-            customBlock.setPower(wireBlock, basePower);
+            customBlock.setSupply(wireBlock, basePower - remaining);
         }
 
         for (Block block : this.blocks) {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
+            if (customBlock.getName().contains("Wire")) continue;
 
-            ArmorStand armorStand = (ArmorStand) block.getWorld().spawnEntity(block.getLocation().add(0.5, -1, 0.5), EntityType.ARMOR_STAND);
-            armorStand.setVisible(false);
-            armorStand.setGravity(false);
-            armorStand.setCustomNameVisible(true);
-            armorStand.setCustomName(ChatColor.GOLD + "Output: " + customBlock.getOutputPower(block));
+            if (customBlock.getOutputPower(block) > -1) {
+                ArmorStand armorStand = (ArmorStand) block.getWorld().spawnEntity(block.getLocation().add(0.5, -0.6, 0.5), EntityType.ARMOR_STAND);
+                armorStand.setVisible(false);
+                armorStand.setGravity(false);
+                armorStand.setCustomNameVisible(true);
+                armorStand.setCustomName(ChatColor.GOLD + "Output: " + customBlock.getOutputPower(block));
 
-            armorStands.add(armorStand);
+                armorStands.add(armorStand);
+            }
 
-            ArmorStand armorStand2 = (ArmorStand) block.getWorld().spawnEntity(block.getLocation().add(0.5, -1.3, 0.5), EntityType.ARMOR_STAND);
-            armorStand2.setVisible(false);
-            armorStand2.setGravity(false);
-            armorStand2.setCustomNameVisible(true);
-            armorStand2.setCustomName(ChatColor.RED + "Power: " + customBlock.getPower(block));
+            if (customBlock.wantPower()) {
+                ArmorStand armorStand2 = (ArmorStand) block.getWorld().spawnEntity(block.getLocation().add(0.5, -0.9, 0.5), EntityType.ARMOR_STAND);
+                armorStand2.setVisible(false);
+                armorStand2.setGravity(false);
+                armorStand2.setCustomNameVisible(true);
+                armorStand2.setCustomName(ChatColor.RED + "Demand: " + customBlock.getDemand(block)); // How much power it NEEDS
 
-            armorStands.add(armorStand2);
+                armorStands.add(armorStand2);
+            }
+
+            if (customBlock.getSupply(block) > -1) {
+                ArmorStand armorStand2 = (ArmorStand) block.getWorld().spawnEntity(block.getLocation().add(0.5, -1.2, 0.5), EntityType.ARMOR_STAND);
+                armorStand2.setVisible(false);
+                armorStand2.setGravity(false);
+                armorStand2.setCustomNameVisible(true);
+                armorStand2.setCustomName(ChatColor.RED + "Supply: " + customBlock.getSupply(block)); // How much power it is GETTING
+
+                armorStands.add(armorStand2);
+            }
         }
     }
 
@@ -122,6 +176,7 @@ public class CircuitMap {
     }
 
     public void addBlock(Block block) {
+        System.out.println("block = " + block);
         this.blocks.add(block);
         updatePower();
     }
@@ -138,7 +193,30 @@ public class CircuitMap {
         if (this.blocks.size() > 0) updatePower(block);
     }
 
-    private int[] splitIntoParts(int whole, int parts) {
+    private static int distributeWithRemaining(int amount, boolean supply, List<CachedBlock> blocks) {
+        int[] parts = splitIntoParts(amount, blocks.size());
+        int remaining = 0;
+
+        System.out.println(Arrays.toString(parts));
+
+        for (int i = blocks.size() - 1; i >= 0; i--) {
+            int part = parts[i];
+            CachedBlock cachedBlock = blocks.get(i);
+
+            if (cachedBlock.getValue() + part >= cachedBlock.getMaxValue()) {
+                remaining += part + cachedBlock.getValue() - cachedBlock.getMaxValue();
+                cachedBlock.setValue(cachedBlock.getMaxValue());
+                cachedBlock.apply(supply);
+                blocks.remove(cachedBlock);
+            } else {
+                cachedBlock.setValue(cachedBlock.getValue() + part);
+            }
+        }
+
+        return remaining;
+    }
+
+    private static int[] splitIntoParts(int whole, int parts) {
         int[] arr = new int[parts];
         for (int i = 0; i < arr.length; i++)
             whole -= arr[i] = (whole + parts - i - 1) / (parts - i);
@@ -151,5 +229,46 @@ public class CircuitMap {
 
     private boolean isBlockElectrical(Block block) {
         return main.getBlockDataManager().getCustomBlock(block) != null && main.getBlockDataManager().getCustomBlock(block).isElectrical();
+    }
+}
+
+class CachedBlock {
+    private final Block block;
+    private final CustomBlock customBlock;
+    private final int maxValue;
+    private int value;
+
+    public CachedBlock(Block block, CustomBlock customBlock, int maxValue) {
+        this.block = block;
+        this.customBlock = customBlock;
+        this.maxValue = maxValue;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public CustomBlock getCustomBlock() {
+        return customBlock;
+    }
+
+    public int getMaxValue() {
+        return maxValue;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public void apply(boolean supply) {
+        if (supply) {
+            this.customBlock.setSupply(this.block, this.value);
+        } else {
+            this.customBlock.setOutputPower(this.block, this.value);
+        }
     }
 }

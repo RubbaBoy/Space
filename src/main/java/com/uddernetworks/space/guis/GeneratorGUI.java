@@ -1,10 +1,10 @@
 package com.uddernetworks.space.guis;
 
-import com.uddernetworks.space.blocks.CryogenicContainerBlock;
 import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.blocks.GeneratorBlock;
 import com.uddernetworks.space.main.Main;
 import net.minecraft.server.v1_12_R1.EnumParticle;
+import net.minecraft.server.v1_12_R1.PacketPlayOutSetSlot;
 import net.minecraft.server.v1_12_R1.PacketPlayOutWorldParticles;
 import net.minecraft.server.v1_12_R1.TileEntityFurnace;
 import org.bukkit.Bukkit;
@@ -29,8 +29,17 @@ public class GeneratorGUI extends CustomGUI {
     private int smokeDelay = 0; // The amount of 5 tick intervals that should go by until it spawns smoke. A value of 4 will spawn one after each second.
     private int currentSmoke = 0;
 
+    private ProgressBar wattageProgress;
+
+    private int adding2 = 1;
+    private int index2 = 0;
+
     public GeneratorGUI(Main main, String title, int size, UUID uuid) {
         super(main, title, size, uuid, GUIItems.GENERATOR_MAIN);
+
+        this.wattageProgress = main.getProgressBarManager().getProgressBar("GeneratorLoad");
+
+        addSlot(new PopulatedSlot(47, false, wattageProgress.getItemStack(0)));
 
         SlotAction slotAction = new SlotAction() {
             @Override
@@ -53,6 +62,26 @@ public class GeneratorGUI extends CustomGUI {
         }
 
         updateSlots();
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
+
+//            Bukkit.getPlayer("RubbaBoy").sendMessage("Power: " + main.getBlockDataManager().getCustomBlock(getParentBlock()).getOutputPower(getParentBlock()));
+
+            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 47, CraftItemStack.asNMSCopy(wattageProgress.getItemStack(index2 / 16D * 100D)));
+
+            getInventory().getViewers().stream()
+                    .map(player -> ((CraftPlayer) player).getHandle())
+                    .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
+
+            index2 += adding2;
+
+            if ((adding2 > 0 && index2 >= 16) || (adding2 < 0 && index2 < 0)) {
+                adding2 *= -1;
+
+                index2 += adding2;
+            }
+
+        }, 0L, 2L);
     }
 
     @Override
