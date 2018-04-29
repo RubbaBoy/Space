@@ -1,9 +1,15 @@
 package com.uddernetworks.space.database;
 
 public enum DatabaseTable {
-    BLOCK_DATA("block_data", "CREATE TABLE IF NOT EXISTS block_data (\n" +
-            "  coordinate VARCHAR(512) NOT NULL UNIQUE,\n" +
-            "  value TEXT DEFAULT ''\n" +
+    BLOCK_DATA("block_data", "CREATE TABLE block_data (\n" +
+            "  world VARCHAR(32),\n" +
+            "  x     INT,\n" +
+            "  y     INT,\n" +
+            "  z     INT,\n" +
+            "  key TEXT NOT NULL,\n" +
+            "  value TEXT DEFAULT '',\n" +
+            "  UNIQUE (`world`, `x`, `y`, `z`, `key`)\n" +
+            "    ON CONFLICT REPLACE\n" +
             ");");
 
     private final String tableName;

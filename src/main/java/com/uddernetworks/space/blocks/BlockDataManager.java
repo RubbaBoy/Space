@@ -39,9 +39,15 @@ public class BlockDataManager {
         main.newChain()
                 .async(() -> {
                     try {
-                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("INSERT OR REPLACE INTO block_data VALUES (?, ?);");
-                        preparedStatement.setString(1, block.getWorld().getUID() + "," + block.getX() + "," + block.getY() + "," + block.getZ() + "," + key);
-                        preparedStatement.setString(2, value.toString());
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("INSERT OR REPLACE INTO block_data VALUES (?, ?, ?, ?, ?, ?);");
+
+                        preparedStatement.setString(1, block.getWorld().getUID().toString().replace("-", ""));
+                        preparedStatement.setInt(2, block.getX());
+                        preparedStatement.setInt(3, block.getY());
+                        preparedStatement.setInt(4, block.getZ());
+                        preparedStatement.setString(5, key);
+                        preparedStatement.setString(6, value.toString());
+
                         preparedStatement.execute();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -64,9 +70,13 @@ public class BlockDataManager {
         main.newChain()
                 .asyncFirst(() -> {
                     try {
-                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT value FROM block_data WHERE coordinate = ?;");
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT value FROM block_data WHERE world = ? AND x = ? AND y = ? AND z = ? AND key = ?;");
 
-                        preparedStatement.setString(1, block.getWorld().getUID() + "," + block.getX() + "," + block.getY() + "," + block.getZ() + "," + key);
+                        preparedStatement.setString(1, block.getWorld().getUID().toString().replace("-", ""));
+                        preparedStatement.setInt(2, block.getX());
+                        preparedStatement.setInt(3, block.getY());
+                        preparedStatement.setInt(4, block.getZ());
+                        preparedStatement.setString(5, key);
 
                         ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -88,8 +98,13 @@ public class BlockDataManager {
         main.newChain()
                 .async(() -> {
                     try {
-                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("DELETE FROM block_data WHERE coordinate LIKE ?;");
-                        preparedStatement.setString(1, block.getWorld().getUID() + "," + block.getX() + "," + block.getY() + "," + block.getZ() + ",%");
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("DELETE FROM block_data WHERE world = ? AND x = ? AND y = ? AND z = ?;");
+
+                        preparedStatement.setString(1, block.getWorld().getUID().toString().replace("-", ""));
+                        preparedStatement.setInt(2, block.getX());
+                        preparedStatement.setInt(3, block.getY());
+                        preparedStatement.setInt(4, block.getZ());
+
                         preparedStatement.execute();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -116,7 +131,7 @@ public class BlockDataManager {
         main.newChain()
                 .asyncFirst(() -> {
                     try {
-                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT * FROM block_data WHERE coordinate LIKE ?;");
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT * FROM block_data WHERE key = ?;");
 
                         preparedStatement.setString(1, "%customBlock");
 
@@ -137,12 +152,13 @@ public class BlockDataManager {
                         }
 
                         while (resultSet.next()) {
-                            String[] data = resultSet.getString("coordinate").split(",");
+                            World world = Bukkit.getWorld(resultSet.getString("world"));
+                            int x = resultSet.getInt("x");
+                            int y = resultSet.getInt("y");
+                            int z = resultSet.getInt("z");
                             int customBlockID = Integer.valueOf(resultSet.getString("value"));
 
-                            World world = Bukkit.getWorld(UUID.fromString(data[0]));
-
-                            this.customBlockCache.put(world.getBlockAt(Integer.valueOf(data[1]), Integer.valueOf(data[2]), Integer.valueOf(data[3])), main.getCustomIDManager().getCustomBlockById(customBlockID));
+                            this.customBlockCache.put(world.getBlockAt(x, y, z), main.getCustomIDManager().getCustomBlockById(customBlockID));
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
