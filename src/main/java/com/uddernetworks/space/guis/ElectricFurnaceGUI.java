@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class ElectricFurnaceGUI extends CustomGUI {
@@ -68,7 +69,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
 
             PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 20, CraftItemStack.asNMSCopy(arrowProgress.getItemStack(index2 / 23D * 100D)));
 
-            getInventory().getViewers().stream()
+            new ArrayList<>(getInventory().getViewers()).stream()
                     .map(player -> ((CraftPlayer) player).getHandle())
                     .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
 

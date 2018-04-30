@@ -130,20 +130,30 @@ public class CustomBlockManager implements Listener {
         Block clicked = event.getClickedBlock();
         Player player = event.getPlayer();
 
+//        System.out.println("1111");
         if (event.getHand() != EquipmentSlot.HAND) return;
 
+//        System.out.println("2222");
         if (player.isSneaking() || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
+//        System.out.println("3333");
         CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(clicked);
 
+//        System.out.println("4444");
+//        System.out.println("customBlock = " + customBlock);
         if (customBlock == null) return;
 
+//        System.out.println("5555");
         customBlock.onClick(event);
 
+//        System.out.println("6666");
         if (!customBlock.hasGUI()) return;
         event.setCancelled(false);
 
+//        System.out.println("7777");
+
         customBlock.getGUI(clicked, customGUI -> {
+//            System.out.println("customGUI = " + customGUI);
             if (customGUI != null) {
                 player.openInventory(customGUI.getInventory());
             }

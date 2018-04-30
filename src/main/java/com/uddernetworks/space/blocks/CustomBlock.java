@@ -189,8 +189,9 @@ public abstract class CustomBlock extends IDHolder {
     }
 
     public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
-        System.out.println("getGUI BLOCk = " + blockInstance);
+//        System.out.println("getGUI BLOCk = " + blockInstance);
         main.getBlockDataManager().getData(blockInstance, "inventoryID", inventoryID -> {
+            System.out.println("inventoryID = " + inventoryID);
             if (inventoryID == null || main.getGUIManager().getGUI(UUID.fromString(inventoryID)) == null) {
                 CustomGUI customGUI = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
                 if (customGUI == null) return;
@@ -199,7 +200,7 @@ public abstract class CustomBlock extends IDHolder {
             } else {
                 CustomGUI customGUI = main.getGUIManager().getGUI(UUID.fromString(inventoryID));
                 if (customGUI != null) customGUI.setParentBlock(blockInstance);
-                customGUIConsumer.accept(customGUI);
+                if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
             }
         });
     }

@@ -77,6 +77,7 @@ public class Main extends JavaPlugin implements Listener {
     private BlockDataManager blockDataManager;
     private EnhancedMetadataManager enhancedMetadataManager;
     private CircuitMapManager circuitMapManager;
+    private BlockLoadInitializer blockLoadInitializer;
 
     private TaskChainFactory taskChainFactory;
 
@@ -133,6 +134,7 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager = new CustomBlockManager(this);
         this.fastTaskTracker = new FastTaskTracker(this);
         this.enhancedMetadataManager = new EnhancedMetadataManager(this);
+        this.blockLoadInitializer = new BlockLoadInitializer(this);
 
         getServer().getPluginManager().registerEvents(this, this);
 
@@ -140,6 +142,7 @@ public class Main extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(this.customItemManager, this);
         getServer().getPluginManager().registerEvents(this.customBlockManager, this);
+        getServer().getPluginManager().registerEvents(this.blockLoadInitializer, this);
 //        getServer().getPluginManager().registerEvents(new ItemStacker(this), this);
 
         /* Progress Bars */
@@ -368,6 +371,10 @@ public class Main extends JavaPlugin implements Listener {
 
     public CircuitMapManager getCircuitMapManager() {
         return circuitMapManager;
+    }
+
+    public BlockLoadInitializer getBlockLoadInitializer() {
+        return blockLoadInitializer;
     }
 
     public <T> TaskChain<T> newChain() {
@@ -673,8 +680,12 @@ public class Main extends JavaPlugin implements Listener {
             /**
              * Take the player's networking channel and add our custom DuplexHandler
              */
-            ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
-            pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler); // "packet_handler", --- beforeeeeeeee
+            try {
+                ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
+                pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler); // "packet_handler", --- beforeeeeeeee
+            } catch (IllegalArgumentException ignored) {
+                // TODO: Suppress properly later
+            }
         }, 60L);
 
     }

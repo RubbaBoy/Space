@@ -4,15 +4,14 @@ import com.google.common.collect.ImmutableMap;
 import com.uddernetworks.space.main.Main;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class BlockDataManager {
@@ -41,7 +40,7 @@ public class BlockDataManager {
                     try {
                         PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("INSERT OR REPLACE INTO block_data VALUES (?, ?, ?, ?, ?, ?);");
 
-                        preparedStatement.setString(1, block.getWorld().getUID().toString().replace("-", ""));
+                        preparedStatement.setString(1, block.getWorld().getUID().toString());
                         preparedStatement.setInt(2, block.getX());
                         preparedStatement.setInt(3, block.getY());
                         preparedStatement.setInt(4, block.getZ());
@@ -72,7 +71,10 @@ public class BlockDataManager {
                     try {
                         PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT value FROM block_data WHERE world = ? AND x = ? AND y = ? AND z = ? AND key = ?;");
 
-                        preparedStatement.setString(1, block.getWorld().getUID().toString().replace("-", ""));
+//                        System.out.println("block.getWorld().getUID().toString() = " + block.getWorld().getUID().toString());
+//                        System.out.println("key = " + key);
+
+                        preparedStatement.setString(1, block.getWorld().getUID().toString());
                         preparedStatement.setInt(2, block.getX());
                         preparedStatement.setInt(3, block.getY());
                         preparedStatement.setInt(4, block.getZ());
@@ -100,7 +102,7 @@ public class BlockDataManager {
                     try {
                         PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("DELETE FROM block_data WHERE world = ? AND x = ? AND y = ? AND z = ?;");
 
-                        preparedStatement.setString(1, block.getWorld().getUID().toString().replace("-", ""));
+                        preparedStatement.setString(1, block.getWorld().getUID().toString());
                         preparedStatement.setInt(2, block.getX());
                         preparedStatement.setInt(3, block.getY());
                         preparedStatement.setInt(4, block.getZ());
@@ -133,7 +135,7 @@ public class BlockDataManager {
                     try {
                         PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT * FROM block_data WHERE key = ?;");
 
-                        preparedStatement.setString(1, "%customBlock");
+                        preparedStatement.setString(1, "customBlock");
 
                         return preparedStatement.executeQuery();
                     } catch (SQLException e) {
@@ -152,7 +154,7 @@ public class BlockDataManager {
                         }
 
                         while (resultSet.next()) {
-                            World world = Bukkit.getWorld(resultSet.getString("world"));
+                            World world = Bukkit.getWorld(UUID.fromString(resultSet.getString("world")));
                             int x = resultSet.getInt("x");
                             int y = resultSet.getInt("y");
                             int z = resultSet.getInt("z");
@@ -169,8 +171,64 @@ public class BlockDataManager {
                 .execute();
     }
 
+    public void getBlocksInChunk(Chunk chunk, Consumer<Map<Block, CustomBlock>> callback) {
+        main.newChain()
+                .asyncFirst(() -> {
+                    try {
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT * FROM block_data WHERE key == 'customBlock' AND x >> 4 == ? AND z >> 4 == ?;");
+
+                        preparedStatement.setInt(1, chunk.getX());
+                        preparedStatement.setInt(2, chunk.getZ());
+
+//                        System.out.println("chunk.getX() = " + chunk.getX());
+//                        System.out.println("chunk.getZ() = " + chunk.getZ());
+
+                        return preparedStatement.executeQuery();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    return null;
+                })
+                .syncLast(resultSet -> {
+                    Map<Block, CustomBlock> blocks = new HashMap<>();
+
+                    try {
+                        if (resultSet == null || resultSet.isClosed()) {
+                            if (callback != null) callback.accept(blocks);
+                            return;
+                        }
+
+                        while (resultSet.next()) {
+                            World world = Bukkit.getWorld(UUID.fromString(resultSet.getString("world")));
+                            int x = resultSet.getInt("x");
+                            int y = resultSet.getInt("y");
+                            int z = resultSet.getInt("z");
+                            int customBlockID = Integer.valueOf(resultSet.getString("value"));
+
+//                            System.out.println("x = " + x);
+//                            System.out.println("customBlockID = " + customBlockID);
+
+                            blocks.put(world.getBlockAt(x, y, z), main.getCustomIDManager().getCustomBlockById(customBlockID));
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (callback != null) {
+                        System.out.println("blocks = " + blocks);
+                        callback.accept(blocks);
+                    }
+                })
+                .execute();
+    }
+
     public CustomBlock getCustomBlock(Block block) {
         return this.customBlockCache.get(block);
+    }
+
+    public Map<Block, CustomBlock> getCustomBlockCache() {
+        return this.customBlockCache;
     }
 
     private void setCache(Block block, String key, String value) {

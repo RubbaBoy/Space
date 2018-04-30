@@ -2,7 +2,7 @@ package com.uddernetworks.space.database;
 
 public enum DatabaseTable {
     BLOCK_DATA("block_data", "CREATE TABLE block_data (\n" +
-            "  world VARCHAR(32),\n" +
+            "  world VARCHAR(36),\n" +
             "  x     INT,\n" +
             "  y     INT,\n" +
             "  z     INT,\n" +
