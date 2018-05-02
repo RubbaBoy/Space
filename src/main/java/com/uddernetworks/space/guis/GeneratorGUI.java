@@ -63,25 +63,27 @@ public class GeneratorGUI extends CustomGUI {
 
         updateSlots();
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
+        setPacketItem(47, wattageProgress.getItemStack(0));
 
-//            Bukkit.getPlayer("RubbaBoy").sendMessage("Power: " + main.getBlockDataManager().getCustomBlock(getParentBlock()).getOutputPower(getParentBlock()));
-
-            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 47, CraftItemStack.asNMSCopy(wattageProgress.getItemStack(index2 / 16D * 100D)));
-
-            getInventory().getViewers().stream()
-                    .map(player -> ((CraftPlayer) player).getHandle())
-                    .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
-
-            index2 += adding2;
-
-            if ((adding2 > 0 && index2 >= 16) || (adding2 < 0 && index2 < 0)) {
-                adding2 *= -1;
-
-                index2 += adding2;
-            }
-
-        }, 0L, 2L);
+//        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
+//
+////            Bukkit.getPlayer("RubbaBoy").sendMessage("Power: " + main.getBlockDataManager().getCustomBlock(getParentBlock()).getOutputPower(getParentBlock()));
+//
+//            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 47, CraftItemStack.asNMSCopy(wattageProgress.getItemStack(index2 / 16D * 100D)));
+//
+//            getInventory().getViewers().stream()
+//                    .map(player -> ((CraftPlayer) player).getHandle())
+//                    .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
+//
+//            index2 += adding2;
+//
+//            if ((adding2 > 0 && index2 >= 16) || (adding2 < 0 && index2 < 0)) {
+//                adding2 *= -1;
+//
+//                index2 += adding2;
+//            }
+//
+//        }, 0L, 2L);
     }
 
     @Override
@@ -93,6 +95,11 @@ public class GeneratorGUI extends CustomGUI {
             if (data == null) return;
             getInventory().setContents(InventoryUtils.deserializeInventory(data));
         });
+    }
+
+    public void updateOutputMeter(double power, double maxPower) {
+        System.out.println("Percentage: " + (power / maxPower * 100D));
+        setPacketItem(47, wattageProgress.getItemStack(power / maxPower * 100D));
     }
 
     private int removeFuel() {

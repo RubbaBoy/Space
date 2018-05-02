@@ -61,27 +61,29 @@ public class ElectricFurnaceGUI extends CustomGUI {
 
         updateSlots();
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
 
-//            System.out.println("index2 = " + index2);
 
-//            Bukkit.getPlayer("RubbaBoy").sendMessage("Power: " + main.getBlockDataManager().getCustomBlock(getParentBlock()).getSupply(getParentBlock()));
-
-            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 20, CraftItemStack.asNMSCopy(arrowProgress.getItemStack(index2 / 23D * 100D)));
-
-            new ArrayList<>(getInventory().getViewers()).stream()
-                    .map(player -> ((CraftPlayer) player).getHandle())
-                    .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
-
-            index2 += adding2;
-
-            if ((adding2 > 0 && index2 >= 23) || (adding2 < 0 && index2 < 0)) {
-                adding2 *= -1;
-
-                index2 += adding2;
-            }
-
-        }, 0L, 2L);
+//        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
+//
+////            System.out.println("index2 = " + index2);
+//
+////            Bukkit.getPlayer("RubbaBoy").sendMessage("Power: " + main.getBlockDataManager().getCustomBlock(getParentBlock()).getSupply(getParentBlock()));
+//
+//            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 20, CraftItemStack.asNMSCopy(arrowProgress.getItemStack(index2 / 23D * 100D)));
+//
+//            new ArrayList<>(getInventory().getViewers()).stream()
+//                    .map(player -> ((CraftPlayer) player).getHandle())
+//                    .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
+//
+//            index2 += adding2;
+//
+//            if ((adding2 > 0 && index2 >= 23) || (adding2 < 0 && index2 < 0)) {
+//                adding2 *= -1;
+//
+//                index2 += adding2;
+//            }
+//
+//        }, 0L, 2L);
     }
 
     @Override

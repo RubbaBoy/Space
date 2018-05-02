@@ -1,8 +1,6 @@
 package com.uddernetworks.space.blocks;
 
 import com.uddernetworks.space.main.Main;
-import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;

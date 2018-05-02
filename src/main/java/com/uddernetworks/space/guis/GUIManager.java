@@ -41,7 +41,7 @@ public class GUIManager {
     }
 
     public void removeGUI(UUID uuid) {
-        new ArrayList<>(guis).stream().filter(gui -> gui.getUUID().equals(uuid)).forEach(guis::remove);
+        new ArrayList<>(guis).stream().filter(gui -> gui.getUUID().equals(uuid)).forEach(gui -> guis.remove(gui));
     }
 
     public void clearGUIs() {

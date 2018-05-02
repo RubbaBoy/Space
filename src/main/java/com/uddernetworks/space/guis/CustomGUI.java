@@ -1,10 +1,12 @@
 package com.uddernetworks.space.guis;
 
 import com.uddernetworks.space.main.Main;
+import net.minecraft.server.v1_12_R1.PacketPlayOutSetSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -17,9 +19,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class CustomGUI implements InventoryHolder, Listener {
 
@@ -27,6 +27,7 @@ public class CustomGUI implements InventoryHolder, Listener {
     private String title;
     private int size;
     private List<Slot> slots = new ArrayList<>();
+    private Map<Integer, ItemStack> asyncItems = new HashMap<>();
     private Inventory inventory;
     private UUID uuid;
     private Block parentBlock = null;
@@ -70,6 +71,21 @@ public class CustomGUI implements InventoryHolder, Listener {
 //        if (slots.stream().noneMatch(openSlot -> openSlot.getIndex() == slot.getIndex())) {
         slots.add(slot);
 //        }
+    }
+
+    public void setPacketItem(int index, ItemStack itemStack) {
+        asyncItems.remove(index);
+        asyncItems.put(index, itemStack);
+
+        showPacketItem(index, itemStack);
+    }
+
+    public void showPacketItem(int index, ItemStack itemStack) {
+        PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), index, CraftItemStack.asNMSCopy(itemStack));
+
+        getInventory().getViewers().stream()
+                .map(player -> ((CraftPlayer) player).getHandle())
+                .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
     }
 
     public void updateSlots() {
@@ -133,6 +149,11 @@ public class CustomGUI implements InventoryHolder, Listener {
     public void onOpenEvent(InventoryOpenEvent event) {
         if (event.getInventory().getHolder().getClass().equals(getClass())) {
             onOpen(event.getPlayer());
+            System.out.println("asyncItems = " + asyncItems);
+
+            Bukkit.getScheduler().runTaskLater(main, () -> {
+                asyncItems.forEach(this::showPacketItem);
+            }, 20L);
         }
     }
 

@@ -25,8 +25,7 @@ public class DirectionalBlock extends AnimatedBlock {
 
     @Override
     boolean onBreak(Block block, Player player) {
-        super.onBreak(block, player);
-        return true;
+        return super.onBreak(block, player);
     }
 
     @Override

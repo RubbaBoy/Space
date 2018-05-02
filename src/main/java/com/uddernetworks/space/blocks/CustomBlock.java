@@ -107,6 +107,7 @@ public abstract class CustomBlock extends IDHolder {
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         enhancedMetadata.setData("currentPower", power);
+        onSupplyChange(blockInstance, power);
     }
 
     /**
@@ -125,6 +126,7 @@ public abstract class CustomBlock extends IDHolder {
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         enhancedMetadata.setData("demand", power);
+        onDemandChange(blockInstance, power);
     }
 
     /**
@@ -144,6 +146,7 @@ public abstract class CustomBlock extends IDHolder {
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         enhancedMetadata.setData("maxLoad", load);
+        onMaxLoadChange(blockInstance, load);
     }
 
     /**
@@ -165,6 +168,7 @@ public abstract class CustomBlock extends IDHolder {
 
         if (currentPower != power) {
             enhancedMetadata.setData("outputPower", power);
+            onOutputChange(blockInstance, power);
             return true;
         }
 
@@ -183,6 +187,14 @@ public abstract class CustomBlock extends IDHolder {
     abstract void onPlace(Block block, Player player);
 
     abstract void onClick(PlayerInteractEvent event);
+
+    public void onSupplyChange(Block block, double newAmount) {}
+
+    public void onDemandChange(Block block, double newAmount) {}
+
+    public void onMaxLoadChange(Block block, double newAmount) {}
+
+    public void onOutputChange(Block block, double newAmount) {}
 
     public void spawnParticles(Block block) {
         block.getWorld().playEffect(block.getLocation().add(0, 0.5D, 0), Effect.STEP_SOUND, particle.getId());

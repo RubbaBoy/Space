@@ -113,12 +113,27 @@ public class CustomBlockManager implements Listener {
         if (player.getGameMode() != GameMode.CREATIVE) block.getWorld().dropItemNaturally(block.getLocation(), customBlock.toItemStack());
 
         if (!customBlock.onBreak(block, player)) {
+            System.out.println("Cancel");
             event.setCancelled(true);
             return;
         }
+        System.out.println("Go");
 
-        main.getBlockDataManager().deleteData(block, () -> {
-        });
+        if (customBlock.hasGUI()) {
+            customBlock.getGUI(block, customGUI -> {
+                if (customGUI != null) {
+                    main.getGUIManager().removeGUI(customGUI.getUUID());
+                }
+
+                main.getBlockDataManager().deleteData(block, () -> {});
+            });
+        } else {
+            main.getBlockDataManager().deleteData(block, () -> {});
+        }
+//        main.getGUIManager().removeGUI();
+        System.out.println("Done! Cancelled = " + event.isCancelled());
+
+        block.setType(Material.AIR);
 
 //        block.setMetadata("inventoryID", new FixedMetadataValue(main, new ArrayList<>()));
 //        block.setMetadata("material", new FixedMetadataValue(main, new ArrayList<>()));
@@ -130,30 +145,20 @@ public class CustomBlockManager implements Listener {
         Block clicked = event.getClickedBlock();
         Player player = event.getPlayer();
 
-//        System.out.println("1111");
         if (event.getHand() != EquipmentSlot.HAND) return;
 
-//        System.out.println("2222");
         if (player.isSneaking() || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
-//        System.out.println("3333");
         CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(clicked);
 
-//        System.out.println("4444");
-//        System.out.println("customBlock = " + customBlock);
         if (customBlock == null) return;
 
-//        System.out.println("5555");
         customBlock.onClick(event);
 
-//        System.out.println("6666");
         if (!customBlock.hasGUI()) return;
         event.setCancelled(false);
 
-//        System.out.println("7777");
-
         customBlock.getGUI(clicked, customGUI -> {
-//            System.out.println("customGUI = " + customGUI);
             if (customGUI != null) {
                 player.openInventory(customGUI.getInventory());
             }
@@ -211,6 +216,7 @@ public class CustomBlockManager implements Listener {
                 System.out.println("Uncalled for block face! " + blockFace);
                 break;
         }
+
         if (toPlaceBlock == null || !toPlaceBlock.isEmpty()) return;
 
         BlockPrePlace blockPrePlace = new BlockPrePlace(customBlock.getID(), customBlock.getDamage());
@@ -219,7 +225,6 @@ public class CustomBlockManager implements Listener {
         Runnable runnable = () -> {
             if (player.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount() - 1);
 
-//            Block finalToPlaceBlock = finalToPlaceBlock;
             main.getBlockDataManager().setData(finalToPlaceBlock, "customBlock", blockPrePlace.getId(), () -> {
                 sendArmSwing(player, event.getHand());
 

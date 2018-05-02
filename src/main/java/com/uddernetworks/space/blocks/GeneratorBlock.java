@@ -46,6 +46,20 @@ public class GeneratorBlock extends DirectionalBlock {
         return true;
     }
 
+    @Override
+    public void onMaxLoadChange(Block block, double newAmount) {
+
+    }
+
+    @Override
+    public void onOutputChange(Block block, double newAmount) {
+        getGUI(block, customGUI -> {
+            GeneratorGUI generatorGUI = (GeneratorGUI) customGUI;
+
+            generatorGUI.updateOutputMeter(newAmount, getMaxLoad(block));
+        });
+    }
+
     public void setPowered(Block block, boolean powered) {
         // Powered status uses EnhancedMetadata because it's much faster and doesn't matter if it's persistent
 

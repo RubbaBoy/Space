@@ -24,7 +24,7 @@ public class ElectricFurnaceBlock extends DirectionalBlock {
     boolean onBreak(Block block, Player player) {
         System.out.println("BREAKING FURNACEEEEEEEEEEEEEEE");
         main.getCircuitMapManager().removeBlock(block);
-        return true;
+        return super.onBreak(block, player);
     }
 
     @Override
