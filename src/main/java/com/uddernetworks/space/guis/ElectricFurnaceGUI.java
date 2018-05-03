@@ -91,7 +91,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
         super.setParentBlock(parentBlock);
 
         // For testing
-        this.animatedBlock.startAnimation(getParentBlock(), 2);
+        this.animatedBlock.startAnimation(getParentBlock());
     }
 
     private void startProcessing() {

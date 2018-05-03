@@ -73,7 +73,7 @@ public class AlloyMixerGUI extends CustomGUI {
 //            EntityPlayer ep = ((CraftPlayer) getInventory().getViewers().get(0)).getHandle();
 //            this.windowID = ep.activeContainer.windowId;
 
-            animatedBlock.startAnimation(getParentBlock(), 1);
+            animatedBlock.startAnimation(getParentBlock());
 
             this.task = new FastTask(main).runRepeatingTask(true, () -> {
                 if (!this.processing) return;

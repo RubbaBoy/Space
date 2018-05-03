@@ -15,6 +15,7 @@ public class ElectricFurnaceBlock extends DirectionalBlock {
     public ElectricFurnaceBlock(Main main, int id, Material material, short[][] damages, Material particle, String name) {
         super(main, id, material, damages, particle, name, () -> main.getGUIManager().addGUI(new ElectricFurnaceGUI(main, "Electric Furnace", 27, UUID.randomUUID())));
 
+        setSpeed(2);
         setWantPower(true);
         setElectrical(true);
         setDefaultDemand(1000);
