@@ -1,12 +1,8 @@
 package com.uddernetworks.space.blocks;
 
-import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.main.Main;
-import com.uddernetworks.space.utils.ItemBuilder;
-import com.uddernetworks.space.utils.MutableInt;
 import com.uddernetworks.space.utils.Reflect;
 import net.minecraft.server.v1_12_R1.*;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -15,11 +11,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftCreatureSpawner;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,13 +23,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.function.Consumer;
+import java.util.UUID;
 
 public class CustomBlockManager implements Listener {
 
@@ -113,31 +104,25 @@ public class CustomBlockManager implements Listener {
         if (player.getGameMode() != GameMode.CREATIVE) block.getWorld().dropItemNaturally(block.getLocation(), customBlock.toItemStack());
 
         if (!customBlock.onBreak(block, player)) {
-            System.out.println("Cancel");
             event.setCancelled(true);
             return;
         }
-        System.out.println("Go");
 
         if (customBlock.hasGUI()) {
-            customBlock.getGUI(block, customGUI -> {
-                if (customGUI != null) {
-                    main.getGUIManager().removeGUI(customGUI.getUUID());
-                }
-
-                main.getBlockDataManager().deleteData(block, () -> {});
+            System.out.println("Has GUI");
+            main.getBlockDataManager().getData(block, "inventoryID", inventoryID -> {
+                System.out.println("inventoryID = " + inventoryID);
+                if (inventoryID == null) return;
+                UUID uuid = UUID.fromString(inventoryID);
+                System.out.println("uuid = " + uuid);
+                main.getGUIManager().removeGUI(uuid);
+                main.getBlockDataManager().deleteData(block, () -> {
+                    System.out.println("Deleted data");
+                });
             });
         } else {
             main.getBlockDataManager().deleteData(block, () -> {});
         }
-//        main.getGUIManager().removeGUI();
-        System.out.println("Done! Cancelled = " + event.isCancelled());
-
-        block.setType(Material.AIR);
-
-//        block.setMetadata("inventoryID", new FixedMetadataValue(main, new ArrayList<>()));
-//        block.setMetadata("material", new FixedMetadataValue(main, new ArrayList<>()));
-//        block.setMetadata("damage", new FixedMetadataValue(main, new ArrayList<>()));
     }
 
     @EventHandler

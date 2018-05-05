@@ -28,6 +28,7 @@ public class CircuitMapManager {
 
             for (Block block : circuitMap.getBlocks()) {
                 CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
+                if (customBlock == null) continue;
                 stringBuilder.append("\n").append(customBlock.getName()).append("(\t").append(block.getX()).append(", ").append(block.getY()).append(", ").append(block.getZ()).append(")");
             }
 

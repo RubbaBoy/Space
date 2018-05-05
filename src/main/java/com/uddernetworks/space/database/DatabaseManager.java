@@ -1,12 +1,13 @@
 package com.uddernetworks.space.database;
 
 import com.uddernetworks.space.main.Main;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
-import java.text.MessageFormat;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 
 public class DatabaseManager {

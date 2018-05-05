@@ -6,7 +6,6 @@ import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.meta.EnhancedMetadata;
 import com.uddernetworks.space.utils.ItemBuilder;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

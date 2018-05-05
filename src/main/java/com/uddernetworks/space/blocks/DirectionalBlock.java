@@ -9,8 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
-import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class DirectionalBlock extends AnimatedBlock {
@@ -58,6 +56,12 @@ public class DirectionalBlock extends AnimatedBlock {
         }
 
         setDamages(block, damages[index]);
+
+        CustomGUI customGUI = getCustomGUISupplier() == null ? null : main.getGUIManager().addGUI(getCustomGUISupplier().get());
+        if (customGUI != null) {
+            customGUI.setParentBlock(block);
+            main.getBlockDataManager().setData(block, "inventoryID", customGUI.getUUID(), () -> {});
+        }
 
         main.getBlockDataManager().setData(block, "direction", index, () -> {});
 

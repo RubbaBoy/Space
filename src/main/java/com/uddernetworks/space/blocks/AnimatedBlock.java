@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -46,8 +45,6 @@ public class AnimatedBlock extends CustomBlock {
                 return;
             }
         }
-
-        System.out.println("CONTINUTINGF");
 
         AnimatingDamages animatingDamages = new AnimatingDamages(damages, speed);
         animatingDamages.addBlock(block);
@@ -177,23 +174,18 @@ public class AnimatedBlock extends CustomBlock {
             this.damages = damages;
             this.speed = speed;
 
-
             Bukkit.getScheduler().runTaskTimer(main, () -> {
                 try {
                     System.out.println("currentCycleIndex = " + currentCycleIndex);
-                    System.out.println("currentCycleIndex = " + currentCycleIndex.hashCode());
 
-                    new HashMap<>(currentCycleIndex).forEach((block, mutableInt) -> {
+                    currentCycleIndex.forEach((block, mutableInt) -> {
                         try {
                             if (running.containsKey(block) && running.get(block)) {
-                                System.out.println("Contain");
                                 int currentIndex = currentCycleIndex.get(block).getValue();
 
                                 main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damages[currentIndex]);
 
                                 currentCycleIndex.get(block).increment();
-                            } else {
-                                System.out.println("No contain");
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -213,10 +205,6 @@ public class AnimatedBlock extends CustomBlock {
             currentCycleIndex.remove(block);
 
             running.remove(block);
-
-            System.out.println("REMOVCEDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-            System.out.println("currentCycleIndex = " + currentCycleIndex);
-            System.out.println("currentCycleIndex = " + currentCycleIndex.hashCode());
         }
 
         public boolean containsBlock(Block block) {

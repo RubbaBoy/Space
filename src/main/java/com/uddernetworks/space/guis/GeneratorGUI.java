@@ -4,7 +4,6 @@ import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.blocks.GeneratorBlock;
 import com.uddernetworks.space.main.Main;
 import net.minecraft.server.v1_12_R1.EnumParticle;
-import net.minecraft.server.v1_12_R1.PacketPlayOutSetSlot;
 import net.minecraft.server.v1_12_R1.PacketPlayOutWorldParticles;
 import net.minecraft.server.v1_12_R1.TileEntityFurnace;
 import org.bukkit.Bukkit;

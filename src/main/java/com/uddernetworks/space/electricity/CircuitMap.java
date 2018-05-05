@@ -4,7 +4,6 @@ import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.blocks.WireBlock;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
@@ -13,9 +12,7 @@ import org.bukkit.entity.EntityType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CircuitMap {
 

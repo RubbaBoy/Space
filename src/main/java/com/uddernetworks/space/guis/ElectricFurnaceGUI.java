@@ -3,16 +3,9 @@ package com.uddernetworks.space.guis;
 import com.uddernetworks.space.blocks.AnimatedBlock;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.utils.FastTask;
-import net.minecraft.server.v1_12_R1.PacketPlayOutSetSlot;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class ElectricFurnaceGUI extends CustomGUI {

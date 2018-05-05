@@ -10,9 +10,7 @@ import com.uddernetworks.space.entities.CustomEntityTest;
 import com.uddernetworks.space.items.CustomItem;
 import com.uddernetworks.space.items.IDHolder;
 import com.uddernetworks.space.main.Main;
-import com.uddernetworks.space.nbt.NBTItem;
 import com.uddernetworks.space.utils.ItemBuilder;
-import net.minecraft.server.v1_12_R1.BlockStepAbstract;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
@@ -34,7 +32,6 @@ import org.bukkit.util.EulerAngle;
 
 import java.lang.reflect.Field;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Command(name = "rocket", consoleAllow = false, minArgs = 1, maxArgs = 4)
 public class RocketCommand {
