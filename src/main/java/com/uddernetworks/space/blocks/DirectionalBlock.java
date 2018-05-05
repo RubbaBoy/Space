@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class DirectionalBlock extends AnimatedBlock {
@@ -57,16 +59,15 @@ public class DirectionalBlock extends AnimatedBlock {
 
         setDamages(block, damages[index]);
 
-        main.getBlockDataManager().setData(block, "direction", index, () -> {
-        });
+        main.getBlockDataManager().setData(block, "direction", index, () -> {});
+
+        startAnimation(block);
 
         blockPrePlace.setUsingCallback(true);
 
-        getBlockDamages(block, damages -> {
-            setTypeTo(block, damages[0]);
-            blockPrePlace.setDamage(damages[0]);
-            blockPrePlace.getCallback().run();
-        });
+        setTypeTo(block, damages[index][0]);
+        blockPrePlace.setDamage(damages[index][0]);
+        blockPrePlace.getCallback().run();
 
         return true;
     }
@@ -84,11 +85,5 @@ public class DirectionalBlock extends AnimatedBlock {
     @Override
     boolean hasGUI() {
         return getCustomGUISupplier() != null;
-    }
-
-    private void setTypeTo(Block block, short damage) {
-        System.out.println("damage = " + damage);
-//        main.getCustomBlockManager().setBlockData(block.getWorld(), block, Material.DIAMOND_AXE, main.getCustomIDManager().getCustomBlockById(customBlockID).getDamage());
-        main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damage);
     }
 }

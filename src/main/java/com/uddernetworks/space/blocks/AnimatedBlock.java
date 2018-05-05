@@ -8,24 +8,17 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AnimatedBlock extends CustomBlock {
 
-//    private Consumer<Player> openInventory;
-
     short[][] damages;
     private double speed = 1;
     private List<AnimatingDamages> animatingDamages = new ArrayList<>();
-//    private Map<Block, short[]> animations = new HashMap<>();
-//    private Map<Block, BukkitTask> fastTasks = new HashMap<>();
-//    private Map<Block, Double> speeds = new HashMap<>();
-//    private Map<Block, MutableInt> currentCycleIndex = new HashMap<>();
 
     public AnimatedBlock(Main main, int id, Material material, short[] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
         this(main, id, material, new short[][] {damages}, particle, name, customGUISupplier);
@@ -45,23 +38,16 @@ public class AnimatedBlock extends CustomBlock {
         return speed;
     }
 
-    public void setDamages(Block block, short[] damages) { // TODO: MORNING: Make sure this class stops shit when needed
-        System.out.println("AnimatedBlock.setDamages");
-//        this.animations.put(block, damages);
-//
-//        if (fastTasks.containsKey(block)) {
-//            fastTasks.get(block).cancel();
-//            fastTasks.remove(block);
-//
-//            startAnimation(block, speeds.get(block));
-//        }
-
+    public void setDamages(Block block, short[] damages) {
+        System.out.println("block = [" + block + "], damages = [" + Arrays.toString(damages) + "]");
         for (AnimatingDamages animatingDamage : animatingDamages) {
             if (Arrays.equals(animatingDamage.getDamages(), damages)) {
                 animatingDamage.addBlock(block);
                 return;
             }
         }
+
+        System.out.println("CONTINUTINGF");
 
         AnimatingDamages animatingDamages = new AnimatingDamages(damages, speed);
         animatingDamages.addBlock(block);
@@ -72,36 +58,12 @@ public class AnimatedBlock extends CustomBlock {
     public void startAnimation(Block block) {
         for (AnimatingDamages animatingDamage : animatingDamages) {
             if (animatingDamage.containsBlock(block)) {
+                System.out.println("Contains");
                 animatingDamage.setRunning(block, true);
+            } else {
+                System.out.println("Doesn't contain");
             }
         }
-
-
-//        speeds.put(block, speed);
-//
-//        if (fastTasks.containsKey(block)) {
-//            fastTasks.get(block).cancel();
-//            fastTasks.remove(block);
-//        }
-
-//        getBlockDamages(block, blockDamages -> {
-
-
-//            currentCycleIndex.put(block, new MutableInt().setLoopbackCap(blockDamages.length - 1));
-
-//            BukkitTask task = Bukkit.getScheduler().runTaskTimer(main, () -> {
-//                System.out.println("111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
-//                int currentIndex = currentCycleIndex.get(block).getValue();
-//
-//                if (block.getWorld().getPlayers().size() <= 0) return;
-//
-//                main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), blockDamages[currentIndex]);
-//
-//                currentCycleIndex.get(block).increment();
-//            }, 0, Double.valueOf(speed / blockDamages.length * 20).longValue());
-
-//            fastTasks.put(block, task);
-//        });
     }
 
     public short[] getDamages(Block block) {
@@ -116,24 +78,18 @@ public class AnimatedBlock extends CustomBlock {
         } else {
             main.getBlockDataManager().getData(block, "direction", directionString -> {
                 if (directionString == null) {
-//                    animations.put(block, damages[0]);
                     callback.accept(damages[0]);
                     return;
                 }
 
                 int direction = Integer.valueOf(directionString);
 
-//                animations.put(block, damages[direction]);
                 callback.accept(damages[direction]);
             });
         }
     }
 
     public void stopAnimation(Block block) {
-//        if (fastTasks.containsKey(block)) {
-//            fastTasks.get(block).cancel();
-//            fastTasks.remove(block);
-//        }
         for (AnimatingDamages animatingDamage : animatingDamages) {
             if (animatingDamage.containsBlock(block)) {
                 animatingDamage.setRunning(block, false);
@@ -156,22 +112,6 @@ public class AnimatedBlock extends CustomBlock {
 
     @Override
     boolean onBreak(Block block, Player player) {
-//        if (fastTasks.containsKey(block)) {
-//            System.out.println("Cancelling stuffffffffffff");
-//            System.out.println(fastTasks.get(block));
-//            Bukkit.getScheduler().cancelTask(fastTasks.get(block).getTaskId());
-//            fastTasks.get(block).cancel();
-//            fastTasks.remove(block);
-//
-//            animations.remove(block);
-//            speeds.remove(block);
-//            currentCycleIndex.remove(block);
-//
-//            System.out.println("fastTasks = " + fastTasks);
-//        } else {
-//            System.out.println("NO CONTAINNNNNNN stuffffffffffffff");
-//        }
-//        stopAnimation(block);
         for (AnimatingDamages animatingDamage : animatingDamages) {
             if (animatingDamage.containsBlock(block)) {
                 animatingDamage.removeBlock(block);
@@ -201,6 +141,32 @@ public class AnimatedBlock extends CustomBlock {
         return true;
     }
 
+    @Override
+    public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
+        main.getBlockDataManager().getData(blockInstance, "inventoryID", inventoryID -> {
+            if (inventoryID == null || main.getGUIManager().getGUI(UUID.fromString(inventoryID)) == null) {
+                CustomGUI customGUI = getCustomGUISupplier() == null ? null : main.getGUIManager().addGUI(getCustomGUISupplier().get());
+                if (customGUI == null) return;
+                customGUI.setParentBlock(blockInstance);
+                main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), () -> {
+                    main.getBlockDataManager().getData(blockInstance, "direction", data -> {
+                        int direction = Integer.valueOf(data);
+                        setDamages(blockInstance, damages[direction]);
+                        startAnimation(blockInstance);
+
+                        setTypeTo(blockInstance, damages[direction][0]);
+                        if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
+                        if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
+                    });
+                });
+            } else {
+                CustomGUI customGUI = main.getGUIManager().getGUI(UUID.fromString(inventoryID));
+                if (customGUI != null) customGUI.setParentBlock(blockInstance);
+                if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
+            }
+        });
+    }
+
     private class AnimatingDamages {
         private short[] damages;
         private double speed;
@@ -213,14 +179,29 @@ public class AnimatedBlock extends CustomBlock {
 
 
             Bukkit.getScheduler().runTaskTimer(main, () -> {
-                currentCycleIndex.forEach((block, mutableInt) -> {
-                    System.out.println("111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
-                    int currentIndex = currentCycleIndex.get(block).getValue();
+                try {
+                    System.out.println("currentCycleIndex = " + currentCycleIndex);
+                    System.out.println("currentCycleIndex = " + currentCycleIndex.hashCode());
 
-                    main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damages[currentIndex]);
+                    new HashMap<>(currentCycleIndex).forEach((block, mutableInt) -> {
+                        try {
+                            if (running.containsKey(block) && running.get(block)) {
+                                System.out.println("Contain");
+                                int currentIndex = currentCycleIndex.get(block).getValue();
 
-                    currentCycleIndex.get(block).increment();
-                });
+                                main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damages[currentIndex]);
+
+                                currentCycleIndex.get(block).increment();
+                            } else {
+                                System.out.println("No contain");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }, 0, Double.valueOf(speed / damages.length * 20).longValue());
         }
 
@@ -230,7 +211,12 @@ public class AnimatedBlock extends CustomBlock {
 
         public void removeBlock(Block block) {
             currentCycleIndex.remove(block);
+
             running.remove(block);
+
+            System.out.println("REMOVCEDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+            System.out.println("currentCycleIndex = " + currentCycleIndex);
+            System.out.println("currentCycleIndex = " + currentCycleIndex.hashCode());
         }
 
         public boolean containsBlock(Block block) {

@@ -4,6 +4,7 @@ import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,8 @@ public class CircuitMapManager {
         this.circuitMaps.add(circuitMap);
 
         circuitMap.updatePower();
+
+        printStatus();
     }
 
     public void removeBlock(Block block) {
@@ -94,5 +97,9 @@ public class CircuitMapManager {
 
     public void addCircuit(CircuitMap circuitMap) {
         this.circuitMaps.add(circuitMap);
+    }
+
+    public void clearDebugText() {
+        this.circuitMaps.forEach(circuitMap -> circuitMap.getArmorStands().forEach(ArmorStand::remove));
     }
 }

@@ -201,20 +201,25 @@ public abstract class CustomBlock extends IDHolder {
     }
 
     public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
-//        System.out.println("getGUI BLOCk = " + blockInstance);
         main.getBlockDataManager().getData(blockInstance, "inventoryID", inventoryID -> {
-            System.out.println("inventoryID = " + inventoryID);
             if (inventoryID == null || main.getGUIManager().getGUI(UUID.fromString(inventoryID)) == null) {
                 CustomGUI customGUI = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
                 if (customGUI == null) return;
                 customGUI.setParentBlock(blockInstance);
-                main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), () -> customGUIConsumer.accept(customGUI));
+                main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), () -> {
+                    if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
+                    if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
+                });
             } else {
                 CustomGUI customGUI = main.getGUIManager().getGUI(UUID.fromString(inventoryID));
                 if (customGUI != null) customGUI.setParentBlock(blockInstance);
                 if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
             }
         });
+    }
+
+    public void setTypeTo(Block block, short damage) {
+        main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damage);
     }
 
     abstract boolean hasGUI();

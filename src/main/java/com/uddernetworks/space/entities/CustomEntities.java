@@ -18,7 +18,7 @@ public enum CustomEntities {
     private MinecraftKey key;
     private MinecraftKey oldKey;
 
-    private CustomEntities(String name, int id, EntityType entityType, Class<? extends Entity> nmsClass, Class<? extends Entity> customClass) {
+    CustomEntities(String name, int id, EntityType entityType, Class<? extends Entity> nmsClass, Class<? extends Entity> customClass) {
         this.name = name;
         this.id = id;
         this.entityType = entityType;

@@ -270,6 +270,10 @@ public class CircuitMap {
     private boolean isBlockElectrical(Block block) {
         return main.getBlockDataManager().getCustomBlock(block) != null && main.getBlockDataManager().getCustomBlock(block).isElectrical();
     }
+
+    public List<ArmorStand> getArmorStands() {
+        return armorStands;
+    }
 }
 
 class CachedBlock {

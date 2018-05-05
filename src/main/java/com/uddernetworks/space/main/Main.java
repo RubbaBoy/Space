@@ -108,7 +108,6 @@ public class Main extends JavaPlugin implements Listener {
         this.databaseManager.initialize();
 
         this.blockDataManager = new BlockDataManager(this);
-        this.blockDataManager.updateCaches(null);
 
         this.circuitMapManager = new CircuitMapManager(this);
 
@@ -311,10 +310,13 @@ public class Main extends JavaPlugin implements Listener {
 
 
         CustomEntities.registerEntities();
+
+        this.blockDataManager.updateCaches(() -> this.blockLoadInitializer.init());
     }
 
     @Override
     public void onDisable() {
+        this.circuitMapManager.clearDebugText();
         this.guiManager.saveInventories();
 
         this.guiManager.clearGUIs();
