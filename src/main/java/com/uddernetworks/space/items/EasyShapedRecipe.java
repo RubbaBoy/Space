@@ -24,16 +24,9 @@ public class EasyShapedRecipe {
         this(main, recipeName, main.getCustomIDManager().getByID(resultID), shape);
     }
 
-//    public EasyShapedRecipe(Main main, String recipeName, String customResultName, boolean customItem, String... shape) {
-//        this(main, recipeName, customItem ? main.getCustomItemManager().getCustomItem(customResultName).toItemStack() : main.getCustomBlockManager().getCustomBlock(customResultName).toItemStack(), shape);
-//    }
-
     public EasyShapedRecipe(Main main, String recipeName, IDHolder idHolder, String... shape) {
         this.main = main;
         this.recipeName = recipeName;
-//        System.out.println("idHolder = " + idHolder);
-//        System.out.println("idHolder.id = " + idHolder.id);
-//        System.out.println("idHolder.toItemStack() = " + idHolder.toItemStack());
         this.result = idHolder.toItemStack();
         this.shape = shape;
     }

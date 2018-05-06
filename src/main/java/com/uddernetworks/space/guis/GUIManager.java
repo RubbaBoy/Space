@@ -25,13 +25,6 @@ public class GUIManager {
     }
 
     public CustomGUI getGUI(UUID uuid) {
-//        System.out.println("uuid = " + uuid);
-//        for (CustomGUI gui : guis) {
-//            System.out.println("gui.getUUID() = " + gui.getUUID());
-//            if (gui.getUUID().equals(uuid)) return gui;
-//        }
-//
-//        return null;
         return guis.stream().filter(customGUI -> customGUI.getUUID().equals(uuid)).findFirst().orElse(null);
     }
 
@@ -46,9 +39,7 @@ public class GUIManager {
     public void saveInventories() {
         this.guis.forEach(gui -> {
             if (gui instanceof LiquidOxygenGeneratorGUI || gui instanceof AlloyMixerGUI) {
-                main.getBlockDataManager().setData(gui.getParentBlock(), "inventoryContents", InventoryUtils.serializeInventory(gui.getInventory().getContents()), () -> {
-                    System.out.println("Saved GUI: " + gui.getUUID());
-                });
+                main.getBlockDataManager().setData(gui.getParentBlock(), "inventoryContents", InventoryUtils.serializeInventory(gui.getInventory().getContents()), () -> {});
             }
         });
     }

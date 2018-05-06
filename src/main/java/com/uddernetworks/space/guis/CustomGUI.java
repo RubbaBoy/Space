@@ -149,7 +149,6 @@ public class CustomGUI implements InventoryHolder, Listener {
     public void onOpenEvent(InventoryOpenEvent event) {
         if (event.getInventory().getHolder().getClass().equals(getClass())) {
             onOpen(event.getPlayer());
-            System.out.println("asyncItems = " + asyncItems);
 
             Bukkit.getScheduler().runTaskLater(main, () -> {
                 asyncItems.forEach(this::showPacketItem);

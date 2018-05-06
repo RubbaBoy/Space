@@ -38,7 +38,6 @@ public class AnimatedBlock extends CustomBlock {
     }
 
     public void setDamages(Block block, short[] damages) {
-        System.out.println("block = [" + block + "], damages = [" + Arrays.toString(damages) + "]");
         for (AnimatingDamages animatingDamage : animatingDamages) {
             if (Arrays.equals(animatingDamage.getDamages(), damages)) {
                 animatingDamage.addBlock(block);
@@ -55,10 +54,7 @@ public class AnimatedBlock extends CustomBlock {
     public void startAnimation(Block block) {
         for (AnimatingDamages animatingDamage : animatingDamages) {
             if (animatingDamage.containsBlock(block)) {
-                System.out.println("Contains");
                 animatingDamage.setRunning(block, true);
-            } else {
-                System.out.println("Doesn't contain");
             }
         }
     }
@@ -176,8 +172,6 @@ public class AnimatedBlock extends CustomBlock {
 
             Bukkit.getScheduler().runTaskTimer(main, () -> {
                 try {
-                    System.out.println("currentCycleIndex = " + currentCycleIndex);
-
                     currentCycleIndex.forEach((block, mutableInt) -> {
                         try {
                             if (running.containsKey(block) && running.get(block)) {

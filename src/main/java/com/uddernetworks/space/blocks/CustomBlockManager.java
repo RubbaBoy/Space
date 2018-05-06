@@ -58,14 +58,6 @@ public class CustomBlockManager implements Listener {
         Bukkit.getOnlinePlayers().forEach(forPlayer -> ((CraftPlayer) forPlayer).getHandle().playerConnection.sendPacket(animation));
     }
 
-//    public void getCustomBlock(Block block, Consumer<CustomBlock> customBlockConsumer) {
-//        main.getBlockDataManager().getData(block, "customBlock", customBlockString -> {
-//            if (!StringUtils.isNumeric(customBlockString)) customBlockConsumer.accept(null);
-//
-//            customBlockConsumer.accept((CustomBlock) main.getCustomIDManager().getByID(Integer.valueOf(customBlockString)));
-//        });
-//    }
-
     public CustomBlock getCustomBlock(String name) {
         for (CustomBlock customBlock : customBlocks) {
             if (customBlock.getName().equalsIgnoreCase(name)) return customBlock;
@@ -73,14 +65,6 @@ public class CustomBlockManager implements Listener {
 
         return null;
     }
-
-//    public CustomBlock getCustomBlock(int id) {
-//        for (CustomBlock customBlock : customBlocks) {
-//            if (customBlock.getName().equalsIgnoreCase(name)) return customBlock;
-//        }
-//
-//        return null;
-//    }
 
     private net.minecraft.server.v1_12_R1.Material getNMSMaterial(net.minecraft.server.v1_12_R1.Block nmsBlock) {
         return nmsBlock.q(null);
@@ -109,16 +93,11 @@ public class CustomBlockManager implements Listener {
         }
 
         if (customBlock.hasGUI()) {
-            System.out.println("Has GUI");
             main.getBlockDataManager().getData(block, "inventoryID", inventoryID -> {
-                System.out.println("inventoryID = " + inventoryID);
                 if (inventoryID == null) return;
                 UUID uuid = UUID.fromString(inventoryID);
-                System.out.println("uuid = " + uuid);
                 main.getGUIManager().removeGUI(uuid);
-                main.getBlockDataManager().deleteData(block, () -> {
-                    System.out.println("Deleted data");
-                });
+                main.getBlockDataManager().deleteData(block, () -> {});
             });
         } else {
             main.getBlockDataManager().deleteData(block, () -> {});
