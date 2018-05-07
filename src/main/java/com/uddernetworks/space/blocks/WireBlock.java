@@ -17,7 +17,7 @@ public class WireBlock extends CustomBlock {
     }
 
     @Override
-    boolean onBreak(Block block, Player player) {
+    public boolean onBreak(Block block, Player player) {
         List<Block> list = new ArrayList<>();
         list.add(block);
         updateState(block, list, block);
@@ -26,23 +26,23 @@ public class WireBlock extends CustomBlock {
     }
 
     @Override
-    boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
+    public boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
         return true;
     }
 
     @Override
-    void onPlace(Block block, Player player) {
+    public void onPlace(Block block, Player player) {
         updateState(block, new ArrayList<>(), null);
         main.getCircuitMapManager().addBlock(block);
     }
 
     @Override
-    void onClick(PlayerInteractEvent event) {
+    public void onClick(PlayerInteractEvent event) {
 
     }
 
     @Override
-    boolean hasGUI() {
+    public boolean hasGUI() {
         return false;
     }
 

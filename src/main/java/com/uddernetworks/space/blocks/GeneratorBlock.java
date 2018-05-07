@@ -1,5 +1,6 @@
 package com.uddernetworks.space.blocks;
 
+import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.guis.GeneratorGUI;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class GeneratorBlock extends DirectionalBlock {
 
@@ -18,30 +20,29 @@ public class GeneratorBlock extends DirectionalBlock {
     }
 
     @Override
-    boolean onBreak(Block block, Player player) {
-        System.out.println("BREAKING GENERATORRRRRRRRRRRRRRRRRRRRRRRRRRR");
+    public boolean onBreak(Block block, Player player) {
         main.getCircuitMapManager().removeBlock(block);
         return super.onBreak(block, player);
     }
 
     @Override
-    boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
+    public boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
         return super.onPrePlace(block, player, blockPrePlace);
     }
 
     @Override
-    void onPlace(Block block, Player player) {
+    public void onPlace(Block block, Player player) {
         setPowered(block, true);
         main.getCircuitMapManager().addBlock(block);
     }
 
     @Override
-    void onClick(PlayerInteractEvent event) {
+    public void onClick(PlayerInteractEvent event) {
 
     }
 
     @Override
-    boolean hasGUI() {
+    public boolean hasGUI() {
         return true;
     }
 
@@ -55,7 +56,21 @@ public class GeneratorBlock extends DirectionalBlock {
         getGUI(block, customGUI -> {
             GeneratorGUI generatorGUI = (GeneratorGUI) customGUI;
 
+            System.out.println("New amount = " + newAmount);
+            System.out.println("Max load = " + getMaxLoad(block));
+
             generatorGUI.updateOutputMeter(newAmount, getMaxLoad(block));
+        });
+    }
+
+    @Override
+    public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
+        System.out.println("GeneratorBlock.getGUI");
+        System.out.println(this);
+        System.out.println("blockInstance = [" + blockInstance + "], customGUIConsumer = [" + customGUIConsumer + "]");
+        super.getGUI(blockInstance, customGUI -> {
+            setPowered(blockInstance, true); // TODO: Remove later
+            if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
         });
     }
 
@@ -63,5 +78,6 @@ public class GeneratorBlock extends DirectionalBlock {
         // Powered status uses EnhancedMetadata because it's much faster and doesn't matter if it's persistent
 
         setMaxLoad(block, powered ? 7000 : 0);
+        updateCircuit(block);
     }
 }

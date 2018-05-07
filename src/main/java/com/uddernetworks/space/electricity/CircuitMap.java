@@ -57,6 +57,8 @@ public class CircuitMap {
 
             int blockOutputPower = customBlock.getMaxLoad(block);
 
+            System.out.println("customBlock = " + customBlock + "\tPower = " + blockOutputPower);
+
             if (blockOutputPower != -1) {
                 generatingBlocks.add(block);
                 basePower += blockOutputPower;
@@ -67,10 +69,16 @@ public class CircuitMap {
             }
         }
 
+        System.out.println("basePower = " + basePower);
+
+        // Blocks ACCEPTING like Electric Furnace
+
         List<CachedBlock> blockList = powerHungryBlocks.stream().map(block -> {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
             return new CachedBlock(block, customBlock, customBlock.getDemand(block));
         }).collect(Collectors.toList());
+
+        System.out.println("accept blockList = " + blockList);
 
         int remaining = basePower;
 
@@ -81,10 +89,16 @@ public class CircuitMap {
         if (!blockList.isEmpty()) blockList.forEach(cachedBlock -> cachedBlock.apply(true));
 
 
+
+
+        // Generators and everything
+
         blockList = generatingBlocks.stream().map(block -> {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
             return new CachedBlock(block, customBlock, customBlock.getMaxLoad(block));
         }).collect(Collectors.toList());
+
+        System.out.println("gen blockList = " + blockList);
 
         remaining = basePower - remaining;
 
@@ -93,6 +107,9 @@ public class CircuitMap {
         }
 
         if (!blockList.isEmpty()) blockList.forEach(cachedBlock -> cachedBlock.apply(false));
+
+
+
 
 
         for (Block wireBlock : wireBlocks) {
@@ -231,10 +248,12 @@ public class CircuitMap {
     }
 
     private static int distributeWithRemaining(int amount, boolean supply, List<CachedBlock> blocks) {
+        System.out.println("CircuitMap.distributeWithRemaining");
+        System.out.println("amount = [" + amount + "], supply = [" + supply + "], blocks = [" + blocks + "]");
         int[] parts = splitIntoParts(amount, blocks.size());
         int remaining = 0;
 
-        System.out.println(Arrays.toString(parts));
+        System.out.println("Parts = " + Arrays.toString(parts));
 
         for (int i = blocks.size() - 1; i >= 0; i--) {
             int part = parts[i];

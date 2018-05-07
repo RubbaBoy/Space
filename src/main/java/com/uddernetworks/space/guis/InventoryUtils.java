@@ -18,7 +18,6 @@ public class InventoryUtils {
         yamlConfiguration.set("items", itemStacks);
 
         String saved = yamlConfiguration.saveToString();
-        System.out.println("saved = \n" + saved);
 
         return saved;
     }
@@ -30,10 +29,6 @@ public class InventoryUtils {
             yamlConfiguration.loadFromString(string);
 
             List<ItemStack> itemStackList = (List<ItemStack>) yamlConfiguration.getList("items");
-
-            System.out.println("itemStackList = " + itemStackList);
-
-            System.out.println("OTHER SHIT = \n\n" + Arrays.toString(itemStackList.toArray(new ItemStack[0])));
 
             return itemStackList.toArray(new ItemStack[0]);
         } catch (InvalidConfigurationException e) {

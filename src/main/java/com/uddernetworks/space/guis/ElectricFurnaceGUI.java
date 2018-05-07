@@ -1,6 +1,8 @@
 package com.uddernetworks.space.guis;
 
 import com.uddernetworks.space.blocks.AnimatedBlock;
+import com.uddernetworks.space.blocks.CustomBlock;
+import com.uddernetworks.space.blocks.ElectricFurnaceBlock;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.utils.FastTask;
 import net.minecraft.server.v1_12_R1.RecipesFurnace;
@@ -12,6 +14,7 @@ import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class ElectricFurnaceGUI extends CustomGUI {
@@ -34,6 +37,9 @@ public class ElectricFurnaceGUI extends CustomGUI {
 
     private Slot firstOutput;
     private Slot secondOutput;
+
+    private double supply;
+    private double demand;
 
     public ElectricFurnaceGUI(Main main, String title, int size, UUID uuid) {
         super(main, title, size, uuid, GUIItems.ELECTRIC_FURNACE_MAIN);
@@ -70,28 +76,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
 
         updateSlots();
 
-
-//        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
-//
-////            System.out.println("index2 = " + index2);
-//
-////            Bukkit.getPlayer("RubbaBoy").sendMessage("Power: " + main.getBlockDataManager().getCustomBlock(getParentBlock()).getSupply(getParentBlock()));
-//
-//            PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 20, CraftItemStack.asNMSCopy(arrowProgress.getItemStack(index2 / 23D * 100D)));
-//
-//            new ArrayList<>(getInventory().getViewers()).stream()
-//                    .map(player -> ((CraftPlayer) player).getHandle())
-//                    .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
-//
-//            index2 += adding2;
-//
-//            if ((adding2 > 0 && index2 >= 23) || (adding2 < 0 && index2 < 0)) {
-//                adding2 *= -1;
-//
-//                index2 += adding2;
-//            }
-//
-//        }, 0L, 2L);
+        this.demand = animatedBlock.getDefaultDemand();
     }
 
     @Override
@@ -99,7 +84,28 @@ public class ElectricFurnaceGUI extends CustomGUI {
         super.setParentBlock(parentBlock);
 
         // For testing
-        this.animatedBlock.startAnimation(getParentBlock());
+//        this.animatedBlock.startAnimation(getParentBlock());
+    }
+
+    public double getSupply() {
+        return supply;
+    }
+
+    public void setSupply(double supply) {
+        this.supply = supply;
+
+        if (!processing) {
+            ElectricFurnaceBlock customBlock = (ElectricFurnaceBlock) main.getBlockDataManager().getCustomBlock(getParentBlock());
+            customBlock.setTypeTo(getParentBlock(), customBlock.getDamages(getParentBlock())[1]);
+        }
+    }
+
+    public double getDemand() {
+        return demand;
+    }
+
+    public void setDemand(double demand) {
+        this.demand = demand;
     }
 
     private void startProcessing() {
@@ -116,32 +122,21 @@ public class ElectricFurnaceGUI extends CustomGUI {
         this.task2 = new FastTask(main).runTaskLater(false, () -> {
             try {
                 if (!this.processing) return;
-                System.out.println("Finished");
 
                 stopProcessing();
 
                 ItemStack resulting = CraftItemStack.asBukkitCopy(RecipesFurnace.getInstance().getResult(CraftItemStack.asNMSCopy(getInventory().getItem(input.getIndex()))));
 
-                System.out.println("resulting = " + resulting);
-
                 Slot output = getOutputFor(resulting);
 
-                System.out.println("output = " + output + " pos = " + output.getIndex());
-
                 if (output != null) {
-                    System.out.println("Here");
-                    System.out.println("1 amount = " + resulting.getAmount());
-//                    System.out.println("2 amount = " + getInventory().getItem(output.getIndex()).getAmount());
                     resulting.setAmount(Math.min(resulting.getAmount() + (getInventory().getItem(output.getIndex()) != null ? getInventory().getItem(output.getIndex()).getAmount() : 0), 64));
-                    System.out.println("Result amount = " + resulting.getAmount());
 
                     getInventory().setItem(output.getIndex(), resulting);
 
                     ItemStack inputItem = getInventory().getItem(input.getIndex());
                     inputItem.setAmount(inputItem.getAmount() - 1);
                     getInventory().setItem(input.getIndex(), inputItem);
-
-                    System.out.println("Setting result!");
                 }
 
 //            Slot testSlot = firstOutput;
@@ -226,11 +221,9 @@ public class ElectricFurnaceGUI extends CustomGUI {
     }
 
     private void updateDoing() {
-        System.out.println("ElectricFurnaceGUI.updateDoing");
         Bukkit.getScheduler().runTaskLater(main, () -> {
             try {
                 if (processing) {
-                    System.out.println("111");
                     if (input == null) return;
 
                     if (!goodInputItem(input)) {
@@ -245,38 +238,22 @@ public class ElectricFurnaceGUI extends CustomGUI {
                         stopProcessing();
                         return;
                     }
-
-                    System.out.println("Letting continue");
-
-//                startProcessing();
                 } else {
-                    System.out.println("222");
                     if (goodInputItem(firstInput)) {
                         input = firstInput;
 
-                        System.out.println("333");
-
                         Slot output = getOutputFor(CraftItemStack.asBukkitCopy(RecipesFurnace.getInstance().getResult(CraftItemStack.asNMSCopy(getInventory().getItem(input.getIndex())))));
-                        System.out.println("output = " + output);
                         if (output == null) return;
-
-                        System.out.println("First input is good");
 
                         startProcessing();
                     } else if (goodInputItem(secondInput)) {
                         input = secondInput;
 
-                        System.out.println("444");
-
                         Slot output = getOutputFor(CraftItemStack.asBukkitCopy(RecipesFurnace.getInstance().getResult(CraftItemStack.asNMSCopy(getInventory().getItem(input.getIndex())))));
-                        System.out.println("output = " + output);
                         if (output == null) return;
-
-                        System.out.println("Second input is good");
 
                         startProcessing();
                     } else {
-                        System.out.println("No good input found");
                         input = null;
 //                        startProcessing();
                     }

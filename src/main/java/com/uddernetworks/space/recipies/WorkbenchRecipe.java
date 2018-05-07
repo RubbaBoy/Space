@@ -29,8 +29,6 @@ public class WorkbenchRecipe extends Recipe {
         this.ordered = ordered;
         this.resulting = resulting;
 
-        System.out.println("representing = " + representing);
-
         ItemStack[][] items = new ItemStack[5][];
         for (int i = 0; i < 5; i++) {
             items[i] = new ItemStack[5];
@@ -38,7 +36,6 @@ public class WorkbenchRecipe extends Recipe {
                 if (itemChars[i][i2] == ' ') {
                     items[i][i2] = ItemBuilder.AIR;
                 } else {
-                    System.out.println("Got = " + representing.get(itemChars[i][i2]));
                     items[i][i2] = representing.get(itemChars[i][i2]).clone();
                 }
             }
@@ -79,12 +76,9 @@ public class WorkbenchRecipe extends Recipe {
             ItemStack[] row = itemGrid[i];
 
             for (int i2 = 0; i2 < 5; i2++) {
-                System.out.println("Adding together index " + ((i * 5) + i2));
                 ret[(i * 5) + i2] = row[i2];
             }
         }
-
-        System.out.println("ret = " + ret);
 
         return ret;
     }

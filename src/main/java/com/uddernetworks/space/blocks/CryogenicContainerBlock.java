@@ -16,27 +16,27 @@ public class CryogenicContainerBlock extends CustomBlock {
     }
 
     @Override
-    boolean onBreak(Block block, Player player) {
+    public boolean onBreak(Block block, Player player) {
         return true;
     }
 
     @Override
-    boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
+    public boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
         return true;
     }
 
     @Override
-    void onPlace(Block block, Player player) {
+    public void onPlace(Block block, Player player) {
 
     }
 
     @Override
-    void onClick(PlayerInteractEvent event) {
+    public void onClick(PlayerInteractEvent event) {
 
     }
 
     @Override
-    boolean hasGUI() {
+    public boolean hasGUI() {
         return true;
     }
 

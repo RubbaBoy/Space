@@ -218,7 +218,6 @@ public class BlockDataManager {
                     }
 
                     if (callback != null) {
-                        System.out.println("blocks = " + blocks);
                         callback.accept(blocks);
                     }
                 })

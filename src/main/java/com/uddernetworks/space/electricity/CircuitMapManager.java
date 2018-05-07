@@ -51,6 +51,12 @@ public class CircuitMapManager {
 
     public void addBlock(Block block) {
         System.out.println("block = " + block);
+
+        if (getCircuitMap(block) != null) {
+            System.out.println("Block already in circuit map!");
+            return;
+        }
+
         for (BlockFace blockFace : new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
             Block nearBlock = block.getRelative(blockFace);
 

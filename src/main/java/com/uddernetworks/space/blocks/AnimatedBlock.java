@@ -17,6 +17,7 @@ public class AnimatedBlock extends CustomBlock {
 
     short[][] damages;
     private double speed = 1;
+    private int skip = 0;
     private List<AnimatingDamages> animatingDamages = new ArrayList<>();
 
     public AnimatedBlock(Main main, int id, Material material, short[] damages, Material particle, String name, Supplier<CustomGUI> customGUISupplier) {
@@ -35,6 +36,18 @@ public class AnimatedBlock extends CustomBlock {
 
     public double getSpeed() {
         return speed;
+    }
+
+    public int getSkip() {
+        return skip;
+    }
+
+    public void setSkip(int skip) {
+        this.skip = skip;
+    }
+
+    public short[][] getRawDamages() {
+        return this.damages;
     }
 
     public void setDamages(Block block, short[] damages) {
@@ -104,7 +117,7 @@ public class AnimatedBlock extends CustomBlock {
 
 
     @Override
-    boolean onBreak(Block block, Player player) {
+    public boolean onBreak(Block block, Player player) {
         for (AnimatingDamages animatingDamage : animatingDamages) {
             if (animatingDamage.containsBlock(block)) {
                 animatingDamage.removeBlock(block);
@@ -115,22 +128,22 @@ public class AnimatedBlock extends CustomBlock {
     }
 
     @Override
-    boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
+    public boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
         return true;
     }
 
     @Override
-    void onPlace(Block block, Player player) {
+    public void onPlace(Block block, Player player) {
 
     }
 
     @Override
-    void onClick(PlayerInteractEvent event) {
+    public void onClick(PlayerInteractEvent event) {
 //        openInventory.accept(event.getPlayer());
     }
 
     @Override
-    boolean hasGUI() {
+    public boolean hasGUI() {
         return true;
     }
 
@@ -143,19 +156,26 @@ public class AnimatedBlock extends CustomBlock {
                 customGUI.setParentBlock(blockInstance);
                 main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), () -> {
                     main.getBlockDataManager().getData(blockInstance, "direction", data -> {
-                        int direction = Integer.valueOf(data);
+                        int direction = data == null ? 0 : Integer.valueOf(data);
                         setDamages(blockInstance, damages[direction]);
-                        startAnimation(blockInstance);
+//                        startAnimation(blockInstance);
 
                         setTypeTo(blockInstance, damages[direction][0]);
-                        if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
+//                        if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
                         if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
                     });
                 });
             } else {
                 CustomGUI customGUI = main.getGUIManager().getGUI(UUID.fromString(inventoryID));
-                if (customGUI != null) customGUI.setParentBlock(blockInstance);
-                if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
+
+                main.getBlockDataManager().getData(blockInstance, "direction", data -> {
+                    int direction = data == null ? 0 : Integer.valueOf(data);
+                    setDamages(blockInstance, damages[direction]);
+                    setTypeTo(blockInstance, damages[direction][0]);
+
+                    if (customGUI != null) customGUI.setParentBlock(blockInstance);
+                    if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
+                });
             }
         });
     }
@@ -177,7 +197,7 @@ public class AnimatedBlock extends CustomBlock {
                             if (running.containsKey(block) && running.get(block)) {
                                 int currentIndex = currentCycleIndex.get(block).getValue();
 
-                                main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damages[currentIndex]);
+                                main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damages[currentIndex + skip]);
 
                                 currentCycleIndex.get(block).increment();
                             }
@@ -192,7 +212,7 @@ public class AnimatedBlock extends CustomBlock {
         }
 
         public void addBlock(Block block) {
-            currentCycleIndex.put(block, new MutableInt().setLoopbackCap(damages.length - 1));
+            currentCycleIndex.put(block, new MutableInt().setLoopbackCap(damages.length - 1 - skip));
         }
 
         public void removeBlock(Block block) {

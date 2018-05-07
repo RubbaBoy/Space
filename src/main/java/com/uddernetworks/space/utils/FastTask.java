@@ -38,9 +38,6 @@ public class FastTask {
         this.delayMS = delayVals[0];
         this.delayNS = (int) delayVals[1];
 
-        System.out.println("Delay MS = " + this.delayMS);
-        System.out.println("Delay NS = " + this.delayNS);
-
         Runnable runnableWrapper = () -> {
             try {
                 Thread.sleep(initialDelayMS, initialDelayNS);

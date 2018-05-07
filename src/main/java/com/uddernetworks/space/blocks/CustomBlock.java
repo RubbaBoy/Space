@@ -1,5 +1,6 @@
 package com.uddernetworks.space.blocks;
 
+import com.uddernetworks.space.electricity.CircuitMap;
 import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.items.IDHolder;
 import com.uddernetworks.space.main.Main;
@@ -78,12 +79,24 @@ public abstract class CustomBlock extends IDHolder {
         this.wantPower = wantPower;
     }
 
+    public int getDefaultInputPower() {
+        return defaultInputPower;
+    }
+
     public void setDefaultInputPower(int defaultInputPower) {
         this.defaultInputPower = defaultInputPower;
     }
 
+    public int getDefaultDemand() {
+        return defaultDemand;
+    }
+
     public void setDefaultDemand(int defaultDemand) {
         this.defaultDemand = defaultDemand;
+    }
+
+    public int getDefaultMaxLoad() {
+        return defaultMaxLoad;
     }
 
     public void setDefaultMaxLoad(int defaultMaxLoad) {
@@ -132,6 +145,7 @@ public abstract class CustomBlock extends IDHolder {
      * Gets the maximum load the block may output
      */
     public int getMaxLoad(Block blockInstance) {
+        System.out.println("Getting max load!");
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         return (int) enhancedMetadata.getData("maxLoad", this.defaultMaxLoad);
@@ -141,7 +155,7 @@ public abstract class CustomBlock extends IDHolder {
      * Sets the maximum load the block may output
      */
     public void setMaxLoad(Block blockInstance, int load) {
-        System.out.println("blockInstance = [" + blockInstance + "], load = [" + load + "]");
+        System.out.println("Setting max load to: " + load);
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         enhancedMetadata.setData("maxLoad", load);
@@ -195,18 +209,25 @@ public abstract class CustomBlock extends IDHolder {
 
     public void onOutputChange(Block block, double newAmount) {}
 
+    public void updateCircuit(Block blockInstance) {
+        CircuitMap circuitMap = main.getCircuitMapManager().getCircuitMap(blockInstance);
+        if (circuitMap == null) return;
+        circuitMap.updatePower();
+    }
+
     public void spawnParticles(Block block) {
         block.getWorld().playEffect(block.getLocation().add(0, 0.5D, 0), Effect.STEP_SOUND, particle.getId());
     }
 
     public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
+        System.out.println("get GUI");
         main.getBlockDataManager().getData(blockInstance, "inventoryID", inventoryID -> {
             if (inventoryID == null || main.getGUIManager().getGUI(UUID.fromString(inventoryID)) == null) {
                 CustomGUI customGUI = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
                 if (customGUI == null) return;
                 customGUI.setParentBlock(blockInstance);
                 main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), () -> {
-                    if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
+//                    if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
                     if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
                 });
             } else {
@@ -221,5 +242,5 @@ public abstract class CustomBlock extends IDHolder {
         main.getCustomBlockManager().setBlockData(block.getWorld(), block, getMaterial(), damage);
     }
 
-    abstract boolean hasGUI();
+    public abstract boolean hasGUI();
 }

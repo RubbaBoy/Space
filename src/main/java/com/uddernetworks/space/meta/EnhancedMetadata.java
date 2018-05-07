@@ -23,4 +23,8 @@ public class EnhancedMetadata {
         this.data.put(name, data);
     }
 
+    @Override
+    public String toString() {
+        return "EnhancedMetadata[" + data.toString() + "]";
+    }
 }

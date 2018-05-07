@@ -83,7 +83,6 @@ public class AlloyMixerGUI extends CustomGUI {
                 getInventory().getViewers().stream()
                         .map(player -> ((CraftPlayer) player).getHandle())
                         .forEach(entityPlayer -> {
-                            System.out.println("Updating for: " + entityPlayer.displayName);
                             entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot);
                         });
             }, 0L, speedInSeconds / 100);
@@ -143,13 +142,9 @@ public class AlloyMixerGUI extends CustomGUI {
                 ItemStack inSlot = getInventory().getItem(49);
 
                 if (inSlot == null || inSlot.getType() == Material.AIR) {
-                    System.out.println("========== 222");
                     startProcessing();
                 } else if (inSlot.getAmount() + resulting.getAmount() <= 64) {
-                    System.out.println("========== 333");
                     startProcessing();
-                } else {
-                    System.out.println("NOPPPPPPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEE238907349805734958745jdofhp98fu73809rjodsiv......:: " + (inSlot.getAmount() + resulting.getAmount()));
                 }
             } else {
 //                System.out.println("========== 444");

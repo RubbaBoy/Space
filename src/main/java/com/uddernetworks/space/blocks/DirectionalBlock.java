@@ -24,12 +24,12 @@ public class DirectionalBlock extends AnimatedBlock {
     }
 
     @Override
-    boolean onBreak(Block block, Player player) {
+    public boolean onBreak(Block block, Player player) {
         return super.onBreak(block, player);
     }
 
     @Override
-    boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
+    public boolean onPrePlace(Block block, Player player, CustomBlockManager.BlockPrePlace blockPrePlace) {
         int direction = Math.round(player.getLocation().getYaw() / 90f) & 0x3;
 
         BlockFace blockFace = axis[direction].getOppositeFace();
@@ -65,7 +65,7 @@ public class DirectionalBlock extends AnimatedBlock {
 
         main.getBlockDataManager().setData(block, "direction", index, () -> {});
 
-        startAnimation(block);
+//        startAnimation(block);
 
         blockPrePlace.setUsingCallback(true);
 
@@ -77,17 +77,17 @@ public class DirectionalBlock extends AnimatedBlock {
     }
 
     @Override
-    void onPlace(Block block, Player player) {
+    public void onPlace(Block block, Player player) {
 
     }
 
     @Override
-    void onClick(PlayerInteractEvent event) {
+    public void onClick(PlayerInteractEvent event) {
 
     }
 
     @Override
-    boolean hasGUI() {
+    public boolean hasGUI() {
         return getCustomGUISupplier() != null;
     }
 }

@@ -66,6 +66,10 @@ public class EnhancedMetadataManager implements Listener {
         return false;
     }
 
+    public Map<PersistantBlock, EnhancedMetadata> getAllMetadata() {
+        return new HashMap<>(this.metadataHashMap);
+    }
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();

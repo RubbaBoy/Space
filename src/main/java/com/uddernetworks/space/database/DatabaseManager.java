@@ -21,7 +21,6 @@ public class DatabaseManager {
 
     public void connect(File file) {
         try {
-            System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
             file.getParentFile().mkdirs();
             file.createNewFile();
             // db parameters

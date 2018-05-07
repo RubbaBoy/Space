@@ -59,7 +59,6 @@ public class LiquidOxygenGeneratorGUI extends CustomGUI {
         super.setParentBlock(parentBlock);
 
         main.getBlockDataManager().getData(getParentBlock(), "inventoryContents", data -> {
-            System.out.println("data = " + data);
             if (data == null) return;
             getInventory().setContents(InventoryUtils.deserializeInventory(data));
         });

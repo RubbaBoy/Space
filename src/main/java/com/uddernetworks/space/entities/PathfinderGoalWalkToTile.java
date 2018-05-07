@@ -38,7 +38,6 @@ public class PathfinderGoalWalkToTile extends PathfinderGoal {
     @Override
     public void c() {
         this.entity.getNavigation().a(this.path, 1D);
-        System.out.println(path);
     }
 
     // on end path goal

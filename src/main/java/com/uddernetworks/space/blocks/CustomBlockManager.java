@@ -200,8 +200,6 @@ public class CustomBlockManager implements Listener {
             event.setCancelled(true);
         };
 
-        System.out.println("1111111111111111111111");
-
         blockPrePlace.setCallback(runnable);
 
         if (!customBlock.onPrePlace(toPlaceBlock, player, blockPrePlace)) return;

@@ -214,10 +214,10 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 39, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator")); // Wiki
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 40, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator")); // Wiki
         this.customBlockManager.addCustomBlock(new ElectricFurnaceBlock(this, 115, Material.DIAMOND_AXE, new short[][] {
-                {61, 62, 63, 64, 65, 66},
-                {67, 68, 69, 70, 71, 72},
-                {73, 74, 75, 76, 77, 78},
-                {79, 80, 81, 82, 83, 84}}, Material.WHITE_SHULKER_BOX, "Electric Furnace")); // Wiki
+                {61, 62, 63, 64, 65, 66, 67},
+                {68, 69, 70, 71, 72, 73, 74},
+                {75, 76, 77, 78, 79, 80, 81},
+                {82, 83, 84, 85, 86, 87, 88}}, Material.WHITE_SHULKER_BOX, "Electric Furnace")); // Wiki
         this.customBlockManager.addCustomBlock(new GeneratorBlock(this, 116, Material.DIAMOND_HOE, new short[][] {{41}, {42}, {43}, {44}}, Material.ORANGE_SHULKER_BOX, "Generator")); // NOT ON WIKI, need to fix model
 
 
@@ -325,7 +325,9 @@ public class Main extends JavaPlugin implements Listener {
         CustomEntities.unregisterEntities();
 
         try {
+            System.out.println("PRE  COMPLETELY CLOSED::: " + databaseManager.getConnection().isClosed());
             databaseManager.getConnection().close();
+            System.out.println("POST COMPLETELY CLOSED::: " + databaseManager.getConnection().isClosed());
         } catch (SQLException e) {
             e.printStackTrace();
         }

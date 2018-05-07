@@ -28,12 +28,12 @@ public class ItemStacker implements Listener {
 
     @EventHandler
     public void onInventoryEvent(InventoryEvent event) {
-        System.out.println("Inventory event");
+
     }
 
     @EventHandler
     public void onInventoryInteract(InventoryInteractEvent event) {
-        System.out.println("Interacted");
+
     }
 
     @EventHandler
@@ -112,9 +112,6 @@ public class ItemStacker implements Listener {
                         newCurrent = total;
                     }
 
-                    System.out.println("newCurrent = " + newCurrent);
-                    System.out.println("newCursor = " + newCursor);
-
                     event.getCurrentItem().setAmount(newCurrent);
 
                     event.getCursor().setAmount(newCursor);
@@ -145,14 +142,7 @@ public class ItemStacker implements Listener {
 
                     ItemStack thinkSlot = clickedTopInventory ? topInventory.getItem(event.getSlot()) : bottomInventory.getItem(event.getSlot());
 
-                    System.out.println("thinkSlot = " + thinkSlot);
-                    System.out.println("Actual slot = " + event.getCurrentItem());
-
-
                     event.setCurrentItem(ItemBuilder.itemFrom(Material.DIRT));
-
-                    System.out.println("Inventory = " + event.getInventory());
-                    System.out.println("Clicked inventory = " + event.getClickedInventory());
 
 //                    event.setCancelled(true);
 //                    event.setResult(Event.Result.DENY);
@@ -183,7 +173,6 @@ public class ItemStacker implements Listener {
 
     @EventHandler
     public void onItemPickup(PlayerPickupItemEvent event) {
-        System.out.println("PICKUP");
         CustomItem customItem = main.getCustomItemManager().getCustomItem(event.getItem().getItemStack());
 
         if (customItem == null) return;
@@ -193,21 +182,14 @@ public class ItemStacker implements Listener {
 
         int slot = first(craftInventory, customItem.toItemStack(), false);
 
-        System.out.println("slot = " + slot);
-
         if (slot == -1) slot = firstEmpty(craftInventory);
 
         if (slot == -1) {
-            System.out.println("Nope");
             event.setCancelled(true);
             return;
         }
 
-        System.out.println("slot = " + slot);
-
         ItemStack itemInSlot = inventory.getItem(slot);
-
-        System.out.println("itemInSlot = " + itemInSlot);
 
         if (itemInSlot == null) return;
 
@@ -249,11 +231,9 @@ public class ItemStacker implements Listener {
     // See CraftInventory#first(itemStack, boolean)
     private int first(CraftInventory craftInventory, ItemStack item, boolean withAmount) {
         if (item == null) {
-            System.out.println("item = " + item);
             return -1;
         } else {
             ItemStack[] inventory = craftInventory.getStorageContents();
-            System.out.println("inventory = " + Arrays.toString(inventory));
             int i = 0;
 
             while(true) {
