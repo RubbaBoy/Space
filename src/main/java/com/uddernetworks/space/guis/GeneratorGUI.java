@@ -96,6 +96,7 @@ public class GeneratorGUI extends CustomGUI {
     }
 
     public void updateOutputMeter(double power, double maxPower) {
+        System.out.println("power = [" + power + "], maxPower = [" + maxPower + "]");
         System.out.println("Percentage: " + (power / maxPower * 100D));
         setPacketItem(47, wattageProgress.getItemStack(power / maxPower * 100D));
     }

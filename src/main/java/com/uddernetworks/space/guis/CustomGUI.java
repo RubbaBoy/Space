@@ -152,7 +152,7 @@ public class CustomGUI implements InventoryHolder, Listener {
 
             Bukkit.getScheduler().runTaskLater(main, () -> {
                 asyncItems.forEach(this::showPacketItem);
-            }, 20L);
+            }, 1L);
         }
     }
 

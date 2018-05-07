@@ -55,19 +55,12 @@ public class GeneratorBlock extends DirectionalBlock {
     public void onOutputChange(Block block, double newAmount) {
         getGUI(block, customGUI -> {
             GeneratorGUI generatorGUI = (GeneratorGUI) customGUI;
-
-            System.out.println("New amount = " + newAmount);
-            System.out.println("Max load = " + getMaxLoad(block));
-
             generatorGUI.updateOutputMeter(newAmount, getMaxLoad(block));
         });
     }
 
     @Override
     public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
-        System.out.println("GeneratorBlock.getGUI");
-        System.out.println(this);
-        System.out.println("blockInstance = [" + blockInstance + "], customGUIConsumer = [" + customGUIConsumer + "]");
         super.getGUI(blockInstance, customGUI -> {
             setPowered(blockInstance, true); // TODO: Remove later
             if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
@@ -75,9 +68,11 @@ public class GeneratorBlock extends DirectionalBlock {
     }
 
     public void setPowered(Block block, boolean powered) {
+        System.out.println("GeneratorBlock.setPowered");
+        System.out.println("block = [" + block + "], powered = [" + powered + "]");
         // Powered status uses EnhancedMetadata because it's much faster and doesn't matter if it's persistent
 
         setMaxLoad(block, powered ? 7000 : 0);
-        updateCircuit(block);
+//        updateCircuit(block);
     }
 }

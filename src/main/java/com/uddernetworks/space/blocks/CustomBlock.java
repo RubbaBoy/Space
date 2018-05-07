@@ -145,7 +145,6 @@ public abstract class CustomBlock extends IDHolder {
      * Gets the maximum load the block may output
      */
     public int getMaxLoad(Block blockInstance) {
-        System.out.println("Getting max load!");
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         return (int) enhancedMetadata.getData("maxLoad", this.defaultMaxLoad);
@@ -155,7 +154,7 @@ public abstract class CustomBlock extends IDHolder {
      * Sets the maximum load the block may output
      */
     public void setMaxLoad(Block blockInstance, int load) {
-        System.out.println("Setting max load to: " + load);
+        System.out.println("Setting max load to " + load);
         EnhancedMetadata enhancedMetadata = main.getEnhancedMetadataManager().getMetadata(blockInstance);
 
         enhancedMetadata.setData("maxLoad", load);
@@ -220,7 +219,6 @@ public abstract class CustomBlock extends IDHolder {
     }
 
     public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
-        System.out.println("get GUI");
         main.getBlockDataManager().getData(blockInstance, "inventoryID", inventoryID -> {
             if (inventoryID == null || main.getGUIManager().getGUI(UUID.fromString(inventoryID)) == null) {
                 CustomGUI customGUI = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());

@@ -1,5 +1,6 @@
 package com.uddernetworks.space.blocks;
 
+import com.uddernetworks.space.guis.CustomGUI;
 import com.uddernetworks.space.guis.ElectricFurnaceGUI;
 import com.uddernetworks.space.main.Main;
 import org.bukkit.Material;
@@ -9,6 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ElectricFurnaceBlock extends DirectionalBlock {
 
@@ -16,7 +18,7 @@ public class ElectricFurnaceBlock extends DirectionalBlock {
         super(main, id, material, damages, particle, name, () -> main.getGUIManager().addGUI(new ElectricFurnaceGUI(main, "Electric Furnace", 27, UUID.randomUUID())));
 
         setSpeed(2);
-        setSkip(2);
+        setSkip(1);
         setWantPower(true);
         setElectrical(true);
         setDefaultDemand(1000);

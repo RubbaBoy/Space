@@ -48,6 +48,8 @@ public class CircuitMap {
             addBlocksNear(block, exclude);
         }
 
+        System.out.println("Blocks NOWWWWWWWWWWW ==== " + this.blocks.size());
+
         for (Block block : new ArrayList<>(this.blocks)) {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
             if (customBlock == null || !customBlock.isElectrical() || block.equals(exclude)) {
@@ -56,8 +58,6 @@ public class CircuitMap {
             }
 
             int blockOutputPower = customBlock.getMaxLoad(block);
-
-            System.out.println("customBlock = " + customBlock + "\tPower = " + blockOutputPower);
 
             if (blockOutputPower != -1) {
                 generatingBlocks.add(block);
@@ -69,16 +69,12 @@ public class CircuitMap {
             }
         }
 
-        System.out.println("basePower = " + basePower);
-
         // Blocks ACCEPTING like Electric Furnace
 
         List<CachedBlock> blockList = powerHungryBlocks.stream().map(block -> {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
             return new CachedBlock(block, customBlock, customBlock.getDemand(block));
         }).collect(Collectors.toList());
-
-        System.out.println("accept blockList = " + blockList);
 
         int remaining = basePower;
 
@@ -98,8 +94,6 @@ public class CircuitMap {
             return new CachedBlock(block, customBlock, customBlock.getMaxLoad(block));
         }).collect(Collectors.toList());
 
-        System.out.println("gen blockList = " + blockList);
-
         remaining = basePower - remaining;
 
         while (remaining > 0 && !blockList.isEmpty()) {
@@ -116,6 +110,17 @@ public class CircuitMap {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(wireBlock);
 
             customBlock.setSupply(wireBlock, basePower - remaining);
+        }
+
+        System.out.println("=======================");
+        for (int i = 0; i < 10; i++) {
+            System.out.println("this.blocks = " + this.blocks.size());
+        }
+
+        try {
+            throw new Exception("Test");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         for (Block block : this.blocks) {
@@ -248,12 +253,8 @@ public class CircuitMap {
     }
 
     private static int distributeWithRemaining(int amount, boolean supply, List<CachedBlock> blocks) {
-        System.out.println("CircuitMap.distributeWithRemaining");
-        System.out.println("amount = [" + amount + "], supply = [" + supply + "], blocks = [" + blocks + "]");
         int[] parts = splitIntoParts(amount, blocks.size());
         int remaining = 0;
-
-        System.out.println("Parts = " + Arrays.toString(parts));
 
         for (int i = blocks.size() - 1; i >= 0; i--) {
             int part = parts[i];

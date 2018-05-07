@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ElectricFurnaceGUI extends CustomGUI {
 
@@ -23,6 +24,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
     private double amount = 0;
     private double update = 1;
     private double speedInSeconds = 2.5;
+    private boolean animationPlaying = false;
     //    private ProgressBar fuelProgress;
     private ProgressBar arrowProgress;
     private FastTask task;
@@ -94,9 +96,14 @@ public class ElectricFurnaceGUI extends CustomGUI {
     public void setSupply(double supply) {
         this.supply = supply;
 
+        updateScreen();
+    }
+
+    public void updateScreen() {
+        System.out.println("Updating screen, processing = " + processing);
         if (!processing) {
             ElectricFurnaceBlock customBlock = (ElectricFurnaceBlock) main.getBlockDataManager().getCustomBlock(getParentBlock());
-            customBlock.setTypeTo(getParentBlock(), customBlock.getDamages(getParentBlock())[1]);
+            customBlock.setTypeTo(getParentBlock(), customBlock.getDamages(getParentBlock())[supply > 0 ? 1 : 0]);
         }
     }
 
@@ -138,20 +145,6 @@ public class ElectricFurnaceGUI extends CustomGUI {
                     inputItem.setAmount(inputItem.getAmount() - 1);
                     getInventory().setItem(input.getIndex(), inputItem);
                 }
-
-//            Slot testSlot = firstOutput;
-//            ItemStack testItem = first;
-//
-//            for (int i = 0; i < 2; i++) {
-//                if (testItem.isSimilar(resulting) || testItem.getType() == Material.AIR || testItem.getAmount() <= 0) {
-//                    testItem.setAmount(testItem.getAmount() + resulting.getAmount());
-//                    getInventory().setItem(testSlot.getIndex(), testItem);
-//                    break;
-//                }
-//
-//                testSlot = secondOutput;
-//                testItem = second;
-//            }
 
                 updateDoing();
             } catch (Exception e) {
@@ -215,8 +208,6 @@ public class ElectricFurnaceGUI extends CustomGUI {
         if (this.task2 != null) this.task2.cancel();
         this.amount = 0;
 
-//        animatedBlock.stopAnimation(getParentBlock());
-
         resetMeter();
     }
 
@@ -224,11 +215,14 @@ public class ElectricFurnaceGUI extends CustomGUI {
         Bukkit.getScheduler().runTaskLater(main, () -> {
             try {
                 if (processing) {
-                    if (input == null) return;
+                    if (input == null) {
+                        stopAnimation();
+                        return;
+                    }
 
                     if (!goodInputItem(input)) {
-//                    processing = false;
                         stopProcessing();
+                        stopAnimation();
                         return;
                     }
 
@@ -236,6 +230,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
 
                     if (output == null) {
                         stopProcessing();
+                        stopAnimation();
                         return;
                     }
                 } else {
@@ -243,44 +238,46 @@ public class ElectricFurnaceGUI extends CustomGUI {
                         input = firstInput;
 
                         Slot output = getOutputFor(CraftItemStack.asBukkitCopy(RecipesFurnace.getInstance().getResult(CraftItemStack.asNMSCopy(getInventory().getItem(input.getIndex())))));
-                        if (output == null) return;
+                        if (output == null) {
+                            stopAnimation();
+                            return;
+                        }
 
                         startProcessing();
                     } else if (goodInputItem(secondInput)) {
                         input = secondInput;
 
                         Slot output = getOutputFor(CraftItemStack.asBukkitCopy(RecipesFurnace.getInstance().getResult(CraftItemStack.asNMSCopy(getInventory().getItem(input.getIndex())))));
-                        if (output == null) return;
+                        if (output == null) {
+                            stopAnimation();
+                            return;
+                        }
 
                         startProcessing();
                     } else {
                         input = null;
-//                        startProcessing();
+                        stopAnimation();
+                        return;
                     }
                 }
 
+                if (!animationPlaying) {
+                    animationPlaying = true;
+                    animatedBlock.startAnimation(getParentBlock());
+                }
 
-//            ItemStack[][] tempGrid = new ItemStack[][] {
-//                    {getInventory().getItem(11), getInventory().getItem(15)}
-//            };
-//
-//            ItemStack resulting = main.getRecipeManager().getResultingItem(tempGrid, RecipeType.ALLOY_MIXER);
-//
-//            if (resulting != null && resulting.getType() != Material.AIR) {
-//                ItemStack inSlot = getInventory().getItem(49);
-//
-//                if (inSlot == null || inSlot.getType() == Material.AIR) {
-//                    startProcessing();
-//                } else if (inSlot.getAmount() + resulting.getAmount() <= 64) {
-//                    startProcessing();
-//                }
-//            } else {
-//                stopProcessing();
-//            }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }, 1L);
+    }
+
+    private void stopAnimation() {
+        if (animationPlaying) {
+            animationPlaying = false;
+            animatedBlock.stopAnimation(getParentBlock());
+            updateScreen();
+        }
     }
 
     private Slot getOutputFor(ItemStack resulting) {
@@ -291,7 +288,8 @@ public class ElectricFurnaceGUI extends CustomGUI {
         ItemStack testItem = first;
 
         for (int i = 0; i < 2; i++) {
-            if (testItem == null || testItem.isSimilar(resulting) || testItem.getType() == Material.AIR || testItem.getAmount() <= 0) return testSlot;
+            if (testItem == null || testItem.isSimilar(resulting) || testItem.getType() == Material.AIR || testItem.getAmount() <= 0)
+                return testSlot;
             testSlot = secondOutput;
             testItem = second;
         }
@@ -308,21 +306,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
         return itemStack.getAmount() > 0 && itemStack.getType() != Material.AIR && !RecipesFurnace.getInstance().getResult(CraftItemStack.asNMSCopy(itemStack)).isEmpty();
     }
 
-    private void clearInputs() {
-        if (getInventory().getItem(11) != null)
-            getInventory().getItem(11).setAmount(getInventory().getItem(11).getAmount() - 1);
-        if (getInventory().getItem(15) != null)
-            getInventory().getItem(15).setAmount(getInventory().getItem(15).getAmount() - 1);
-
-        resetMeter();
-    }
-
     private void resetMeter() {
         setPacketItem(20, arrowProgress.getItemStack(0));
-//        PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 46, CraftItemStack.asNMSCopy(fuelProgress.getItemStack(0)));
-//
-//        getInventory().getViewers().stream()
-//                .map(player -> ((CraftPlayer) player).getHandle())
-//                .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
     }
 }

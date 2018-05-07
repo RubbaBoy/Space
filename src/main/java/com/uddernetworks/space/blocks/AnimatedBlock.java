@@ -72,6 +72,14 @@ public class AnimatedBlock extends CustomBlock {
         }
     }
 
+    public void stopAnimation(Block block) {
+        for (AnimatingDamages animatingDamage : animatingDamages) {
+            if (animatingDamage.containsBlock(block)) {
+                animatingDamage.setRunning(block, false);
+            }
+        }
+    }
+
     public short[] getDamages(Block block) {
         Optional<AnimatingDamages> animatedDamages = animatingDamages.stream().filter(animatingDamages1 -> animatingDamages1.containsBlock(block)).findFirst();
         return animatedDamages.map(AnimatingDamages::getDamages).orElse(null);
@@ -92,14 +100,6 @@ public class AnimatedBlock extends CustomBlock {
 
                 callback.accept(damages[direction]);
             });
-        }
-    }
-
-    public void stopAnimation(Block block) {
-        for (AnimatingDamages animatingDamage : animatingDamages) {
-            if (animatingDamage.containsBlock(block)) {
-                animatingDamage.setRunning(block, false);
-            }
         }
     }
 
@@ -160,7 +160,7 @@ public class AnimatedBlock extends CustomBlock {
                         setDamages(blockInstance, damages[direction]);
 //                        startAnimation(blockInstance);
 
-                        setTypeTo(blockInstance, damages[direction][0]);
+//                        setTypeTo(blockInstance, damages[direction][0]); // TODO: EXPERIMENTAL
 //                        if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
                         if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
                     });
@@ -171,7 +171,7 @@ public class AnimatedBlock extends CustomBlock {
                 main.getBlockDataManager().getData(blockInstance, "direction", data -> {
                     int direction = data == null ? 0 : Integer.valueOf(data);
                     setDamages(blockInstance, damages[direction]);
-                    setTypeTo(blockInstance, damages[direction][0]);
+//                    setTypeTo(blockInstance, damages[direction][0]); // TODO: EXPERIMENTAL
 
                     if (customGUI != null) customGUI.setParentBlock(blockInstance);
                     if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);

@@ -325,9 +325,7 @@ public class Main extends JavaPlugin implements Listener {
         CustomEntities.unregisterEntities();
 
         try {
-            System.out.println("PRE  COMPLETELY CLOSED::: " + databaseManager.getConnection().isClosed());
             databaseManager.getConnection().close();
-            System.out.println("POST COMPLETELY CLOSED::: " + databaseManager.getConnection().isClosed());
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream; // https://rubbaboy.me/code/1kshp5f
+import java.util.stream.Stream;
 
 public class BlockLoadInitializer implements Listener {
 
@@ -53,15 +53,6 @@ public class BlockLoadInitializer implements Listener {
     }
 
     public void init() {
-        System.out.println(main.getBlockDataManager().getCustomBlockCache());
-
-        Bukkit.getScheduler().runTaskTimer(main, () -> {
-            System.out.println("Current metadata:");
-            main.getEnhancedMetadataManager().getAllMetadata().forEach((persistantBlock, enhancedMetadata) -> {
-                System.out.println(enhancedMetadata);
-            });
-        }, 0L, 20L);
-
         List<List<Map.Entry<Block, CustomBlock>>> blocksList = new ArrayList<>();
 
         Bukkit.getWorlds().stream().flatMap(world -> Stream.of(world.getLoadedChunks())).forEach(chunk -> {
@@ -72,13 +63,11 @@ public class BlockLoadInitializer implements Listener {
             loadGUIsForChunk(blocks);
         });
 
-        System.out.println("Loaded GUIs");
+        System.out.println("Finished GUIs");
 
-//        System.out.println("Current NEW metadata:");
-//        main.getEnhancedMetadataManager().getAllMetadata().forEach((persistantBlock, enhancedMetadata) -> {
-//            System.out.println(enhancedMetadata);
-//        });
-
-        blocksList.forEach(this::loadCircuitsForChunk);
+        Bukkit.getScheduler().runTaskLater(main, () -> {
+            System.out.println("Getting circuits...");
+            blocksList.forEach(this::loadCircuitsForChunk);
+        }, 40L);
     }
 }
