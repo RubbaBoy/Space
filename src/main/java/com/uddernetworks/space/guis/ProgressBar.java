@@ -18,10 +18,8 @@ public class ProgressBar {
     }
 
     public ItemStack getItemStack(double percentage) {
-        percentage = Math.min(100, percentage / 100);
-        percentage = percentage * damages.length;
-
-//        System.out.println("Samage = " + damages[(int) Math.round(percentage)]);
+        percentage = Math.min(1, percentage / 100);
+        percentage = percentage * (damages.length - 1);
 
         return ItemBuilder.from(material).setDamage(damages[(int) Math.round(percentage)]).setUnbreakable(true).addFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     }

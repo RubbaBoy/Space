@@ -32,7 +32,7 @@ public class GeneratorBlock extends DirectionalBlock {
 
     @Override
     public void onPlace(Block block, Player player) {
-        setPowered(block, true);
+//        setPowered(block, true);
         main.getCircuitMapManager().addBlock(block);
     }
 
@@ -62,7 +62,7 @@ public class GeneratorBlock extends DirectionalBlock {
     @Override
     public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
         super.getGUI(blockInstance, customGUI -> {
-            setPowered(blockInstance, true); // TODO: Remove later
+//            setPowered(blockInstance, true); // TODO: Remove later
             if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
         });
     }

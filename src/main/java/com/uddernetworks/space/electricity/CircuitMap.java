@@ -48,8 +48,6 @@ public class CircuitMap {
             addBlocksNear(block, exclude);
         }
 
-        System.out.println("Blocks NOWWWWWWWWWWW ==== " + this.blocks.size());
-
         for (Block block : new ArrayList<>(this.blocks)) {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(block);
             if (customBlock == null || !customBlock.isElectrical() || block.equals(exclude)) {
@@ -110,17 +108,6 @@ public class CircuitMap {
             CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(wireBlock);
 
             customBlock.setSupply(wireBlock, basePower - remaining);
-        }
-
-        System.out.println("=======================");
-        for (int i = 0; i < 10; i++) {
-            System.out.println("this.blocks = " + this.blocks.size());
-        }
-
-        try {
-            throw new Exception("Test");
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         for (Block block : this.blocks) {
