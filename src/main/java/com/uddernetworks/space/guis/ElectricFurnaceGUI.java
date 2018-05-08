@@ -1,7 +1,6 @@
 package com.uddernetworks.space.guis;
 
 import com.uddernetworks.space.blocks.AnimatedBlock;
-import com.uddernetworks.space.blocks.CustomBlock;
 import com.uddernetworks.space.blocks.ElectricFurnaceBlock;
 import com.uddernetworks.space.main.Main;
 import com.uddernetworks.space.utils.FastTask;
@@ -9,20 +8,17 @@ import net.minecraft.server.v1_12_R1.RecipesFurnace;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftItem;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class ElectricFurnaceGUI extends CustomGUI {
 
     private Main main;
     private double amount = 0;
     private double update = 1;
+    private final double defaultSpeedInSeconds = 2.5;
     private double speedInSeconds = 2.5;
     private boolean animationPlaying = false;
     //    private ProgressBar fuelProgress;
@@ -96,11 +92,14 @@ public class ElectricFurnaceGUI extends CustomGUI {
     public void setSupply(double supply) {
         this.supply = supply;
 
+        double percentage = supply / animatedBlock.getDemand(getParentBlock());
+
+        speedInSeconds = defaultSpeedInSeconds / percentage;
+
         updateScreen();
     }
 
     public void updateScreen() {
-        System.out.println("Updating screen, processing = " + processing);
         if (!processing) {
             ElectricFurnaceBlock customBlock = (ElectricFurnaceBlock) main.getBlockDataManager().getCustomBlock(getParentBlock());
             customBlock.setTypeTo(getParentBlock(), customBlock.getDamages(getParentBlock())[supply > 0 ? 1 : 0]);
@@ -151,55 +150,6 @@ public class ElectricFurnaceGUI extends CustomGUI {
                 e.printStackTrace();
             }
         }, speedInSeconds);
-
-
-//        if (!this.processing) {
-//            this.processing = true;
-//            this.amount = 0;
-
-
-//            animatedBlock.startAnimation(getParentBlock(), 1);
-
-//            this.task = new FastTask(main).runRepeatingTask(true, () -> {
-//                if (!this.processing) return;
-//
-//                PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 46, CraftItemStack.asNMSCopy(fuelProgress.getItemStack(amount)));
-//
-//                amount += update;
-//
-//                getInventory().getViewers().stream()
-//                        .map(player -> ((CraftPlayer) player).getHandle())
-//                        .forEach(entityPlayer -> {
-//                            System.out.println("Updating for: " + entityPlayer.displayName);
-//                            entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot);
-//                        });
-//            }, 0L, speedInSeconds / 100);
-//
-//            this.task2 = new FastTask(main).runTaskLater(false, () -> {
-//                if (this.processing) {
-//                    this.processing = false;
-//
-//                    stopProcessing();
-//
-//                    ItemStack[][] tempGrid = new ItemStack[][] {
-//                            {getInventory().getItem(11), getInventory().getItem(15)}
-//                    };
-//
-//                    ItemStack resulting = main.getRecipeManager().getResultingItem(tempGrid, RecipeType.ALLOY_MIXER);
-//
-//                    ItemStack inSlot = getInventory().getItem(49);
-//                    if (inSlot != null && inSlot.isSimilar(resulting)) {
-//                        inSlot.setAmount(inSlot.getAmount() + resulting.getAmount());
-//                        getInventory().setItem(49, inSlot);
-//                    } else {
-//                        getInventory().setItem(49, resulting);
-//                    }
-//
-//                    clearInputs();
-//                    updateDoing();
-//                }
-//            }, speedInSeconds);
-//        }
     }
 
     private void stopProcessing() {

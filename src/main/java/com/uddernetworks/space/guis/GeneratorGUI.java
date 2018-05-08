@@ -117,7 +117,6 @@ public class GeneratorGUI extends CustomGUI {
     private boolean prevPowered = false;
 
     private void startFuelProcessing() {
-        System.out.println("GeneratorGUI.startFuelProcessing");
         if (this.isProcessing) return;
         this.isProcessing = true;
         this.task = Bukkit.getScheduler().runTaskTimer(main, () -> {
@@ -136,11 +135,7 @@ public class GeneratorGUI extends CustomGUI {
                 if (this.fuelNeeded > this.tempFuel) {
                     int fuel = removeFuel();
 
-                    System.out.println("fuel = " + fuel);
-
                     if (fuel == -1) {
-                        System.out.println("111");
-
                         this.generatorBlock.setPowered(getParentBlock(), false);
                         this.generatorBlock.updateCircuit(getParentBlock());
 
@@ -160,7 +155,6 @@ public class GeneratorGUI extends CustomGUI {
                 }
 
                 if (this.tempFuel >= this.fuelNeeded) {
-                    System.out.println("222");
                     this.tempFuel = this.tempFuel - this.fuelNeeded;
                 }
 
