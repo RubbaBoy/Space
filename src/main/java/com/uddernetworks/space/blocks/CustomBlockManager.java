@@ -1,6 +1,8 @@
 package com.uddernetworks.space.blocks;
 
 import com.uddernetworks.space.main.Main;
+import com.uddernetworks.space.nbt.NBTItem;
+import com.uddernetworks.space.utils.Debugger;
 import com.uddernetworks.space.utils.Reflect;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
@@ -85,7 +87,9 @@ public class CustomBlockManager implements Listener {
 
         customBlock.spawnParticles(block);
 
-        if (player.getGameMode() != GameMode.CREATIVE) block.getWorld().dropItemNaturally(block.getLocation(), customBlock.toItemStack());
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            customBlock.toItemStack(block, itemStack -> block.getWorld().dropItemNaturally(block.getLocation(), itemStack));
+        }
 
         if (!customBlock.onBreak(block, player)) {
             event.setCancelled(true);
@@ -183,16 +187,26 @@ public class CustomBlockManager implements Listener {
 
         if (toPlaceBlock == null || !toPlaceBlock.isEmpty()) return;
 
-        BlockPrePlace blockPrePlace = new BlockPrePlace(customBlock.getID(), customBlock.getDamage());
+        BlockPrePlace blockPrePlace = new BlockPrePlace(customBlock.getID(), customBlock.getDamage(), item);
+
+        Debugger debugger = new Debugger();
+
+        debugger.log("Initial");
 
         Block finalToPlaceBlock = toPlaceBlock;
         Runnable runnable = () -> {
+            debugger.log("Finished preplace");
+
             if (player.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount() - 1);
 
-            main.getBlockDataManager().setData(finalToPlaceBlock, "customBlock", blockPrePlace.getId(), () -> {
-                sendArmSwing(player, event.getHand());
+            setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), (short) blockPrePlace.getDamage());
+            sendArmSwing(player, event.getHand());
 
-                setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), (short) blockPrePlace.getDamage());
+            main.getBlockDataManager().setData(finalToPlaceBlock, "customBlock", blockPrePlace.getId(), () -> {
+//                debugger.log("Set arm swing");
+                debugger.end();
+
+//                setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), (short) blockPrePlace.getDamage());
 
                 customBlock.onPlace(finalToPlaceBlock, player);
             });
@@ -293,12 +307,14 @@ public class CustomBlockManager implements Listener {
     class BlockPrePlace {
         private int id;
         private int damage;
+        private ItemStack itemStack;
         private boolean usingCallback = false;
         private Runnable callback;
 
-        public BlockPrePlace(int id, int damage) {
+        public BlockPrePlace(int id, int damage, ItemStack itemStack) {
             this.id = id;
             this.damage = damage;
+            this.itemStack = itemStack;
         }
 
         public int getId() {
@@ -331,6 +347,10 @@ public class CustomBlockManager implements Listener {
 
         public Runnable getCallback() {
             return callback;
+        }
+
+        public ItemStack getItemStack() {
+            return itemStack;
         }
     }
 }

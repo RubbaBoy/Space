@@ -2,6 +2,7 @@ package com.uddernetworks.space.database;
 
 public enum DatabaseTable {
     BLOCK_DATA("block_data", "CREATE TABLE block_data (\n" +
+            "  autoKey INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
             "  world VARCHAR(36),\n" +
             "  x     INT,\n" +
             "  y     INT,\n" +

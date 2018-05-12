@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 
 public class BlockDataManager {
 
-    private static final boolean POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK = true;
+    private static final boolean POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK = false;
 
     private Main main;
     private Map<Block, CustomBlock> customBlockCache = new HashMap<>();
@@ -40,7 +40,7 @@ public class BlockDataManager {
         main.newChain()
                 .async(() -> {
                     try {
-                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("INSERT OR REPLACE INTO block_data VALUES (?, ?, ?, ?, ?, ?);");
+                        PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("INSERT OR REPLACE INTO block_data (world, x, y, z, key, value) VALUES (?, ?, ?, ?, ?, ?);");
 
                         preparedStatement.setString(1, block.getWorld().getUID().toString());
                         preparedStatement.setInt(2, block.getX());
@@ -49,7 +49,7 @@ public class BlockDataManager {
                         preparedStatement.setString(5, key);
                         preparedStatement.setString(6, value.toString());
 
-                        preparedStatement.execute();
+                        preparedStatement.executeUpdate();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -109,7 +109,7 @@ public class BlockDataManager {
                         preparedStatement.setInt(3, block.getY());
                         preparedStatement.setInt(4, block.getZ());
 
-                        preparedStatement.execute();
+                        preparedStatement.executeUpdate();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -120,10 +120,14 @@ public class BlockDataManager {
 
     public void increment(Block block, String key, int incrementBy, Consumer<Integer> newValue) {
         getData(block, key, data -> {
+            System.out.println("data = " + data);
             if (StringUtils.isNumeric(data)) {
+                int value = Integer.valueOf(data) + incrementBy;
+
                 if (incrementBy != 0) {
-                    int value = Integer.valueOf(data) + incrementBy;
                     setData(block, key, value, () -> newValue.accept(value));
+                } else {
+                    newValue.accept(value);
                 }
             } else {
                 setData(block, key, incrementBy, () -> newValue.accept(incrementBy));

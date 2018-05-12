@@ -29,6 +29,7 @@ public abstract class CustomBlock extends IDHolder {
     private int defaultInputPower;
     private int defaultDemand;
     private int defaultMaxLoad = -1;
+//    private boolean parentBlockOnGUI = false;
     private Material particle;
     private String name;
     private ItemStack staticDrop;
@@ -189,7 +190,11 @@ public abstract class CustomBlock extends IDHolder {
 
     @Override
     public ItemStack toItemStack() {
-        return staticDrop.clone();
+        return this.staticDrop.clone();
+    }
+
+    public void toItemStack(Block blockInstance, Consumer<ItemStack> itemStackConsumer) {
+        itemStackConsumer.accept(toItemStack());
     }
 
     abstract boolean onBreak(Block block, Player player);
@@ -230,7 +235,7 @@ public abstract class CustomBlock extends IDHolder {
                 });
             } else {
                 CustomGUI customGUI = main.getGUIManager().getGUI(UUID.fromString(inventoryID));
-                if (customGUI != null) customGUI.setParentBlock(blockInstance);
+                if (customGUI != null && customGUI.getParentBlock() == null) customGUI.setParentBlock(blockInstance);
                 if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
             }
         });

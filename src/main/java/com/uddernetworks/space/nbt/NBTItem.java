@@ -2,9 +2,13 @@ package com.uddernetworks.space.nbt;
 
 import com.uddernetworks.space.utils.Reflect;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NBTItem {
     private NBTTagCompound tag;
@@ -22,7 +26,27 @@ public class NBTItem {
 
     public ItemStack toItemStack() {
         Reflect.setField(this.nmsItemStack, "tag", this.tag, false);
-        return CraftItemStack.asBukkitCopy(nmsItemStack);
+        ItemStack itemStack = CraftItemStack.asBukkitCopy(nmsItemStack);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        List<String> lore = new ArrayList<>();
+
+        for (String key : this.tag.c()) {
+            String adding = null;
+            if (this.tag.hasKeyOfType(key, 8)) {
+                adding = this.tag.getString(key);
+            } else if (this.tag.hasKeyOfType(key, 99)) {
+                adding = String.valueOf(this.tag.getInt(key));
+            }
+
+            if (adding == null) continue;
+            lore.add(ChatColor.RESET + "" + ChatColor.AQUA + key + " = " + adding);
+        }
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+
+        return itemStack;
     }
 
     public void updateItem() {
@@ -30,6 +54,22 @@ public class NBTItem {
 
         try {
             ItemMeta itemMeta = this.itemStack.getItemMeta();
+
+            List<String> lore = new ArrayList<>();
+
+            for (String key : this.tag.c()) {
+                String adding = null;
+                if (this.tag.hasKeyOfType(key, 8)) {
+                    adding = this.tag.getString(key);
+                } else if (this.tag.hasKeyOfType(key, 99)) {
+                    adding = String.valueOf(this.tag.getInt(key));
+                }
+
+                if (adding == null) continue;
+                lore.add(ChatColor.RESET + "" + ChatColor.AQUA + key + " = " + adding);
+            }
+
+            itemMeta.setLore(lore);
 
             Reflect.setField(itemMeta, Class.forName("org.bukkit.craftbukkit.v1_12_R1.inventory.CraftMetaItem"), "internalTag", this.tag, false);
 

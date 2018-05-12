@@ -25,10 +25,18 @@ public class CryogenicContainerGUI extends CustomGUI {
     public void setParentBlock(Block parentBlock) {
         super.setParentBlock(parentBlock);
 
-        main.getBlockDataManager().increment(getParentBlock(), "cryogenicContainer", 0, newAmount -> {
+        System.out.println("Set parent block................................");
+
+        main.getBlockDataManager().increment(parentBlock, "cryogenicContainer", 0, newAmount -> {
+            System.out.println("newAmount = " + newAmount);
+
             setFills(newAmount);
             updateFills();
         });
+    }
+
+    public int getCurrentlyFilled() {
+        return Double.valueOf(currentlyFilled).intValue();
     }
 
     public void setFills(int currentlyFilled) {
