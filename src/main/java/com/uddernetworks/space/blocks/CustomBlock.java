@@ -229,7 +229,7 @@ public abstract class CustomBlock extends IDHolder {
                 CustomGUI customGUI = customGUISupplier == null ? null : main.getGUIManager().addGUI(customGUISupplier.get());
                 if (customGUI == null) return;
                 customGUI.setParentBlock(blockInstance);
-                main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), () -> {
+                main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), true, () -> {
 //                    if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
                     if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
                 });

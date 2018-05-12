@@ -29,13 +29,17 @@ public class BlockDataManager {
     }
 
     public void setData(Block block, String key, Object value, Runnable callback) {
+        setData(block, key, value, false, callback);
+    }
+
+    public void setData(Block block, String key, Object value, boolean immediateCallback, Runnable callback) {
         if (key.equals("customBlock")) {
             this.customBlockCache.put(block, main.getCustomIDManager().getCustomBlockById(Integer.valueOf(value.toString())));
         } else {
             setCache(block, key, value.toString());
         }
 
-        if (POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK) callback.run();
+        if (POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK || immediateCallback) callback.run();
 
         main.newChain()
                 .async(() -> {
@@ -55,7 +59,7 @@ public class BlockDataManager {
                     }
                 })
                 .sync(() -> {
-                    if (!POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK) callback.run();
+                    if (!POSSIBLY_BAD_IMMEDIATE_PLACE_CALLBACK || !immediateCallback) callback.run();
                 })
                 .execute();
     }

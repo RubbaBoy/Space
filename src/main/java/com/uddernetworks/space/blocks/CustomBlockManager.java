@@ -128,6 +128,7 @@ public class CustomBlockManager implements Listener {
 
         customBlock.getGUI(clicked, customGUI -> {
             if (customGUI != null) {
+                sendArmSwing(player, EquipmentSlot.HAND);
                 player.openInventory(customGUI.getInventory());
             }
         });

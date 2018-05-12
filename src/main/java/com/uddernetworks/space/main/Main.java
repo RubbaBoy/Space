@@ -176,6 +176,12 @@ public class Main extends JavaPlugin implements Listener {
 
         this.progressBarManager.addProgressBar(new ProgressBar("GeneratorLoad", Material.DIAMOND_HOE, damages5));
 
+        int[] damages6 = new int[2];
+
+        for (int i = 0; i < 2; i++) damages6[i] = i + 111 + 122 + 151 + 17 + 23 + 16;
+
+        this.progressBarManager.addProgressBar(new ProgressBar("CryogenicStatus", Material.DIAMOND_HOE, damages6));
+
         this.customIDManager = new CustomIDManager(this);
 
         /* Items */
@@ -212,7 +218,7 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 38, Material.GRAY_SHULKER_BOX, "Cryogenic Container")); // Wiki
 
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 39, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator")); // Wiki
-        this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 40, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator")); // Wiki
+        this.customBlockManager.addCustomBlock(new LiquidHydrogenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 40, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator")); // Wiki
         this.customBlockManager.addCustomBlock(new ElectricFurnaceBlock(this, 115, Material.DIAMOND_AXE, new short[][] {
                 {61, 62, 63, 64, 65, 66, 67},
                 {68, 69, 70, 71, 72, 73, 74},

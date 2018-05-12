@@ -79,6 +79,7 @@ public class CryogenicContainerBlock extends CustomBlock {
 
             NBTItem nbtItem = new NBTItem(itemStack);
             nbtItem.getTag().setInt("cryogenicContainer", cryogenicContainerGUI.getCurrentlyFilled());
+            nbtItem.getTag().setInt("liquidType", cryogenicContainerGUI.getLiquidType());
             // TODO: Add 'type' variable for oxygen/hydrogen
             itemStack = nbtItem.toItemStack();
 
