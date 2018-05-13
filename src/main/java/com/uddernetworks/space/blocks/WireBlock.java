@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WireBlock extends CustomBlock {
@@ -46,6 +47,202 @@ public class WireBlock extends CustomBlock {
         return false;
     }
 
+    private List<WireBlockReference> wireBlockReferences = Arrays.asList(
+            new WireBlockReference(117,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(118,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(118,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(118,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(119,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.WIRE, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.WIRE,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(119,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.WIRE,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(119,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.WIRE, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(120,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.WIRE,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(121,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.WIRE,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(122,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.WIRE, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(123,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.WIRE, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+//            new WireBlockReference(124, new ReferenceType[][] { ///////////////////////////// CROSS
+//                    /*
+//                            NW  N  NE
+//                            W   *  E
+//                            SW  S  SE
+//                     */
+//                    {       // Top
+//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR,
+//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR,
+//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR
+//                    },
+//                    {       // Middle
+//                            ReferenceType.AIR, ReferenceType.WIRE, ReferenceType.AIR,
+//                            ReferenceType.WIRE, ReferenceType.WIRE, ReferenceType.AIR,
+//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR
+//                    },
+//                    {       // Bottom
+//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR,
+//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR,
+//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR
+//                    }
+//            }),
+            new WireBlockReference(125,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.WIRE,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(126,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.WIRE, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.WIRE,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(127,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.WIRE, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.WIRE,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
+            new WireBlockReference(128,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.WIRE, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK)
+            );
+
+    private ReferenceType getReferenceType(Block block, Block imagineDestroyed) {
+        if (block.equals(imagineDestroyed) || block.getType() == Material.AIR || !block.getType().isSolid()) return ReferenceType.AIR;
+        if (isBlockElectrical(block)) return ReferenceType.WIRE;
+        return ReferenceType.BLOCK;
+    }
+
     public void updateState(Block blockInstance, List<Block> updatedBlocks, Block imagineDestroyed) {
         if (!(main.getBlockDataManager().getCustomBlock(blockInstance) instanceof WireBlock)) return;
 
@@ -53,45 +250,36 @@ public class WireBlock extends CustomBlock {
         Block south = blockInstance.getRelative(BlockFace.SOUTH);
         Block east = blockInstance.getRelative(BlockFace.EAST);
         Block west = blockInstance.getRelative(BlockFace.WEST);
+        Block top = blockInstance.getRelative(BlockFace.UP);
+        Block bottom = blockInstance.getRelative(BlockFace.DOWN);
+
+        WireBlockReference wireBlockReference = new WireBlockReference(-1,
+                                                        getReferenceType(top, imagineDestroyed),
+
+                                                        getReferenceType(north, imagineDestroyed),
+                getReferenceType(west, imagineDestroyed),                                       getReferenceType(east, imagineDestroyed),
+                                                        getReferenceType(south, imagineDestroyed),
+
+                                                        getReferenceType(bottom, imagineDestroyed));
 
         boolean northWire = isBlockElectrical(north) && !north.equals(imagineDestroyed);
         boolean southWire = isBlockElectrical(south) && !south.equals(imagineDestroyed);
         boolean eastWire = isBlockElectrical(east) && !east.equals(imagineDestroyed);
         boolean westWire = isBlockElectrical(west) && !west.equals(imagineDestroyed);
 
-        if ((northWire || southWire) && !eastWire && !westWire) {
-            setTypeTo(blockInstance, 119); // Z
-        } else if ((eastWire || westWire) && !northWire && !southWire) {
-            setTypeTo(blockInstance, 118); // X
+        boolean updated = false;
+
+        for (WireBlockReference blockReference : this.wireBlockReferences) {
+            if (blockReference.equals(wireBlockReference)) {
+                setTypeTo(blockInstance, blockReference.getId());
+                updated = true;
+                break;
+            }
         }
 
-        // Starting two's
-        else if ((southWire && eastWire) && !northWire && !westWire) {
-            setTypeTo(blockInstance, 120); // SE
-        } else if ((southWire && westWire) && !northWire && !eastWire) {
-            setTypeTo(blockInstance, 121); // SW
-        } else if ((northWire && westWire) && !southWire && !eastWire) {
-            setTypeTo(blockInstance, 122); // NW
-        } else if ((northWire && eastWire) && !southWire && !westWire) {
-            setTypeTo(blockInstance, 123); // NE
-        }
-
-        // Starting three's
-        else if (southWire && eastWire && westWire && !northWire) {
-            setTypeTo(blockInstance, 125); // NEW
-        } else if (northWire && southWire && eastWire && !westWire) {
-            setTypeTo(blockInstance, 126); // NSE
-        } else if (northWire && southWire && westWire && !eastWire) {
-            setTypeTo(blockInstance, 127); // NSW
-        } else if (northWire && eastWire && westWire && !southWire) {
-            setTypeTo(blockInstance, 128); // SEW
-        }
-
-        // Starting Dot/Cross (Misc)
-        else if (!northWire && !southWire && !eastWire && !westWire) {
-            setTypeTo(blockInstance, 117); // Dot
-        } else {
-            setTypeTo(blockInstance, 124); // Cross
+        if (!updated) {
+            System.out.println("Not updated");
+            setTypeTo(blockInstance, 124);
         }
 
         if (northWire && !updatedBlocks.contains(north)) {
@@ -121,6 +309,78 @@ public class WireBlock extends CustomBlock {
 
     private boolean isBlockElectrical(Block block) {
         return main.getBlockDataManager().getCustomBlock(block) != null && main.getBlockDataManager().getCustomBlock(block).isElectrical();
+    }
+
+    private enum ReferenceType {
+        AIR("Ａ"), BLOCK("Ｂ"), WIRE("Ｗ");
+
+        private String message;
+
+        ReferenceType(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return this.message;
+        }
+    }
+
+    private class WireBlockReference {
+        private int id;
+        // Stores as:         X, Y, Z
+        private ReferenceType north;
+        private ReferenceType south;
+        private ReferenceType east;
+        private ReferenceType west;
+        private ReferenceType top;
+        private ReferenceType bottom;
+
+        public WireBlockReference(int id, ReferenceType... referenceTypes) {
+            this.id = id;
+
+            top = referenceTypes[0];
+            north = referenceTypes[1];
+            west = referenceTypes[2];
+            // Middle
+            east = referenceTypes[3];
+            south = referenceTypes[4];
+            bottom = referenceTypes[5];
+        }
+
+//        public WireBlockReference(int id, ReferenceType[][]... referenceTypes) {
+//            this.referenceTypes = referenceTypes;
+//        }
+
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.append("　").append(top).append("\n");
+            stringBuilder.append("　").append(north).append("\n");
+            stringBuilder.append(west).append("　").append(east).append("\n");
+            stringBuilder.append("　").append(south).append("\n");
+            stringBuilder.append("　").append(bottom).append("\n");
+
+            return stringBuilder.toString();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof WireBlockReference)) return false;
+            WireBlockReference wireBlockReference = (WireBlockReference) obj;
+
+            return north == wireBlockReference.north &&
+                    south == wireBlockReference.south &&
+                    east == wireBlockReference.east &&
+                    west == wireBlockReference.west &&
+                    top == wireBlockReference.top &&
+                    bottom == wireBlockReference.bottom;
+        }
     }
 
 }

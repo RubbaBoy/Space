@@ -226,6 +226,7 @@ public class Main extends JavaPlugin implements Listener {
 
         /* DEBUG ONLY */
 
+        // Ground
         this.customBlockManager.addCustomBlock(new WireBlock(this, 117, Material.DIAMOND_AXE, 1, Material.REDSTONE_BLOCK, "Wire"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 118, Material.DIAMOND_AXE, 2, Material.REDSTONE_BLOCK, "Wire Line X"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 119, Material.DIAMOND_AXE, 3, Material.REDSTONE_BLOCK, "Wire Line Z"));
@@ -238,6 +239,20 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new WireBlock(this, 126, Material.DIAMOND_AXE, 10, Material.REDSTONE_BLOCK, "Wire three NSE"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 127, Material.DIAMOND_AXE, 11, Material.REDSTONE_BLOCK, "Wire Three NSW"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 128, Material.DIAMOND_AXE, 12, Material.REDSTONE_BLOCK, "Wire Three SEW"));
+
+        // WALL     SEW
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 129, Material.DIAMOND_AXE, 13, Material.REDSTONE_BLOCK, "Wire"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 130, Material.DIAMOND_AXE, 14, Material.REDSTONE_BLOCK, "Wire Line X"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 131, Material.DIAMOND_AXE, 15, Material.REDSTONE_BLOCK, "Wire Line Z"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 132, Material.DIAMOND_AXE, 16, Material.REDSTONE_BLOCK, "Wire Turn SE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 133, Material.DIAMOND_AXE, 17, Material.REDSTONE_BLOCK, "Wire Turn SW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 134, Material.DIAMOND_AXE, 18, Material.REDSTONE_BLOCK, "Wire Turn NW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 135, Material.DIAMOND_AXE, 19, Material.REDSTONE_BLOCK, "Wire Turn NE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 136, Material.DIAMOND_AXE, 20, Material.REDSTONE_BLOCK, "Wire Cross"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 137, Material.DIAMOND_AXE, 21, Material.REDSTONE_BLOCK, "Wire Three NEW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 138, Material.DIAMOND_AXE, 22, Material.REDSTONE_BLOCK, "Wire three NSE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 139, Material.DIAMOND_AXE, 23, Material.REDSTONE_BLOCK, "Wire Three NSW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 140, Material.DIAMOND_AXE, 24, Material.REDSTONE_BLOCK, "Wire Three SEW"));
 
 
         /* Recipes */
