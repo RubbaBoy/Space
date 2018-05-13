@@ -18,13 +18,17 @@ public class AlloyMixerGUI extends CustomGUI {
     private Main main;
     private double amount = 0;
     private double update = 1;
-    private double speedInSeconds = 5;
+    private final double defaultSpeedInSeconds = 2.5;
+    private double speedInSeconds = 2.5;
     private boolean processing = false;
     private ProgressBar progressBar;
     private FastTask task;
     private FastTask task2;
 //    private int windowID;
     private AnimatedBlock animatedBlock;
+
+    private double supply;
+    private double demand;
 
     public AlloyMixerGUI(Main main, String title, int size, UUID uuid) {
         super(main, title, size, uuid, GUIItems.ALLOY_MIXER_MAIN);
@@ -56,35 +60,47 @@ public class AlloyMixerGUI extends CustomGUI {
         addSlot(new OpenSlot(15, slotAction));
 
         updateSlots();
+
+        this.demand = animatedBlock.getDefaultDemand();
     }
 
-//    private int getWindowID() {
-//        this.windowID = getInventory().getViewers().size() > 0 ? ((CraftPlayer) getInventory().getViewers().get(0)).getHandle().activeContainer.windowId : this.windowID;
-//        return this.windowID;
-//    }
+
+    public double getSupply() {
+        return supply;
+    }
+
+    public void setSupply(double supply) {
+        this.supply = supply;
+
+        double percentage = supply / animatedBlock.getDemand(getParentBlock());
+
+        speedInSeconds = defaultSpeedInSeconds / percentage;
+
+        startProcessing();
+    }
+
+    public double getDemand() {
+        return demand;
+    }
+
+    public void setDemand(double demand) {
+        this.demand = demand;
+    }
 
     private void startProcessing() {
         if (!this.processing) {
+            if (this.supply <= 0) return;
             this.processing = true;
             this.amount = 0;
-
-//            EntityPlayer ep = ((CraftPlayer) getInventory().getViewers().get(0)).getHandle();
-//            this.windowID = ep.activeContainer.windowId;
 
             animatedBlock.startAnimation(getParentBlock());
 
             this.task = new FastTask(main).runRepeatingTask(true, () -> {
                 if (!this.processing) return;
 
-                PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 46, CraftItemStack.asNMSCopy(progressBar.getItemStack(amount)));
+                setPacketItem(46, progressBar.getItemStack(amount));
 
                 amount += update;
-
-                getInventory().getViewers().stream()
-                        .map(player -> ((CraftPlayer) player).getHandle())
-                        .forEach(entityPlayer -> {
-                            entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot);
-                        });
             }, 0L, speedInSeconds / 100);
 
             this.task2 = new FastTask(main).runTaskLater(false, () -> {
@@ -125,20 +141,14 @@ public class AlloyMixerGUI extends CustomGUI {
     }
 
     private void updateDoing() {
-//        System.out.println("AlloyMixerGUI.updateDoing");
         Bukkit.getScheduler().runTaskLater(main, () -> {
-//            System.out.println("15 = " + getInventory().getItem(15));
             ItemStack[][] tempGrid = new ItemStack[][] {
                     {getInventory().getItem(11), getInventory().getItem(15)}
             };
 
             ItemStack resulting = main.getRecipeManager().getResultingItem(tempGrid, RecipeType.ALLOY_MIXER);
 
-//            System.out.println("111111111 resulting = " + resulting);
-
-//            if (resulting != null && resulting.getType() == Material.AIR) {
             if (resulting != null && resulting.getType() != Material.AIR) {
-//                System.out.println("========== 111");
                 ItemStack inSlot = getInventory().getItem(49);
 
                 if (inSlot == null || inSlot.getType() == Material.AIR) {
@@ -147,7 +157,6 @@ public class AlloyMixerGUI extends CustomGUI {
                     startProcessing();
                 }
             } else {
-//                System.out.println("========== 444");
                 stopProcessing();
             }
         }, 1L);
@@ -161,10 +170,6 @@ public class AlloyMixerGUI extends CustomGUI {
     }
 
     private void resetMeter() {
-        PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(getWindowID(), 46, CraftItemStack.asNMSCopy(progressBar.getItemStack(0)));
-
-        getInventory().getViewers().stream()
-                .map(player -> ((CraftPlayer) player).getHandle())
-                .forEach(entityPlayer -> entityPlayer.playerConnection.networkManager.sendPacket(packetPlayOutSetSlot));
+        setPacketItem(46, progressBar.getItemStack(0));
     }
 }

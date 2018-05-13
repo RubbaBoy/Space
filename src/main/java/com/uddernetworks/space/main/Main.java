@@ -211,10 +211,7 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new BasicBlock(this, 108, Material.DIAMOND_HOE, 32, Material.ORANGE_SHULKER_BOX, "Copper Block")); // Wiki
         this.customBlockManager.addCustomBlock(new BasicBlock(this, 109, Material.DIAMOND_HOE, 33, Material.STONE, "Aluminum Ore")); // Wiki
         this.customBlockManager.addCustomBlock(new BasicBlock(this, 110, Material.DIAMOND_HOE, 34, Material.WHITE_SHULKER_BOX, "Aluminum Block")); // Wiki
-        this.customBlockManager.addCustomBlock(new AnimatedBlock(this, 111, Material.DIAMOND_HOE, new short[] {35, 36, 37}, Material.WHITE_SHULKER_BOX, "Alloy Mixer", () -> { // Wiki
-            System.out.println("Creating new AlloyMixer GUI");
-            return getGUIManager().addGUI(new AlloyMixerGUI(this, "Alloy Mixer", 54, UUID.randomUUID()));
-        }));
+        this.customBlockManager.addCustomBlock(new AlloyMixerBlock(this, 111, Material.DIAMOND_HOE, new short[] {35, 36, 37}, Material.WHITE_SHULKER_BOX, "Alloy Mixer")); // Wiki
         this.customBlockManager.addCustomBlock(new CryogenicContainerBlock(this, 112, Material.DIAMOND_HOE, 38, Material.GRAY_SHULKER_BOX, "Cryogenic Container")); // Wiki
 
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 39, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator")); // Wiki

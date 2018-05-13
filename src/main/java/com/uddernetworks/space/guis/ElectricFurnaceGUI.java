@@ -115,6 +115,7 @@ public class ElectricFurnaceGUI extends CustomGUI {
     }
 
     private void startProcessing() {
+        if (this.supply <= 0) return;
         this.processing = true;
 
         this.task = new FastTask(main).runRepeatingTask(true, () -> {

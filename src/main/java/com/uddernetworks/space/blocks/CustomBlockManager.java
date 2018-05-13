@@ -119,14 +119,19 @@ public class CustomBlockManager implements Listener {
 
         CustomBlock customBlock = main.getBlockDataManager().getCustomBlock(clicked);
 
+        System.out.println("customBlock = " + customBlock);
+
         if (customBlock == null) return;
 
         customBlock.onClick(event);
+
+        System.out.println("customBlock.hasGUI() = " + customBlock.hasGUI());
 
         if (!customBlock.hasGUI()) return;
         event.setCancelled(false);
 
         customBlock.getGUI(clicked, customGUI -> {
+            System.out.println("customGUI = " + customGUI);
             if (customGUI != null) {
                 sendArmSwing(player, EquipmentSlot.HAND);
                 player.openInventory(customGUI.getInventory());
@@ -203,7 +208,7 @@ public class CustomBlockManager implements Listener {
             setBlockData(player.getWorld(), finalToPlaceBlock, customBlock.getMaterial(), (short) blockPrePlace.getDamage());
             sendArmSwing(player, event.getHand());
 
-            main.getBlockDataManager().setData(finalToPlaceBlock, "customBlock", blockPrePlace.getId(), () -> {
+            main.getBlockDataManager().setData(finalToPlaceBlock, "customBlock", blockPrePlace.getId(), true, () -> {
 //                debugger.log("Set arm swing");
                 debugger.end();
 

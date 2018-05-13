@@ -44,6 +44,7 @@ public class BlockDataManager {
         main.newChain()
                 .async(() -> {
                     try {
+                        final long start = System.currentTimeMillis();
                         PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("INSERT OR REPLACE INTO block_data (world, x, y, z, key, value) VALUES (?, ?, ?, ?, ?, ?);");
 
                         preparedStatement.setString(1, block.getWorld().getUID().toString());
@@ -54,6 +55,9 @@ public class BlockDataManager {
                         preparedStatement.setString(6, value.toString());
 
                         preparedStatement.executeUpdate();
+
+                        String string = "Query took " + (System.currentTimeMillis() - start) + "ms";
+                        if (Bukkit.getPlayer("RubbaBoy") != null) Bukkit.getPlayer("RubbaBoy").sendMessage(string);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -75,6 +79,7 @@ public class BlockDataManager {
         main.newChain()
                 .asyncFirst(() -> {
                     try {
+                        final long start = System.currentTimeMillis();
                         PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT value FROM block_data WHERE world = ? AND x = ? AND y = ? AND z = ? AND key = ?;");
 
 //                        System.out.println("block.getWorld().getUID().toString() = " + block.getWorld().getUID().toString());
@@ -87,6 +92,9 @@ public class BlockDataManager {
                         preparedStatement.setString(5, key);
 
                         ResultSet resultSet = preparedStatement.executeQuery();
+
+                        String string = "Query took " + (System.currentTimeMillis() - start) + "ms";
+                        if (Bukkit.getPlayer("RubbaBoy") != null) Bukkit.getPlayer("RubbaBoy").sendMessage(string);
 
                         return resultSet.isClosed() ? null : resultSet.getString("value");
                     } catch (SQLException e) {
@@ -105,6 +113,7 @@ public class BlockDataManager {
 
         main.newChain()
                 .async(() -> {
+                    final long start = System.currentTimeMillis();
                     try {
                         PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("DELETE FROM block_data WHERE world = ? AND x = ? AND y = ? AND z = ?;");
 
@@ -117,6 +126,10 @@ public class BlockDataManager {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+
+                    String string = "Query took " + (System.currentTimeMillis() - start) + "ms";
+                    if (Bukkit.getPlayer("RubbaBoy") != null) Bukkit.getPlayer("RubbaBoy").sendMessage(string);
                 })
                 .sync(callback::run)
                 .execute();
@@ -143,6 +156,7 @@ public class BlockDataManager {
         main.newChain()
                 .asyncFirst(() -> {
                     try {
+//                        final long start = System.currentTimeMillis();
                         PreparedStatement preparedStatement = this.main.getDatabaseManager().getConnection().prepareStatement("SELECT * FROM block_data WHERE key = ?;");
 
                         preparedStatement.setString(1, "customBlock");

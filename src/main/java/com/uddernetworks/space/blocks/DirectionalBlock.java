@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class DirectionalBlock extends AnimatedBlock {
@@ -89,5 +91,38 @@ public class DirectionalBlock extends AnimatedBlock {
     @Override
     public boolean hasGUI() {
         return getCustomGUISupplier() != null;
+    }
+
+    @Override
+    public void getGUI(Block blockInstance, Consumer<CustomGUI> customGUIConsumer) {
+        main.getBlockDataManager().getData(blockInstance, "inventoryID", inventoryID -> {
+            if (inventoryID == null || main.getGUIManager().getGUI(UUID.fromString(inventoryID)) == null) {
+                CustomGUI customGUI = getCustomGUISupplier() == null ? null : main.getGUIManager().addGUI(getCustomGUISupplier().get());
+                if (customGUI == null) return;
+                customGUI.setParentBlock(blockInstance);
+                main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), () -> {
+                    main.getBlockDataManager().getData(blockInstance, "direction", data -> {
+                        int direction = data == null ? 0 : Integer.valueOf(data);
+                        setDamages(blockInstance, damages[direction]);
+//                        startAnimation(blockInstance);
+
+//                        setTypeTo(blockInstance, damages[direction][0]); // TODO: EXPERIMENTAL
+//                        if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
+                        if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
+                    });
+                });
+            } else {
+                CustomGUI customGUI = main.getGUIManager().getGUI(UUID.fromString(inventoryID));
+
+                main.getBlockDataManager().getData(blockInstance, "direction", data -> {
+                    int direction = data == null ? 0 : Integer.valueOf(data);
+                    setDamages(blockInstance, damages[direction]);
+//                    setTypeTo(blockInstance, damages[direction][0]); // TODO: EXPERIMENTAL
+
+                    if (customGUI != null) customGUI.setParentBlock(blockInstance);
+                    if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
+                });
+            }
+        });
     }
 }

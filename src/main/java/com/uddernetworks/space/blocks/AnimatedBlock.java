@@ -155,27 +155,14 @@ public class AnimatedBlock extends CustomBlock {
                 if (customGUI == null) return;
                 customGUI.setParentBlock(blockInstance);
                 main.getBlockDataManager().setData(blockInstance, "inventoryID", customGUI.getUUID(), () -> {
-                    main.getBlockDataManager().getData(blockInstance, "direction", data -> {
-                        int direction = data == null ? 0 : Integer.valueOf(data);
-                        setDamages(blockInstance, damages[direction]);
-//                        startAnimation(blockInstance);
-
-//                        setTypeTo(blockInstance, damages[direction][0]); // TODO: EXPERIMENTAL
-//                        if (isElectrical()) main.getCircuitMapManager().addBlock(blockInstance);
-                        if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
-                    });
+                    setDamages(blockInstance, damages[0]);
                 });
             } else {
                 CustomGUI customGUI = main.getGUIManager().getGUI(UUID.fromString(inventoryID));
+                setDamages(blockInstance, damages[0]);
 
-                main.getBlockDataManager().getData(blockInstance, "direction", data -> {
-                    int direction = data == null ? 0 : Integer.valueOf(data);
-                    setDamages(blockInstance, damages[direction]);
-//                    setTypeTo(blockInstance, damages[direction][0]); // TODO: EXPERIMENTAL
-
-                    if (customGUI != null) customGUI.setParentBlock(blockInstance);
-                    if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
-                });
+                if (customGUI != null && customGUI.getParentBlock() == null) customGUI.setParentBlock(blockInstance);
+                if (customGUIConsumer != null) customGUIConsumer.accept(customGUI);
             }
         });
     }

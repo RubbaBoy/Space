@@ -32,7 +32,7 @@ public class CryogenicContainerGUI extends CustomGUI {
     public void setParentBlock(Block parentBlock) {
         super.setParentBlock(parentBlock);
 
-        Bukkit.getPlayer("RubbaBoy").sendMessage("Parent");
+//        Bukkit.getPlayer("RubbaBoy").sendMessage("Parent");
 
         System.out.println("Set parent block................................");
 
