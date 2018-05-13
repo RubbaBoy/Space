@@ -217,10 +217,10 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new LiquidOxygenGeneratorBlock(this, 113, Material.DIAMOND_HOE, 39, Material.GRAY_SHULKER_BOX, "Liquid Oxygen Generator")); // Wiki
         this.customBlockManager.addCustomBlock(new LiquidHydrogenGeneratorBlock(this, 114, Material.DIAMOND_HOE, 40, Material.GRAY_SHULKER_BOX, "Liquid Hydrogen Generator")); // Wiki
         this.customBlockManager.addCustomBlock(new ElectricFurnaceBlock(this, 115, Material.DIAMOND_AXE, new short[][] {
-                {61, 62, 63, 64, 65, 66, 67},
-                {68, 69, 70, 71, 72, 73, 74},
-                {75, 76, 77, 78, 79, 80, 81},
-                {82, 83, 84, 85, 86, 87, 88}}, Material.WHITE_SHULKER_BOX, "Electric Furnace")); // Wiki
+                {61 + 59, 62 + 59, 63 + 59, 64 + 59, 65 + 59, 66 + 59, 67 + 59},
+                {68 + 59, 69 + 59, 70 + 59, 71 + 59, 72 + 59, 73 + 59, 74 + 59},
+                {75 + 59, 76 + 59, 77 + 59, 78 + 59, 79 + 59, 80 + 59, 81 + 59},
+                {82 + 59, 83 + 59, 84 + 59, 85 + 59, 86 + 59, 87 + 59, 88 + 59}}, Material.WHITE_SHULKER_BOX, "Electric Furnace")); // Wiki
         this.customBlockManager.addCustomBlock(new GeneratorBlock(this, 116, Material.DIAMOND_HOE, new short[][] {{41}, {42}, {43}, {44}}, Material.ORANGE_SHULKER_BOX, "Generator")); // NOT ON WIKI, need to fix model
 
 
@@ -295,6 +295,20 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new WireBlock(this, 174, Material.DIAMOND_AXE, 58, Material.REDSTONE_BLOCK, "Wire Three NSE"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 175, Material.DIAMOND_AXE, 59, Material.REDSTONE_BLOCK, "Wire Three NSW"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 176, Material.DIAMOND_AXE, 60, Material.REDSTONE_BLOCK, "Wire Three SEW"));
+
+        // WALL     Ceiling
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 177, Material.DIAMOND_AXE, 61, Material.REDSTONE_BLOCK, "Wire"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 178, Material.DIAMOND_AXE, 62, Material.REDSTONE_BLOCK, "Wire Line X"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 179, Material.DIAMOND_AXE, 63, Material.REDSTONE_BLOCK, "Wire Line Z"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 180, Material.DIAMOND_AXE, 64, Material.REDSTONE_BLOCK, "Wire Turn SE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 181, Material.DIAMOND_AXE, 65, Material.REDSTONE_BLOCK, "Wire Turn SW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 182, Material.DIAMOND_AXE, 66, Material.REDSTONE_BLOCK, "Wire Turn NW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 183, Material.DIAMOND_AXE, 67, Material.REDSTONE_BLOCK, "Wire Turn NE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 184, Material.DIAMOND_AXE, 68, Material.REDSTONE_BLOCK, "Wire Cross"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 185, Material.DIAMOND_AXE, 69, Material.REDSTONE_BLOCK, "Wire Three NEW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 186, Material.DIAMOND_AXE, 70, Material.REDSTONE_BLOCK, "Wire Three NSE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 187, Material.DIAMOND_AXE, 71, Material.REDSTONE_BLOCK, "Wire Three NSW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 188, Material.DIAMOND_AXE, 72, Material.REDSTONE_BLOCK, "Wire Three SEW"));
 
 
         /* Recipes */
