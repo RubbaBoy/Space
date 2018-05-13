@@ -60,21 +60,38 @@ public class WireBlock extends CustomBlock {
         boolean westWire = isBlockElectrical(west) && !west.equals(imagineDestroyed);
 
         if ((northWire || southWire) && !eastWire && !westWire) {
-            setTypeTo(blockInstance, 119);
+            setTypeTo(blockInstance, 119); // Z
         } else if ((eastWire || westWire) && !northWire && !southWire) {
-            setTypeTo(blockInstance, 118);
-        } else if ((southWire && eastWire) && !northWire && !westWire) {
-            setTypeTo(blockInstance, 120);
+            setTypeTo(blockInstance, 118); // X
+        }
+
+        // Starting two's
+        else if ((southWire && eastWire) && !northWire && !westWire) {
+            setTypeTo(blockInstance, 120); // SE
         } else if ((southWire && westWire) && !northWire && !eastWire) {
-            setTypeTo(blockInstance, 121);
+            setTypeTo(blockInstance, 121); // SW
         } else if ((northWire && westWire) && !southWire && !eastWire) {
-            setTypeTo(blockInstance, 122);
+            setTypeTo(blockInstance, 122); // NW
         } else if ((northWire && eastWire) && !southWire && !westWire) {
-            setTypeTo(blockInstance, 123);
-        } else if (!northWire && !southWire) {
-            setTypeTo(blockInstance, 117);
+            setTypeTo(blockInstance, 123); // NE
+        }
+
+        // Starting three's
+        else if (southWire && eastWire && westWire && !northWire) {
+            setTypeTo(blockInstance, 125); // NEW
+        } else if (northWire && southWire && eastWire && !westWire) {
+            setTypeTo(blockInstance, 126); // NSE
+        } else if (northWire && southWire && westWire && !eastWire) {
+            setTypeTo(blockInstance, 127); // NSW
+        } else if (northWire && eastWire && westWire && !southWire) {
+            setTypeTo(blockInstance, 128); // SEW
+        }
+
+        // Starting Dot/Cross (Misc)
+        else if (!northWire && !southWire && !eastWire && !westWire) {
+            setTypeTo(blockInstance, 117); // Dot
         } else {
-            setTypeTo(blockInstance, 124);
+            setTypeTo(blockInstance, 124); // Cross
         }
 
         if (northWire && !updatedBlocks.contains(north)) {

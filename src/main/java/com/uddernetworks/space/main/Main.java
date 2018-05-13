@@ -234,6 +234,10 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new WireBlock(this, 122, Material.DIAMOND_AXE, 6, Material.REDSTONE_BLOCK, "Wire Turn NW"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 123, Material.DIAMOND_AXE, 7, Material.REDSTONE_BLOCK, "Wire Turn NE"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 124, Material.DIAMOND_AXE, 8, Material.REDSTONE_BLOCK, "Wire Cross"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 125, Material.DIAMOND_AXE, 9, Material.REDSTONE_BLOCK, "Wire Three NEW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 126, Material.DIAMOND_AXE, 10, Material.REDSTONE_BLOCK, "Wire three NSE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 127, Material.DIAMOND_AXE, 11, Material.REDSTONE_BLOCK, "Wire Three NSW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 128, Material.DIAMOND_AXE, 12, Material.REDSTONE_BLOCK, "Wire Three SEW"));
 
 
         /* Recipes */
