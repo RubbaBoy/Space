@@ -238,7 +238,7 @@ public class WireBlock extends CustomBlock {
 
 
 
-
+            // WALL SEW
 
             new WireBlockReference(129,
                                         /* Top */
@@ -413,6 +413,197 @@ public class WireBlock extends CustomBlock {
                     /* West */          ReferenceType.AIR, /* East */
                     ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
                                         ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // WALL NEW
+
+            new WireBlockReference(141,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(142,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(142,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(142,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(143,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(143,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(143,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(144,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(145,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(146,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(147,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(148, // CROSS
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(149,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(150,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(151,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.AIR,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(152,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.BLOCK, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.AIR,
 
                                         /* Bottom */
                                         ReferenceType.AIR)

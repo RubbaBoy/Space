@@ -254,6 +254,20 @@ public class Main extends JavaPlugin implements Listener {
         this.customBlockManager.addCustomBlock(new WireBlock(this, 139, Material.DIAMOND_AXE, 23, Material.REDSTONE_BLOCK, "Wire Three NSW"));
         this.customBlockManager.addCustomBlock(new WireBlock(this, 140, Material.DIAMOND_AXE, 24, Material.REDSTONE_BLOCK, "Wire Three SEW"));
 
+        // WALL     NEW
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 141, Material.DIAMOND_AXE, 25, Material.REDSTONE_BLOCK, "Wire"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 142, Material.DIAMOND_AXE, 26, Material.REDSTONE_BLOCK, "Wire Line X"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 143, Material.DIAMOND_AXE, 27, Material.REDSTONE_BLOCK, "Wire Line Z"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 144, Material.DIAMOND_AXE, 28, Material.REDSTONE_BLOCK, "Wire Turn SE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 145, Material.DIAMOND_AXE, 29, Material.REDSTONE_BLOCK, "Wire Turn SW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 146, Material.DIAMOND_AXE, 30, Material.REDSTONE_BLOCK, "Wire Turn NW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 147, Material.DIAMOND_AXE, 31, Material.REDSTONE_BLOCK, "Wire Turn NE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 148, Material.DIAMOND_AXE, 32, Material.REDSTONE_BLOCK, "Wire Cross"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 149, Material.DIAMOND_AXE, 33, Material.REDSTONE_BLOCK, "Wire Three NEW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 150, Material.DIAMOND_AXE, 34, Material.REDSTONE_BLOCK, "Wire three NSE"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 151, Material.DIAMOND_AXE, 35, Material.REDSTONE_BLOCK, "Wire Three NSW"));
+        this.customBlockManager.addCustomBlock(new WireBlock(this, 152, Material.DIAMOND_AXE, 36, Material.REDSTONE_BLOCK, "Wire Three SEW"));
+
 
         /* Recipes */
 
