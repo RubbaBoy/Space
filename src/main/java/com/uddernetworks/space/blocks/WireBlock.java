@@ -169,28 +169,17 @@ public class WireBlock extends CustomBlock {
 
                                         /* Bottom */
                                         ReferenceType.BLOCK),
-//            new WireBlockReference(124, new ReferenceType[][] { ///////////////////////////// CROSS
-//                    /*
-//                            NW  N  NE
-//                            W   *  E
-//                            SW  S  SE
-//                     */
-//                    {       // Top
-//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR,
-//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR,
-//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR
-//                    },
-//                    {       // Middle
-//                            ReferenceType.AIR, ReferenceType.WIRE, ReferenceType.AIR,
-//                            ReferenceType.WIRE, ReferenceType.WIRE, ReferenceType.AIR,
-//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR
-//                    },
-//                    {       // Bottom
-//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR,
-//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR,
-//                            ReferenceType.AIR, ReferenceType.AIR, ReferenceType.AIR
-//                    }
-//            }),
+            new WireBlockReference(124, // CROSS
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.WIRE, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.WIRE,
+
+                                        /* Bottom */
+                                        ReferenceType.BLOCK),
             new WireBlockReference(125,
                                         /* Top */
                                         ReferenceType.AIR,
@@ -234,7 +223,199 @@ public class WireBlock extends CustomBlock {
                                         ReferenceType.AIR,
 
                                         /* Bottom */
-                                        ReferenceType.BLOCK)
+                                        ReferenceType.BLOCK),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            new WireBlockReference(129,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(130,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(130,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(130,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(131,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(131,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(131,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.AIR,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(132,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(133,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(134,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(135,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR),
+            new WireBlockReference(136, // CROSS
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(137,
+                                        /* Top */
+                                        ReferenceType.AIR,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(138,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.AIR, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(139,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.AIR,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.WIRE),
+            new WireBlockReference(140,
+                                        /* Top */
+                                        ReferenceType.WIRE,
+
+                                        /* North */
+                    /* West */          ReferenceType.AIR, /* East */
+                    ReferenceType.WIRE, /* South */            ReferenceType.WIRE,
+                                        ReferenceType.BLOCK,
+
+                                        /* Bottom */
+                                        ReferenceType.AIR)
             );
 
     private ReferenceType getReferenceType(Block block, Block imagineDestroyed) {
@@ -266,11 +447,14 @@ public class WireBlock extends CustomBlock {
         boolean southWire = isBlockElectrical(south) && !south.equals(imagineDestroyed);
         boolean eastWire = isBlockElectrical(east) && !east.equals(imagineDestroyed);
         boolean westWire = isBlockElectrical(west) && !west.equals(imagineDestroyed);
+        boolean topWire = isBlockElectrical(top) && !top.equals(imagineDestroyed);
+        boolean bottomWire = isBlockElectrical(bottom) && !bottom.equals(imagineDestroyed);
 
         boolean updated = false;
 
         for (WireBlockReference blockReference : this.wireBlockReferences) {
             if (blockReference.equals(wireBlockReference)) {
+                System.out.println("blockReference.getId() = " + blockReference.getId());
                 setTypeTo(blockInstance, blockReference.getId());
                 updated = true;
                 break;
@@ -279,7 +463,7 @@ public class WireBlock extends CustomBlock {
 
         if (!updated) {
             System.out.println("Not updated");
-            setTypeTo(blockInstance, 124);
+            setTypeTo(blockInstance, 136);
         }
 
         if (northWire && !updatedBlocks.contains(north)) {
@@ -300,6 +484,16 @@ public class WireBlock extends CustomBlock {
         if (westWire && !updatedBlocks.contains(west)) {
             updatedBlocks.add(west);
             updateState(west, updatedBlocks, imagineDestroyed);
+        }
+
+        if (topWire && !updatedBlocks.contains(top)) {
+            updatedBlocks.add(top);
+            updateState(top, updatedBlocks, imagineDestroyed);
+        }
+
+        if (bottomWire && !updatedBlocks.contains(bottom)) {
+            updatedBlocks.add(bottom);
+            updateState(bottom, updatedBlocks, imagineDestroyed);
         }
     }
 
